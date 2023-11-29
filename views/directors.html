@@ -18,7 +18,7 @@
           {{ range .Directors }}
           <tr>
             <td>{{ .Name }}</td>
-            <td>{{ .Titles | mystring }}</td>
+            <td>{{ .Titles | str_slice }}</td>
           </tr>
           {{ end }}
           </tbody>

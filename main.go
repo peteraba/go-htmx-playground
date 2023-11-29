@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Masterminds/sprig/v3"
 	"github.com/gofiber/fiber/v2"
 	html "github.com/gofiber/template/html/v2"
 
@@ -61,16 +60,10 @@ func main() {
 
 	engine := html.NewFileSystem(http.FS(viewsFS), ".html")
 	engine.AddFunc(
-		// add unescape function
-		"unescape", func(s string) template.HTML {
-			return template.HTML(s)
-		},
-	).AddFunc(
-		// add unescape function
-		"mystring", func(s []string) template.HTML {
+		"str_slice", func(s []string) template.HTML {
 			return template.HTML(strings.Join(s, ","))
 		},
-	).AddFuncMap(sprig.FuncMap())
+	)
 
 	app := fiber.New(fiber.Config{
 		Views:     engine,
