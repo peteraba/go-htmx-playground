@@ -12,7 +12,6 @@ Go goodies:
 HOT JavaScript frameworks to check:
 - https://alpinejs.dev/
 - https://stimulus.hotwired.dev/
-- https://hyperscript.org/
 
 HOT CSS frameworks to check:
 - https://daisyui.com/

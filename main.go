@@ -1,47 +1,63 @@
 package main
 
 import (
-	"bytes"
 	"embed"
 	"html/template"
-	"io"
 	"net/http"
+	"strings"
 
-	"github.com/brianvoe/gofakeit/v6"
-	"github.com/go-playground/validator/v10"
+	"github.com/Masterminds/sprig/v3"
 	"github.com/gofiber/fiber/v2"
 	html "github.com/gofiber/template/html/v2"
+
+	"github.com/peteraba/go-htmx-playground/lib/htmx"
+	"github.com/peteraba/go-htmx-playground/pkg/films/handler"
+	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
 )
-
-// use a single instance of Validate, it caches struct info
-var validate *validator.Validate
-
-type Film struct {
-	Title    string `validate:"required" fake:"{moviename}"`
-	Director string `validate:"required" fake:"{name}"`
-}
-
-func (f *Film) Validate() error {
-	return validate.Struct(f)
-}
 
 //go:embed views/*.html
 var viewsFS embed.FS
 
-func isHx(headers map[string][]string) bool {
-	if headers == nil || len(headers) == 0 {
-		return false
-	}
+//go:embed assets/*
+var assetsFS embed.FS
 
-	if v, ok := headers["Hx-Request"]; ok && len(v) > 0 {
-		return v[0] == "true"
-	}
-
-	return false
+var themes = []string{
+	"light",
+	"dark",
+	"cupcake",
+	"bumblebee",
+	"emerald",
+	"corporate",
+	"synthwave",
+	"retro",
+	"cyberpunk",
+	"valentine",
+	"halloween",
+	"garden",
+	"forest",
+	"aqua",
+	"lofi",
+	"pastel",
+	"fantasy",
+	"wireframe",
+	"black",
+	"luxury",
+	"dracula",
+	"cmyk",
+	"autumn",
+	"business",
+	"acid",
+	"lemonade",
+	"night",
+	"coffee",
+	"winter",
+	"dim",
+	"nord",
+	"sunset",
 }
 
 func main() {
-	validate = validator.New(validator.WithRequiredStructEnabled())
+	const maxListLength = 10
 
 	engine := html.NewFileSystem(http.FS(viewsFS), ".html")
 	engine.AddFunc(
@@ -49,89 +65,51 @@ func main() {
 		"unescape", func(s string) template.HTML {
 			return template.HTML(s)
 		},
-	)
+	).AddFunc(
+		// add unescape function
+		"mystring", func(s []string) template.HTML {
+			return template.HTML(strings.Join(s, ","))
+		},
+	).AddFuncMap(sprig.FuncMap())
 
-	app := fiber.New(fiber.Config{Views: engine})
+	app := fiber.New(fiber.Config{
+		Views:     engine,
+		Immutable: true,
+	})
+
+	repo := repository.NewFilmRepo(maxListLength)
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		if isHx(c.GetReqHeaders()) {
+		if htmx.IsHx(c.GetReqHeaders()) {
 			return c.Render("views/home", fiber.Map{"Path": c.Path()})
 		}
 		// Render index
 		return c.Render("views/home", fiber.Map{"Path": c.Path()}, "views/layout")
 	})
 
-	app.Get("/films", func(c *fiber.Ctx) error {
-		films := []Film{
-			{Title: "The Godfather", Director: "Francis Ford Coppola"},
-			{Title: "Blade Runner", Director: "Ridley Scott"},
-			{Title: "The Thing", Director: "John Carpenter"},
-		}
-
-		if isHx(c.GetReqHeaders()) {
-			return c.Render("views/films", fiber.Map{"Path": c.Path(), "Films": films})
+	app.Get("/colors", func(c *fiber.Ctx) error {
+		if htmx.IsHx(c.GetReqHeaders()) {
+			return c.Render("views/colors", fiber.Map{"Path": c.Path(), "Themes": themes})
 		}
 		// Render index
-		return c.Render("views/films", fiber.Map{"Path": c.Path()}, "views/layout")
+		return c.Render("views/colors", fiber.Map{"Path": c.Path(), "Themes": themes}, "views/layout")
 	})
 
-	app.Get("/directors", func(c *fiber.Ctx) error {
-		if isHx(c.GetReqHeaders()) {
-			return c.Render("views/directors", fiber.Map{"Path": c.Path()})
-		}
+	filmHandler := handler.NewFilm(repo, maxListLength)
+	app.Get("/films", filmHandler.List)
+	app.Post("/films", filmHandler.Create)
+	app.Delete("/films", filmHandler.Delete)
+	app.Post("/generators/films/:num<min(5);max(50)>", filmHandler.Generate)
 
-		return c.Render("views/directors", fiber.Map{"Path": c.Path()}, "views/layout")
-	})
+	directorHandler := handler.NewDirector(repo, maxListLength)
+	app.Get("/directors", directorHandler.List)
 
-	app.Post("/films", func(c *fiber.Ctx) error {
-		f := Film{
-			Title:    c.FormValue("title"),
-			Director: c.FormValue("director"),
-		}
-		if f.Validate() != nil {
-			return c.SendStatus(http.StatusBadRequest)
-		}
+	app.Static("/assets/", "./assets")
 
-		return c.Render("film-list-element", f)
-	})
-
-	app.Post("/generators/films/:num<min(5);max(50)>", func(c *fiber.Ctx) error {
-		n, err := c.ParamsInt("num")
-		if err != nil || n < 5 || n >= 50 {
-			return c.SendStatus(http.StatusBadRequest)
-		}
-
-		f := Film{}
-		b := bytes.Buffer{}
-		w := io.Writer(&b)
-		tmpl := template.Must(template.ParseFS(viewsFS, "views/films.html"))
-		for i := 0; i < n; i++ {
-			err = gofakeit.Struct(&f)
-			if err != nil {
-				return c.SendStatus(http.StatusInternalServerError)
-			}
-
-			err = tmpl.ExecuteTemplate(w, "film-list-element", f)
-			if err != nil {
-				return c.SendStatus(http.StatusInternalServerError)
-			}
-		}
-
-		return c.Send(b.Bytes())
-	})
+	//app.Get("/assets/:file", func(c *fiber.Ctx) error {
+	//
+	//	return c.Send(b.Bytes())
+	//})
 
 	app.Listen(":8000")
-
-	// h2 := func(w http.ResponseWriter, r *http.Request) {
-	// 	title := r.PostFormValue("title")
-	// 	director := r.PostFormValue("director")
-	// 	if title == "" || director == "" {
-	// 		log.Printf("empty form field. title: %s, director: %s\n", title, director)
-	// 		return
-	// 	}
-	//
-	// 	log.Printf("title: %s, director: %s\n", title, director)
-	// 	tmpl := template.Must(template.ParseFS(index, "index.html"))
-	// 	_ = tmpl.ExecuteTemplate(w, "film-list-element", Film{Title: title, Director: director})
-	// }
 }

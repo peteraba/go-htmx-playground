@@ -1,0 +1,23 @@
+  <div class="join p-1">
+    <a class="join-item btn btn-outline {{if not .Prev}}btn-disabled{{end}}" href="">Previous page</a>
+    {{ range .Start }}
+    <a class="join-item btn btn-outline" href="">{{ . }}</a>
+    {{ end }}
+    {{if .Start }}
+    <a class="join-item btn btn-outline btn-disabled">...</a>
+    {{end}}
+    {{ range .PreActive }}
+    <a class="join-item btn btn-outline" href="">{{ . }}</a>
+    {{ end }}
+    <a class="join-item btn btn-outline btn-active">{{ .CurrentPage }}</a>
+    {{ range .PostActive }}
+    <a class="join-item btn btn-outline" href="">{{ . }}</a>
+    {{ end }}
+    {{if .End }}
+    <a class="join-item btn btn-outline btn-disabled">...</a>
+    {{end}}
+    {{ range .End }}
+    <a class="join-item btn btn-outline" href="">{{ . }}</a>
+    {{ end }}
+    <a class="join-item btn btn-outline {{if not .Next}}btn-disabled{{end}}" href="">Next page</a>
+  </div>

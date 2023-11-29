@@ -1,9 +1,9 @@
-{{template "views/header" .}}
+{{template "views/nav" .}}
 
 <div class="min-h-screen flex">
   <div class="flex-1">
     <div class="p-4">
-      <h1 class="p-2 text-white text-2xl">Film List</h1>
+      <h1 class="p-2 text-white text-2xl">List of Movies</h1>
       <div class="overflow-x-auto">
         <table id="film-list" class="table table-zebra table-fixed">
           <!-- head -->
@@ -37,22 +37,15 @@
         </table>
       </div>
 
-      <div class="join p-1">
-        <button class="join-item btn btn-outline">Previous page</button>
-        <button class="join-item btn btn-outline">1</button>
-        <button class="join-item btn btn-outline btn-active">2</button>
-        <button class="join-item btn btn-outline btn-disabled">...</button>
-        <button class="join-item btn btn-outline">8</button>
-        <button class="join-item btn btn-outline">9</button>
-        <button class="join-item btn btn-outline">Next</button>
-      </div>
+      {{template "views/pagination" .Pagination}}
+
     </div>
   </div>
   <div class="flex-1">
     <div class="p-4">
       <h1 class="p-2 text-white text-2xl">Add Film</h1>
 
-      <form hx-post="/films" hx-target="#film-list" hx-swap="beforeend" hx-indicator="#spinner">
+      <form hx-post="/films" hx-target="#wrapper" hx-swap="innerHTML" hx-indicator="#spinner">
         <p class="p-1">
           <input type="text" placeholder="Title" name="title" id="film-title" class="input input-bordered w-full" />
         </p>
@@ -69,9 +62,10 @@
       </form>
 
       <ul class="menu menu-horizontal bg-base-200 rounded-box">
-        <li><a hx-post="/generators/films/10" hx-target="#film-list" hx-swap="beforeend" class="link-primary">Gen 10</a></li>
-        <li><a hx-post="/generators/films/25" hx-target="#film-list" hx-swap="beforeend" class="link-secondary">Gen 25</a></li>
-        <li><a hx-post="/generators/films/50" hx-target="#film-list" hx-swap="beforeend" class="link-accent">Gen 50</a></li>
+        <li><a hx-post="/generators/films/2" hx-target="#wrapper" hx-swap="innerHTML" class="link-accent">Gen 2</a></li>
+        <li><a hx-post="/generators/films/10" hx-target="#wrapper" hx-swap="innerHTML" class="link-primary">Gen 10</a></li>
+        <li><a hx-post="/generators/films/25" hx-target="#wrapper" hx-swap="innerHTML" class="link-secondary">Gen 25</a></li>
+        <li><a hx-delete="/films" hx-target="#wrapper" hx-swap="innerHTML" class="link-accent">Delete</a></li>
       </ul>
     </div>
   </div>
