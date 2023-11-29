@@ -3,11 +3,18 @@ package main
 import (
 	"embed"
 	"html/template"
+	"log/slog"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/fiber/v2/middleware/idempotency"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	html "github.com/gofiber/template/html/v2"
+	slogfiber "github.com/samber/slog-fiber"
 
 	"github.com/peteraba/go-htmx-playground/lib/htmx"
 	"github.com/peteraba/go-htmx-playground/pkg/films/handler"
@@ -56,7 +63,7 @@ var themes = []string{
 }
 
 func main() {
-	const maxListLength = 10
+	const maxListLength = 5
 
 	engine := html.NewFileSystem(http.FS(viewsFS), ".html")
 	engine.AddFunc(
@@ -69,6 +76,16 @@ func main() {
 		Views:     engine,
 		Immutable: true,
 	})
+
+	// See here: https://github.com/samber/slog-fiber
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	app.Use(slogfiber.New(logger))
+
+	app.Use(recover.New())
+
+	app.Use(idempotency.New())
+
+	app.Get("/metrics", monitor.New(monitor.Config{Title: "go|htmx Metrics Page"}))
 
 	repo := repository.NewFilmRepo(maxListLength)
 
@@ -97,16 +114,14 @@ func main() {
 	directorHandler := handler.NewDirector(repo, maxListLength)
 	app.Get("/directors", directorHandler.List)
 
-	app.Get("/assets/:file", func(c *fiber.Ctx) error {
-		fileName := "assets/" + c.Params("file")
-
-		content, err := assetsFS.ReadFile(fileName)
-		if err != nil {
-			return err
-		}
-
-		return c.Send(content)
-	})
+	// Or extend your config for customization
+	app.Use(filesystem.New(filesystem.Config{
+		Root: http.FS(assetsFS),
+		//PathPrefix:   "/assets",
+		Browse:       false,
+		NotFoundFile: "404.html",
+		MaxAge:       3600,
+	}))
 
 	app.Listen(":8000")
 }

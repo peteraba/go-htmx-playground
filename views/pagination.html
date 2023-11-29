@@ -1,23 +1,32 @@
-  <div class="join p-1">
-    <a class="join-item btn btn-outline {{if not .Prev}}btn-disabled{{end}}" href="">Previous page</a>
-    {{ range .Start }}
-    <a class="join-item btn btn-outline" href="">{{ . }}</a>
+{{ $path := .Path }}
+<div class="join p-1 py-4">
+    <!-- prev -->
+    <a class="join-item btn btn-outline{{if le .CurrentPage 1}} btn-disabled{{end}}" href="{{ $path }}{{ .Prev }}">Previous page</a>
+    <!-- beginning -->
+    {{ range .Beginning }}
+    <a class="join-item btn btn-outline" href="{{ $path }}{{ . }}">{{ . }}</a>
     {{ end }}
-    {{if .Start }}
+    <!-- sep -->
+    {{if .Beginning }}
     <a class="join-item btn btn-outline btn-disabled">...</a>
     {{end}}
+    <!-- current block -->
     {{ range .PreActive }}
-    <a class="join-item btn btn-outline" href="">{{ . }}</a>
+    <a class="join-item btn btn-outline" href="{{ $path }}{{ . }}">{{ . }}</a>
     {{ end }}
-    <a class="join-item btn btn-outline btn-active">{{ .CurrentPage }}</a>
+    <span class="join-item btn btn-outline btn-active">{{ .CurrentPage }}</span>
     {{ range .PostActive }}
-    <a class="join-item btn btn-outline" href="">{{ . }}</a>
+    <a class="join-item btn btn-outline" href="{{ $path }}{{ . }}">{{ . }}</a>
     {{ end }}
+    <!-- end of current -->
+    <!-- sep -->
     {{if .End }}
     <a class="join-item btn btn-outline btn-disabled">...</a>
     {{end}}
+    <!-- end -->
     {{ range .End }}
-    <a class="join-item btn btn-outline" href="">{{ . }}</a>
+    <a class="join-item btn btn-outline" href="{{ $path }}{{ . }}">{{ . }}</a>
     {{ end }}
-    <a class="join-item btn btn-outline {{if not .Next}}btn-disabled{{end}}" href="">Next page</a>
-  </div>
+    <!-- next -->
+    <a class="join-item btn btn-outline{{if eq .Next .CurrentPage}} btn-disabled{{end}}" href="{{ $path }}{{ .Next }}">Next page</a>
+</div>

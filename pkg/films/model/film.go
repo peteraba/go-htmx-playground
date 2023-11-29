@@ -18,8 +18,8 @@ func (f Film) Clone() Film {
 	return Film{Title: f.Title, Director: f.Director}
 }
 
-func (f *Film) Validate() error {
-	return validate.Struct(f)
+func (f Film) Validate() error {
+	return validate.Struct(&f)
 }
 
 type Director struct {

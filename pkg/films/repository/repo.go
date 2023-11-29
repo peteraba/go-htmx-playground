@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log"
 	"sort"
 	"sync"
 
@@ -14,30 +15,32 @@ type FilmRepo struct {
 	titles        []string
 	directors     map[string]model.Director
 	directorNames []string
-	maxListLength int
+	maxLimit      int
 }
 
-func (r *FilmRepo) Insert(newFilm model.Film) *FilmRepo {
+func (r *FilmRepo) Insert(newFilms ...model.Film) *FilmRepo {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	// title already exists
-	if _, ok := r.films[newFilm.Title]; ok {
-		return r
-	}
+	for _, newFilm := range newFilms {
+		// title already exists
+		if _, ok := r.films[newFilm.Title]; ok {
+			continue
+		}
 
-	// set film
-	r.films[newFilm.Title] = newFilm.Clone()
-	r.titles = append(r.titles, newFilm.Title)
+		// set film
+		r.films[newFilm.Title] = newFilm.Clone()
+		r.titles = append(r.titles, newFilm.Title)
 
-	// set director
-	newDirector := model.Director{Name: newFilm.Director, Titles: []string{newFilm.Title}}
-	if d, ok := r.directors[newFilm.Director]; ok {
-		newDirector.Titles = append(d.Titles, newFilm.Title)
-	} else {
-		r.directorNames = append(r.directorNames, newFilm.Director)
+		// set director
+		newDirector := model.Director{Name: newFilm.Director, Titles: []string{newFilm.Title}}
+		if d, ok := r.directors[newFilm.Director]; ok {
+			newDirector.Titles = append(d.Titles, newFilm.Title)
+		} else {
+			r.directorNames = append(r.directorNames, newFilm.Director)
+		}
+		r.directors[newFilm.Director] = newDirector
 	}
-	r.directors[newFilm.Director] = newDirector
 
 	// reindex
 	sort.Strings(r.titles)
@@ -78,8 +81,11 @@ func (r *FilmRepo) ListFilms(offset, limit int) ([]model.Film, error) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
-	if limit < 0 || limit > r.maxListLength {
-		return nil, fmt.Errorf("invalid limit: %d", limit)
+	if limit > r.maxLimit {
+		return nil, fmt.Errorf("limit too large: %d (max: %d)", limit, r.maxLimit)
+	}
+	if limit < 1 {
+		return nil, fmt.Errorf("invalid too small: %d (min: 1)", limit)
 	}
 
 	if offset >= len(r.films) {
@@ -108,6 +114,9 @@ func (r *FilmRepo) fetchDirectorsByNames(names []string) []model.Director {
 		if d, ok := r.directors[name]; ok {
 			directors = append(directors, d.Clone())
 		} else {
+			log.Printf("names: %v", names)
+			log.Printf("directors: %v", r.directors)
+			log.Printf("director names: %v", r.directorNames)
 			panic(fmt.Errorf("director was not found: %s", name))
 		}
 	}
@@ -119,8 +128,11 @@ func (r *FilmRepo) ListDirectors(offset, limit int) ([]model.Director, error) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
-	if limit < 0 || limit > r.maxListLength {
-		return nil, fmt.Errorf("invalid limit: %d", limit)
+	if limit > r.maxLimit {
+		return nil, fmt.Errorf("limit too large: %d (max: %d)", limit, r.maxLimit)
+	}
+	if limit < 1 {
+		return nil, fmt.Errorf("invalid too small: %d (min: 1)", limit)
 	}
 
 	if offset >= len(r.films) {
@@ -141,16 +153,16 @@ func (r *FilmRepo) CountDirectors() int {
 	return len(r.directors)
 }
 
-func NewFilmRepo(maxListLength int) *FilmRepo {
+func NewFilmRepo(maxLimit int, films ...model.Film) *FilmRepo {
 	repo := &FilmRepo{
-		films:         make(map[string]model.Film),
-		directors:     make(map[string]model.Director),
-		maxListLength: maxListLength,
+		films:     make(map[string]model.Film),
+		directors: make(map[string]model.Director),
+		maxLimit:  maxLimit,
 	}
 
-	repo.Insert(model.Film{Title: "The Godfather", Director: "Francis Ford Coppola"}).
-		Insert(model.Film{Title: "Blade Runner", Director: "Ridley Scott"}).
-		Insert(model.Film{Title: "The Thing", Director: "John Carpenter"})
+	if len(films) > 0 {
+		repo.Insert(films...)
+	}
 
 	return repo
 }

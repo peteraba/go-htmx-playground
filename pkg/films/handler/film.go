@@ -25,7 +25,7 @@ func NewFilm(repo *repository.FilmRepo, pageSize int) Film {
 }
 
 func (f Film) List(c *fiber.Ctx) error {
-	return f.list(c)
+	return f.list(c, c.Path())
 }
 
 func (f Film) Create(c *fiber.Ctx) error {
@@ -39,7 +39,7 @@ func (f Film) Create(c *fiber.Ctx) error {
 
 	f.repo.Insert(newFilm)
 
-	return f.list(c)
+	return f.list(c, "/films")
 }
 
 func (f Film) Generate(c *fiber.Ctx) error {
@@ -58,16 +58,16 @@ func (f Film) Generate(c *fiber.Ctx) error {
 		f.repo.Insert(newFilm)
 	}
 
-	return f.list(c)
+	return f.list(c, "/films")
 }
 
 func (f Film) Delete(c *fiber.Ctx) error {
 	f.repo.Truncate()
 
-	return f.list(c)
+	return f.list(c, "/films")
 }
 
-func (f Film) list(c *fiber.Ctx) error {
+func (f Film) list(c *fiber.Ctx, basePath string) error {
 	currentPage := c.QueryInt("page", 1)
 	if currentPage <= 0 {
 		currentPage = 1
@@ -80,12 +80,12 @@ func (f Film) list(c *fiber.Ctx) error {
 		return err
 	}
 
-	p := pagination.New(currentPage, f.pageSize, f.repo.CountFilms(), c.Path())
+	p := pagination.New(currentPage, f.pageSize, f.repo.CountFilms(), basePath)
 
 	if htmx.IsHx(c.GetReqHeaders()) {
-		return c.Render("views/films", fiber.Map{"Path": c.Path(), "Films": films, "Pagination": p})
+		return c.Render("views/films", fiber.Map{"Path": basePath, "Films": films, "Pagination": p})
 	}
 
 	// Render index
-	return c.Render("views/films", fiber.Map{"Path": c.Path(), "Films": films, "Pagination": p}, "views/layout")
+	return c.Render("views/films", fiber.Map{"Path": basePath, "Films": films, "Pagination": p}, "views/layout")
 }

@@ -1,18 +1,26 @@
 package pagination
 
+import "strings"
+
 type Pagination struct {
-	Prev        bool
-	Next        bool
+	Prev        int
+	Next        int
 	CurrentPage int
 	Path        string
-	Start       []int
+	Beginning   []int
 	PreActive   []int
 	PostActive  []int
 	End         []int
 }
 
 func New(currentPage, pageSize, count int, path string) Pagination {
-	maxPage := (count / pageSize)
+	if strings.Contains(path, "?") {
+		path += "&page="
+	} else {
+		path += "?page="
+	}
+
+	maxPage := count / pageSize
 	if count%pageSize > 0 {
 		maxPage++
 	}
@@ -28,6 +36,16 @@ func New(currentPage, pageSize, count int, path string) Pagination {
 
 func generate(maxPage, currentPage int, path string) Pagination {
 	var start, preActive, postActive, end []int
+
+	prev := currentPage
+	if currentPage > 1 {
+		prev = currentPage - 1
+	}
+
+	next := currentPage
+	if currentPage < maxPage {
+		next = currentPage + 1
+	}
 
 	if currentPage >= 5 {
 		start = []int{1, 2}
@@ -54,11 +72,11 @@ func generate(maxPage, currentPage int, path string) Pagination {
 	}
 
 	return Pagination{
-		Prev:        currentPage > 1,
-		Next:        currentPage < maxPage,
+		Prev:        prev,
+		Next:        next,
 		CurrentPage: currentPage,
 		Path:        path,
-		Start:       start,
+		Beginning:   start,
 		PreActive:   preActive,
 		PostActive:  postActive,
 		End:         end,

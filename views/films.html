@@ -20,6 +20,11 @@
           </thead>
           <tbody>
 
+          {{ if not .Films }}
+          <tr>
+            <td colspan="3">Empty list</td>
+          </tr>
+          {{ end }}
           {{ range .Films }}
           {{ block "film-list-element" .}}
           <tr>
@@ -53,20 +58,18 @@
           <input type="text" placeholder="Director" name="director" id="film-director" class="input input-bordered w-full" />
         </p>
 
-        <p class="p-1">
+        <p class="p-2">
           <button type="submit" class="btn btn-outline btn-wide">
             <span class="htmx-indicator loading loading-spinner hidden" id="spinner" role="status" aria-hidden="true"></span>
             Submit
           </button>
+          <a hx-post="/generators/films/2" hx-replace-url="false" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-accent">Gen 2</a>
+          <a hx-post="/generators/films/10" hx-replace-url="false" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-primary">Gen 10</a>
+          <a hx-post="/generators/films/25" hx-replace-url="false" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-secondary">Gen 25</a>
+          <a hx-delete="/films" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-accent">Delete</a>
         </p>
       </form>
 
-      <ul class="menu menu-horizontal bg-base-200 rounded-box">
-        <li><a hx-post="/generators/films/2" hx-target="#wrapper" hx-swap="innerHTML" class="link-accent">Gen 2</a></li>
-        <li><a hx-post="/generators/films/10" hx-target="#wrapper" hx-swap="innerHTML" class="link-primary">Gen 10</a></li>
-        <li><a hx-post="/generators/films/25" hx-target="#wrapper" hx-swap="innerHTML" class="link-secondary">Gen 25</a></li>
-        <li><a hx-delete="/films" hx-target="#wrapper" hx-swap="innerHTML" class="link-accent">Delete</a></li>
-      </ul>
     </div>
   </div>
 </div>
