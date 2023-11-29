@@ -104,12 +104,16 @@ func main() {
 	directorHandler := handler.NewDirector(repo, maxListLength)
 	app.Get("/directors", directorHandler.List)
 
-	app.Static("/assets/", "./assets")
+	app.Get("/assets/:file", func(c *fiber.Ctx) error {
+		fileName := "assets/" + c.Params("file")
 
-	//app.Get("/assets/:file", func(c *fiber.Ctx) error {
-	//
-	//	return c.Send(b.Bytes())
-	//})
+		content, err := assetsFS.ReadFile(fileName)
+		if err != nil {
+			return err
+		}
+
+		return c.Send(content)
+	})
 
 	app.Listen(":8000")
 }
