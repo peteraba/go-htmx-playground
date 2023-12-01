@@ -1,19 +1,27 @@
-const ready = (callback) => {
-    if (document.readyState !== "loading") callback();
-    else document.addEventListener("DOMContentLoaded", callback);
-}
-
-// set page color
-ready(() => {
-    const html = document.getElementById("html");
-    if (!html) {
-        console.warn("no #html element found.");
-        return;
-    }
-
+$(function () {
     const theme = localStorage.getItem("theme");
-    if (theme) {
-        html.setAttribute("data-theme", theme);
-        console.debug("custom theme is set: " + theme)
+
+    $("#html").attr("data-theme", theme);
+});
+
+$(function () {
+    const messages = $("#user-messages");
+
+    const source = new EventSource(baseUrl + "/sse");
+    source.onopen = (event) => {
+        console.log("sse connection open");
+    }
+    source.onerror = (event) => {
+        console.error("sse connection error");
+    }
+    source.onmessage = (event) => {
+        const payload = JSON.parse(event.data),
+            type = payload.type,
+            msg = payload.message;
+
+        const alert = $(`<p class="alert alert-${type}"><span>${msg}</span></p>`);
+        alert.appendTo(messages);
+
+        setTimeout(() => {alert.detach()}, 5000);
     }
 });

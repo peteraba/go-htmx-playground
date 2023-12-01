@@ -34,14 +34,16 @@ Nothing in here is production ready. Copy-paste at your own risk.
   - [/] Recover
 - [ ] Colors module
 - [ ] Errors
-  - [ ] htmx-style (polling?)
+  - [/] htmx-style (SSE?)
+  - [ ] htmx-style (Websockets?)
   - [ ] htmx-style (polling?)
 - [ ] Support for microservice-like deployment
 - [ ] Login (IDEA)
 
 # Notes
 JS goodies:
-- [jQuery -> VanillaJS](https://tobiasahlin.com/blog/move-from-jquery-to-vanilla-javascript/)
+- https://github.com/fabiospampinato/cash#fn
+- 
 Go goodies:
 - https://github.com/bugbytes-io/htmx-go-demo/blob/master/index.html
 - https://github.com/donseba/go-htmx

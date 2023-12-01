@@ -11,9 +11,16 @@
             integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
             crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cash-dom/dist/cash.min.js"></script>
+    <script>
+        const baseUrl = "{{ .Url | url }}";
+    </script>
     <script src="/assets/layout.js"></script>
 </head>
 <body>
+
+<div class="toast toast-top toast-end py-20" id="user-messages">
+</div>
 
 <div id="wrapper">
     {{embed}}
