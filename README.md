@@ -5,40 +5,56 @@ Fun project with [Go](https://go.dev/), [Fiber](https://github.com/gofiber/fiber
 Nothing in here is production ready. Copy-paste at your own risk.
 
 # TODO
-- [ ] Harden the application
-  - [ ] JWT-integration
-  - [ ] CSRF
-  - [ ] Encrypt Cookie (probably not relevant)
-  - [ ] Limiter
-  - [ ] Helmet
-  - [/] Idempotency
+- [ ] Delete individual movies
+- [ ] Check all movies on screen
+- [ ] Search
 - [ ] Speed improvements
-  - [ ] Compress
-  - [ ] ETag
-  - [ ] Server-Side Caching (IDEA)
+  - [ ] [Compress](https://docs.gofiber.io/api/middleware/compress)
+  - [ ] [ETag](https://docs.gofiber.io/api/middleware/etag)
+  - [ ] [Server-Side Caching](https://docs.gofiber.io/api/middleware/cache) (IDEA)
   - [ ] CDN (IDEA)
 - [ ] Interop improvements
-  - [ ] CORS (IDEA)
+  - [ ] [CORS](https://docs.gofiber.io/api/middleware/cors) (IDEA)
   - [ ] JSON response from endpoints
-      - [ ] GET /
-      - [ ] GET /colors
-      - [ ] GET /films
-      - [ ] POST /films
-      - [ ] DELETE /colors
-      - [ ] POST /generators/films/:num<min(5);max(50)>
-      - [ ] GET /directors
+    - [ ] GET /
+    - [ ] GET /colors
+    - [ ] GET /films
+    - [ ] POST /films
+    - [ ] DELETE /colors
+    - [ ] POST /generators/films/:num<min(5);max(50)>
+    - [ ] GET /directors
+    - [ ] OpenAPI 3.x definition
 - [ ] Ops improvements
-  - [ ] CORS (IDEA)
-  - [/] Metrics
-  - [ ] Pprof
-  - [/] Recover
-- [ ] Colors module
-- [ ] Errors
+  - [ ] Better logging ([slog](https://github.com/samber/slog-fiber))
+  - [ ] Tracing
+  - [ ] [CORS](https://docs.gofiber.io/api/middleware/cors) (IDEA)
+  - [/] [Metrics](https://docs.gofiber.io/api/middleware/monitor)
+  - [ ] [Pprof](https://docs.gofiber.io/api/middleware/pprof)
+  - [/] [Recover](https://docs.gofiber.io/api/middleware/recover)
+- [/] Colors module
+- [/] Notifications
   - [/] htmx-style (SSE?)
   - [ ] htmx-style (Websockets?)
   - [ ] htmx-style (polling?)
-- [ ] Support for microservice-like deployment
-- [ ] Login (IDEA)
+  - [ ] Load/reload on notification
+- [ ] Support for microservice-like deployment (IDEA)
+- [ ] Harden the application
+  - [ ] JWT-integration (IDEA)
+    - [Fiber-Casbin](https://github.com/gofiber/contrib/tree/main/casbin)
+    - [Casbin](github.com/casbin/casbin)
+    - [zitadel](https://github.com/zitadel/zitadel-go)
+    - [authelia](https://www.authelia.com/)
+    - [gorbac](https://github.com/mikespook/gorbac)
+    - [jwt](https://github.com/golang-jwt/jwt)
+  - [ ] [CSRF](https://docs.gofiber.io/api/middleware/csrf)
+  - [ ] [Encrypt Cookie](https://docs.gofiber.io/api/middleware/encryptcookie) (probably not relevant)
+  - [ ] [Limiter](https://docs.gofiber.io/api/middleware/limiter)
+  - [ ] [Helmet](https://docs.gofiber.io/api/middleware/helmet)
+  - [/] [Idempotency](https://docs.gofiber.io/api/middleware/idempotency)
+  - [ ] [Capslock integration](https://github.com/google/capslock)
+  - [ ] [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)
+  - [ ] Semantic Versioning
+  - [ ] Tooling to enforce semantic versioning
 
 # Notes
 JS goodies:
