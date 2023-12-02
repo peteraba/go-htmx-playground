@@ -31,6 +31,8 @@ Nothing in here is production ready. Copy-paste at your own risk.
   - [/] [Metrics](https://docs.gofiber.io/api/middleware/monitor)
   - [ ] [Pprof](https://docs.gofiber.io/api/middleware/pprof)
   - [/] [Recover](https://docs.gofiber.io/api/middleware/recover)
+- [ ] Code quality
+  - [ ] 
 - [/] Colors module
 - [/] Notifications
   - [/] htmx-style (SSE?)
@@ -42,8 +44,10 @@ Nothing in here is production ready. Copy-paste at your own risk.
   - [ ] JWT-integration (IDEA)
     - [Fiber-Casbin](https://github.com/gofiber/contrib/tree/main/casbin)
     - [Casbin](github.com/casbin/casbin)
-    - [zitadel](https://github.com/zitadel/zitadel-go)
-    - [authelia](https://www.authelia.com/)
+    - [zitadel](https://github.com/zitadel/zitadel-go) ([AMR](https://analyzemyrepo.com/analyze/zitadel/zitadel))
+    - [hanko](https://www.hanko.io/) ([AMR](https://analyzemyrepo.com/analyze/teamhanko/hanko))
+    - [authelia](https://www.authelia.com/) ([AMR](https://analyzemyrepo.com/analyze/authelia/authelia))
+    - [hydra](https://github.com/ory/hydra) ([AMR](https://analyzemyrepo.com/analyze/ory/hydra))
     - [gorbac](https://github.com/mikespook/gorbac)
     - [jwt](https://github.com/golang-jwt/jwt)
   - [ ] [CSRF](https://docs.gofiber.io/api/middleware/csrf)
@@ -53,8 +57,12 @@ Nothing in here is production ready. Copy-paste at your own risk.
   - [/] [Idempotency](https://docs.gofiber.io/api/middleware/idempotency)
   - [ ] [Capslock integration](https://github.com/google/capslock)
   - [ ] [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)
+  - [ ] [OpenSSF](https://securityscorecards.dev/)
   - [ ] Semantic Versioning
-  - [ ] Tooling to enforce semantic versioning
+    - [ ] Automatic tagging (IDEA)
+    - [ ] Easy releases (IDEA)
+    - [ ] Tooling to enforce semantic versioning
+  - [ ] [AnalyzeMyRepo](https://analyzemyrepo.com/analyze/teamhanko/hanko)
 
 # Notes
 JS goodies:
