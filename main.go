@@ -92,7 +92,6 @@ func addFilmHandlers(app *fiber.App, logger *slog.Logger, notifier *notification
 }
 
 func addStaticHandler(app *fiber.App) {
-	// Or extend your config for customization
 	app.Use(filesystem.New(filesystem.Config{
 		Root: http.FS(assetsFS),
 		// PathPrefix:   "/assets",

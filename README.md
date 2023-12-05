@@ -6,8 +6,10 @@ Nothing in here is production ready. Copy-paste at your own risk.
 
 # TODO
 - [/] Delete individual movies
-- [ ] Check all movies on screen
+- [/] Check all movies on screen
 - [ ] Search
+  - [ ] Search movies
+  - [ ] Search films
 - [ ] Speed improvements
   - [ ] [Compress](https://docs.gofiber.io/api/middleware/compress)
   - [ ] [ETag](https://docs.gofiber.io/api/middleware/etag)

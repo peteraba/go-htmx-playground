@@ -101,7 +101,6 @@ func (f Film) Delete(c *fiber.Ctx) error {
 	} else {
 		f.logger.Debug("JS support not enabled. Truncating films...")
 		f.repo.Truncate()
-		f.notifier.Success(fmt.Sprintf("All titles deleted."), c.IP())
 	}
 
 	return f.list(c, "/titles")

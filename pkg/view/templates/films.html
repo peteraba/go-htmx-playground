@@ -4,7 +4,7 @@
   <div class="flex-1">
     <div class="p-4">
       <h1 class="p-2 text-white text-2xl">List of Movies</h1>
-      <form action="/films-delete" method="post" hx-delete="/films">
+      <form action="/films-delete" method="post" hx-delete="/films" hx-target="#wrapper" hx-swap="innerHTML" >
         <div class="overflow-x-auto">
           <table id="film-list" class="table table-zebra table-fixed">
             <!-- head -->
@@ -75,10 +75,10 @@
             </button>
           </p>
           <p class="float-right">
-            <a hx-post="/generators/films/2" hx-replace-url="false" class="btn btn-accent">Gen 2</a>
-            <a hx-post="/generators/films/10" hx-replace-url="false" class="btn btn-primary">Gen 10</a>
-            <a hx-post="/generators/films/25" hx-replace-url="false" class="btn btn-secondary">Gen 25</a>
-            <a hx-delete="/films" class="btn btn-error">Delete All</a>
+            <a hx-post="/generators/films/2" hx-replace-url="false" class="btn btn-accent btn-outline">Gen 2</a>
+            <a hx-post="/generators/films/10" hx-replace-url="false" class="btn btn-primary btn-outline">Gen 10</a>
+            <a hx-post="/generators/films/25" hx-replace-url="false" class="btn btn-secondary btn-outline">Gen 25</a>
+            <a hx-delete="/films" class="btn btn-error btn-outline">Delete All</a>
           </p>
         </div>
       </form>
