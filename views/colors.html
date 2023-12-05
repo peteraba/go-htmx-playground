@@ -1,8 +1,7 @@
 {{template "views/nav" .}}
 
-<h1 class="p-2 text-white text-2xl">Colors</h1>
-
 <div class="container mx-auto" id="color-selectors">
+    <h1 class="p-2 text-white text-2xl">Colors</h1>
     <div class="grid grid-cols-4 gap-4">
         {{ range .Themes }}
         <div class="border-base-content/20 hover:border-base-content/40 overflow-hidden rounded-lg border outline outline-2 outline-offset-2 outline-transparent color-selector"

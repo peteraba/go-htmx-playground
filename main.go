@@ -28,7 +28,7 @@ var viewsFS embed.FS
 var assetsFS embed.FS
 
 func main() {
-	const maxListLength = 5
+	const maxListLength = 10
 
 	engine := html.NewFileSystem(http.FS(viewsFS), ".html")
 	engine.
