@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"sort"
 	"sync"
 
@@ -12,7 +12,8 @@ import (
 )
 
 type FilmRepo struct {
-	lock sync.RWMutex
+	lock   sync.RWMutex
+	logger *slog.Logger
 	// Key is the title of the film
 	films      map[string]model.Film
 	filmTitles []string
@@ -56,10 +57,7 @@ func (r *FilmRepo) Insert(newFilms ...model.Film) *FilmRepo {
 	return r
 }
 
-func (r *FilmRepo) DeleteByTitle(title string) *FilmRepo {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
+func (r *FilmRepo) deleteOneByTitle(title string) *FilmRepo {
 	film, ok := r.films[title]
 	if !ok {
 		return r
@@ -90,6 +88,17 @@ func (r *FilmRepo) DeleteByTitle(title string) *FilmRepo {
 	r.filmTitles = lo.Without(r.filmTitles, title)
 	if r.filmTitles == nil {
 		r.filmTitles = []string{}
+	}
+
+	return r
+}
+
+func (r *FilmRepo) DeleteByTitle(titles ...string) *FilmRepo {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for _, title := range titles {
+		r.deleteOneByTitle(title)
 	}
 
 	return r
@@ -160,9 +169,13 @@ func (r *FilmRepo) fetchDirectorsByNames(names []string) []model.Director {
 		if d, ok := r.directors[name]; ok {
 			directors = append(directors, d.Clone())
 		} else {
-			log.Printf("names: %v", names)
-			log.Printf("directors: %v", r.directors)
-			log.Printf("director names: %v", r.directorNames)
+			r.logger.
+				With("director", name).
+				With("names", names).
+				With("directors", r.directors).
+				With("director names", r.directorNames).
+				Error("director was not found")
+
 			panic(fmt.Errorf("director was not found: %s", name))
 		}
 	}
@@ -199,8 +212,9 @@ func (r *FilmRepo) CountDirectors() int {
 	return len(r.directors)
 }
 
-func NewFilmRepo(maxLimit int, films ...model.Film) *FilmRepo {
+func NewFilmRepo(logger *slog.Logger, maxLimit int, films ...model.Film) *FilmRepo {
 	repo := &FilmRepo{
+		logger:        logger,
 		filmTitles:    []string{},
 		films:         make(map[string]model.Film),
 		directorNames: []string{},

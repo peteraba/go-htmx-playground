@@ -5,7 +5,7 @@ Fun project with [Go](https://go.dev/), [Fiber](https://github.com/gofiber/fiber
 Nothing in here is production ready. Copy-paste at your own risk.
 
 # TODO
-- [ ] Delete individual movies
+- [/] Delete individual movies
 - [ ] Check all movies on screen
 - [ ] Search
 - [ ] Speed improvements

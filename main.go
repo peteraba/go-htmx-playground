@@ -2,16 +2,16 @@ package main
 
 import (
 	"embed"
-	"html/template"
+	"log/slog"
 	"net/http"
-	"strings"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/idempotency"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	html "github.com/gofiber/template/html/v2"
+	slogfiber "github.com/samber/slog-fiber"
 
 	colorsHandler "github.com/peteraba/go-htmx-playground/pkg/colors/handler"
 	filmsHandler "github.com/peteraba/go-htmx-playground/pkg/films/handler"
@@ -19,10 +19,8 @@ import (
 	homeHandler "github.com/peteraba/go-htmx-playground/pkg/home/handler"
 	notificationsHandler "github.com/peteraba/go-htmx-playground/pkg/notifications/handler"
 	notificationsService "github.com/peteraba/go-htmx-playground/pkg/notifications/service"
+	"github.com/peteraba/go-htmx-playground/pkg/view"
 )
-
-//go:embed views/*.html
-var viewsFS embed.FS
 
 //go:embed assets/*
 var assetsFS embed.FS
@@ -30,43 +28,59 @@ var assetsFS embed.FS
 func main() {
 	const maxListLength = 10
 
-	engine := html.NewFileSystem(http.FS(viewsFS), ".html")
-	engine.
-		AddFunc("str_slice", func(s []string) template.HTML {
-			return template.HTML(strings.Join(s, ","))
-		}).
-		AddFunc("url", func(s string) template.URL {
-			return template.URL(s)
-		})
-
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	notifier := notificationsService.NewNotifier(logger)
 	app := fiber.New(fiber.Config{
-		Views:     engine,
+		Views:     view.NewEngine(),
 		Immutable: true,
 	})
 
-	// // See here: https://github.com/samber/slog-fiber
-	// logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	// app.Use(slogfiber.New(logger))
+	setupMiddleware(app, logger)
 
+	addSseHandler(app, logger, notifier)
+	addHomeHandler(app)
+	addColorHandlers(app)
+	addFilmHandlers(app, logger, notifier, maxListLength)
+	addStaticHandler(app)
+
+	err := app.Listen(":8000")
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+}
+
+func setupMiddleware(app *fiber.App, logger *slog.Logger) *slog.Logger {
 	app.Use(recover.New())
 
+	app.Get("/metrics", monitor.New(monitor.Config{Title: "go|htmx Metrics Page"}))
+	app.Use(slogfiber.New(logger))
 	app.Use(idempotency.New())
 
-	app.Get("/metrics", monitor.New(monitor.Config{Title: "go|htmx Metrics Page"}))
+	return logger
+}
 
-	repo := repository.NewFilmRepo(maxListLength)
+func addSseHandler(app *fiber.App, logger *slog.Logger, notifier *notificationsService.Notifier) *notificationsService.Notifier {
+	handler := notificationsHandler.NewSSE(logger, notifier)
+	app.Get("/messages", handler.ServeMessages)
 
-	notifier := notificationsService.NewNotifier()
-	sse := notificationsHandler.NewSSE(notifier)
-	app.Get("/messages", sse.ServeMessages)
+	return notifier
+}
 
-	cHandler := colorsHandler.NewColors()
-	app.Get("/colors", cHandler.Get)
-
+func addHomeHandler(app *fiber.App) {
 	hHandler := homeHandler.NewHome()
 	app.Get("/", hHandler.Get)
+}
 
-	fHandler := filmsHandler.NewFilm(repo, notifier, maxListLength)
+func addColorHandlers(app *fiber.App) {
+	cHandler := colorsHandler.NewColors()
+	app.Get("/colors", cHandler.Get)
+}
+
+func addFilmHandlers(app *fiber.App, logger *slog.Logger, notifier *notificationsService.Notifier, maxListLength int) {
+	repo := repository.NewFilmRepo(logger, maxListLength)
+
+	fHandler := filmsHandler.NewFilm(logger, repo, notifier, maxListLength)
 	app.Get("/films", fHandler.List)
 	app.Post("/films", fHandler.Create)
 	app.Post("/films-delete", fHandler.DeleteForm)
@@ -75,7 +89,9 @@ func main() {
 
 	dHandler := filmsHandler.NewDirector(repo, maxListLength)
 	app.Get("/directors", dHandler.List)
+}
 
+func addStaticHandler(app *fiber.App) {
 	// Or extend your config for customization
 	app.Use(filesystem.New(filesystem.Config{
 		Root: http.FS(assetsFS),
@@ -84,6 +100,4 @@ func main() {
 		NotFoundFile: "404.html",
 		MaxAge:       3600,
 	}))
-
-	app.Listen(":8000")
 }

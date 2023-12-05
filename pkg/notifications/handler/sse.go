@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -13,11 +13,13 @@ import (
 )
 
 type SSE struct {
+	logger   *slog.Logger
 	notifier *service.Notifier
 }
 
-func NewSSE(notifier *service.Notifier) SSE {
+func NewSSE(logger *slog.Logger, notifier *service.Notifier) SSE {
 	return SSE{
+		logger:   logger,
 		notifier: notifier,
 	}
 }
@@ -31,7 +33,7 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 	sseChannel := s.notifier.Sub(c.IP())
 
 	c.Context().SetBodyStreamWriter(func(w *bufio.Writer) {
-		log.Printf("Broadcasting messages is ready.")
+		s.logger.Info("Broadcasting messages is ready.")
 		var (
 			sseEvent model.Notification
 			bolB     []byte
@@ -46,20 +48,19 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 
 			bolB, err = json.Marshal(sseEvent)
 			if err != nil {
-				log.Printf("Error while marshaling: %v. Closing http connection.", err)
+				s.logger.Error("Error while marshaling: %v. Closing http connection.", err)
 				return
 			}
 
 			size, err = fmt.Fprintf(w, "data: %s\n\n", string(bolB))
-			log.Printf("Message sent. (type: %s, bytes: %d)", sseEvent.Type, size)
+			s.logger.With("type", sseEvent.Type, "bytes", size).Info("Message sent.")
 
 			err = w.Flush()
 			if err != nil {
-				log.Printf("Broadcasting messages is closed.")
 				// Refreshing page in web browser will establish a new
 				// SSE connection, but only (the last) one is alive, so
 				// dead connections must be closed here.
-				log.Printf("Error while flushing: %v. Closing http connection.", err)
+				s.logger.Error("Error while flushing: %v. Closing http connection.", err)
 
 				return
 			}

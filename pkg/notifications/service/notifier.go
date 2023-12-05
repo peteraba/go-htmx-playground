@@ -1,18 +1,20 @@
 package service
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/peteraba/go-htmx-playground/pkg/notifications/model"
 )
 
 type Notifier struct {
+	logger          *slog.Logger
 	sseChannelsByIP map[string][]chan model.Notification
 }
 
-func NewNotifier() *Notifier {
+func NewNotifier(logger *slog.Logger) *Notifier {
 	sseChannelsByIP := make(map[string][]chan model.Notification)
 	return &Notifier{
+		logger:          logger,
 		sseChannelsByIP: sseChannelsByIP,
 	}
 }
@@ -38,7 +40,7 @@ func (n *Notifier) broadcast(nType model.NotificationType) {
 func (n *Notifier) broadcastByIP(nType model.NotificationType, message, targetIP string) {
 	sseChannels, ok := n.sseChannelsByIP[targetIP]
 	if !ok {
-		log.Println("SSE channel not found")
+		n.logger.Error("SSE channel not found. ip: %s", targetIP)
 	}
 	for _, sseChannel := range sseChannels {
 		sseChannel <- model.Notification{

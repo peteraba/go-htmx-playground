@@ -52,8 +52,8 @@ func (h Colors) Get(c *fiber.Ctx) error {
 	bind := fiber.Map{"Path": c.Path(), "Url": c.BaseURL(), "Themes": themes}
 
 	if htmx.IsHx(c.GetReqHeaders()) {
-		return c.Render("views/colors", bind)
+		return c.Render("templates/colors", bind)
 	}
 	// Render index
-	return c.Render("views/colors", bind, "views/layout")
+	return c.Render("templates/colors", bind, "templates/layout")
 }

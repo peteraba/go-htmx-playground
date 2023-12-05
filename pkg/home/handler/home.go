@@ -17,8 +17,8 @@ func (h Home) Get(c *fiber.Ctx) error {
 	bind := fiber.Map{"Path": c.Path(), "Url": c.BaseURL()}
 
 	if htmx.IsHx(c.GetReqHeaders()) {
-		return c.Render("views/home", bind)
+		return c.Render("templates/home", bind)
 	}
 	// Render index
-	return c.Render("views/home", bind, "views/layout")
+	return c.Render("templates/home", bind, "templates/layout")
 }

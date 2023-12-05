@@ -38,8 +38,8 @@ func (d Director) List(c *fiber.Ctx) error {
 	p := pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path())
 
 	if htmx.IsHx(c.GetReqHeaders()) {
-		return c.Render("views/directors", fiber.Map{"Path": c.Path(), "Directors": directors, "Pagination": p})
+		return c.Render("templates/directors", fiber.Map{"Path": c.Path(), "Directors": directors, "Pagination": p})
 	}
 
-	return c.Render("views/directors", fiber.Map{"Path": c.Path(), "Directors": directors, "Pagination": p}, "views/layout")
+	return c.Render("templates/directors", fiber.Map{"Path": c.Path(), "Directors": directors, "Pagination": p}, "templates/layout")
 }
