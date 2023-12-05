@@ -1,7 +1,7 @@
 package htmx
 
 func IsHx(headers map[string][]string) bool {
-	if headers == nil || len(headers) == 0 {
+	if len(headers) == 0 {
 		return false
 	}
 

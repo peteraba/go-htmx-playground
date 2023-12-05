@@ -1,0 +1,14 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - go test ./...
+      - air -c air.linux.conf -d
+    silent: true
+
+  install:
+    cmds:
+      - go install github.com/cosmtrek/air@latest
+      - go mod download
+      - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2

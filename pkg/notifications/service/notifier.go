@@ -40,7 +40,7 @@ func (n *Notifier) broadcast(nType model.NotificationType) {
 func (n *Notifier) broadcastByIP(nType model.NotificationType, message, targetIP string) {
 	sseChannels, ok := n.sseChannelsByIP[targetIP]
 	if !ok {
-		n.logger.Error("SSE channel not found. ip: %s", targetIP)
+		n.logger.With("ip", targetIP).Error("SSE channel not found. ip")
 	}
 	for _, sseChannel := range sseChannels {
 		sseChannel <- model.Notification{

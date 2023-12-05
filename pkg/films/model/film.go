@@ -29,9 +29,7 @@ type Director struct {
 
 func (d Director) Clone() Director {
 	titlesClone := make([]string, 0, len(d.Titles))
-	for _, title := range d.Titles {
-		titlesClone = append(titlesClone, title)
-	}
+	titlesClone = append(titlesClone, d.Titles...)
 
 	return Director{Name: d.Name, Titles: titlesClone}
 }

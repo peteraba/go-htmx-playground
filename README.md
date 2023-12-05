@@ -4,9 +4,20 @@ Fun project with [Go](https://go.dev/), [Fiber](https://github.com/gofiber/fiber
 
 Nothing in here is production ready. Copy-paste at your own risk.
 
-# TODO
+## Installation instructions
+
+```bash
+git clone https://github.com/peteraba/go-htmx-playground
+cd go-htmx-playground
+sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
+task install
+```
+
+## TODO
+
 - [/] Delete individual movies
 - [/] Check all movies on screen
+- [ ] Only load template that needs to change
 - [ ] Search
   - [ ] Search movies
   - [ ] Search films
@@ -120,3 +131,4 @@ Alternative to HTMX:
 
 Tooling:
 - go install github.com/cosmtrek/air@latest (watch)
+- sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin

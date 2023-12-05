@@ -48,11 +48,15 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 
 			bolB, err = json.Marshal(sseEvent)
 			if err != nil {
-				s.logger.Error("Error while marshaling: %v. Closing http connection.", err)
+				s.logger.With("err", err).Error("Error while marshaling JSON.")
 				return
 			}
 
 			size, err = fmt.Fprintf(w, "data: %s\n\n", string(bolB))
+			if err != nil {
+				s.logger.With("err", err).Error("Error while writing buffer.")
+				return
+			}
 			s.logger.With("type", sseEvent.Type, "bytes", size).Info("Message sent.")
 
 			err = w.Flush()
@@ -60,7 +64,7 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 				// Refreshing page in web browser will establish a new
 				// SSE connection, but only (the last) one is alive, so
 				// dead connections must be closed here.
-				s.logger.Error("Error while flushing: %v. Closing http connection.", err)
+				s.logger.With("err", err).Error("Error while flushing. Closing http connection.")
 
 				return
 			}
