@@ -6,13 +6,17 @@ import (
 	"sort"
 	"sync"
 
+	"github.com/samber/lo"
+
 	"github.com/peteraba/go-htmx-playground/pkg/films/model"
 )
 
 type FilmRepo struct {
-	lock          sync.RWMutex
-	films         map[string]model.Film
-	titles        []string
+	lock sync.RWMutex
+	// Key is the title of the film
+	films      map[string]model.Film
+	filmTitles []string
+	// Key is the name of the director
 	directors     map[string]model.Director
 	directorNames []string
 	maxLimit      int
@@ -30,7 +34,7 @@ func (r *FilmRepo) Insert(newFilms ...model.Film) *FilmRepo {
 
 		// set film
 		r.films[newFilm.Title] = newFilm.Clone()
-		r.titles = append(r.titles, newFilm.Title)
+		r.filmTitles = append(r.filmTitles, newFilm.Title)
 
 		// set director
 		newDirector := model.Director{Name: newFilm.Director, Titles: []string{newFilm.Title}}
@@ -39,12 +43,54 @@ func (r *FilmRepo) Insert(newFilms ...model.Film) *FilmRepo {
 		} else {
 			r.directorNames = append(r.directorNames, newFilm.Director)
 		}
+
+		sort.Strings(newDirector.Titles)
+
 		r.directors[newFilm.Director] = newDirector
 	}
 
 	// reindex
-	sort.Strings(r.titles)
+	sort.Strings(r.filmTitles)
 	sort.Strings(r.directorNames)
+
+	return r
+}
+
+func (r *FilmRepo) DeleteByTitle(title string) *FilmRepo {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	film, ok := r.films[title]
+	if !ok {
+		return r
+	}
+
+	delete(r.films, title)
+
+	director, ok := r.directors[film.Director]
+	if !ok {
+		panic(fmt.Sprintf("failed to find director %s", film.Director))
+	}
+
+	// Remove title from the director's titles
+	r.directors[film.Director] = model.Director{
+		Name:   film.Director,
+		Titles: lo.Without(director.Titles, title),
+	}
+
+	// Remove the director if they do not have any titles
+	if len(r.directors[director.Name].Titles) == 0 {
+		r.directorNames = lo.Without(r.directorNames, director.Name)
+		if r.directorNames == nil {
+			r.directorNames = []string{}
+		}
+		delete(r.directors, director.Name)
+	}
+
+	r.filmTitles = lo.Without(r.filmTitles, title)
+	if r.filmTitles == nil {
+		r.filmTitles = []string{}
+	}
 
 	return r
 }
@@ -54,7 +100,7 @@ func (r *FilmRepo) Truncate() *FilmRepo {
 	defer r.lock.Unlock()
 
 	r.films = make(map[string]model.Film)
-	r.titles = []string{}
+	r.filmTitles = []string{}
 	r.directors = make(map[string]model.Director)
 	r.directorNames = []string{}
 
@@ -93,10 +139,10 @@ func (r *FilmRepo) ListFilms(offset, limit int) ([]model.Film, error) {
 	}
 
 	if offset+limit >= len(r.films) {
-		return r.fetchFilmsByTitles(r.titles[offset:]), nil
+		return r.fetchFilmsByTitles(r.filmTitles[offset:]), nil
 	}
 
-	return r.fetchFilmsByTitles(r.titles[offset : offset+limit]), nil
+	return r.fetchFilmsByTitles(r.filmTitles[offset : offset+limit]), nil
 }
 
 func (r *FilmRepo) CountFilms() int {
@@ -155,9 +201,11 @@ func (r *FilmRepo) CountDirectors() int {
 
 func NewFilmRepo(maxLimit int, films ...model.Film) *FilmRepo {
 	repo := &FilmRepo{
-		films:     make(map[string]model.Film),
-		directors: make(map[string]model.Director),
-		maxLimit:  maxLimit,
+		filmTitles:    []string{},
+		films:         make(map[string]model.Film),
+		directorNames: []string{},
+		directors:     make(map[string]model.Director),
+		maxLimit:      maxLimit,
 	}
 
 	if len(films) > 0 {

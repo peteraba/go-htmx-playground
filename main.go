@@ -44,9 +44,9 @@ func main() {
 		Immutable: true,
 	})
 
-	//// See here: https://github.com/samber/slog-fiber
-	//logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	//app.Use(slogfiber.New(logger))
+	// // See here: https://github.com/samber/slog-fiber
+	// logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	// app.Use(slogfiber.New(logger))
 
 	app.Use(recover.New())
 
@@ -58,7 +58,7 @@ func main() {
 
 	notifier := notificationsService.NewNotifier()
 	sse := notificationsHandler.NewSSE(notifier)
-	app.Get("/sse", sse.Serve)
+	app.Get("/messages", sse.ServeMessages)
 
 	cHandler := colorsHandler.NewColors()
 	app.Get("/colors", cHandler.Get)
@@ -69,6 +69,7 @@ func main() {
 	fHandler := filmsHandler.NewFilm(repo, notifier, maxListLength)
 	app.Get("/films", fHandler.List)
 	app.Post("/films", fHandler.Create)
+	app.Post("/films-delete", fHandler.DeleteForm)
 	app.Delete("/films", fHandler.Delete)
 	app.Post("/generators/films/:num<min(5);max(50)>", fHandler.Generate)
 
@@ -78,7 +79,7 @@ func main() {
 	// Or extend your config for customization
 	app.Use(filesystem.New(filesystem.Config{
 		Root: http.FS(assetsFS),
-		//PathPrefix:   "/assets",
+		// PathPrefix:   "/assets",
 		Browse:       false,
 		NotFoundFile: "404.html",
 		MaxAge:       3600,

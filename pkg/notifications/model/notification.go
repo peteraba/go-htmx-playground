@@ -7,10 +7,10 @@ const (
 	SUCCESS NotificationType = "success"
 	WARNING NotificationType = "warning"
 	ERROR   NotificationType = "error"
+	RELOAD  NotificationType = "reload"
 )
 
 type Notification struct {
-	Target  string           `json:"target"`
 	Type    NotificationType `json:"type"`
 	Message string           `json:"message"`
 }

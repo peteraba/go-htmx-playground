@@ -50,6 +50,7 @@ Nothing in here is production ready. Copy-paste at your own risk.
     - [hydra](https://github.com/ory/hydra) ([AMR](https://analyzemyrepo.com/analyze/ory/hydra))
     - [gorbac](https://github.com/mikespook/gorbac)
     - [jwt](https://github.com/golang-jwt/jwt)
+    - [topaz](https://github.com/aserto-dev/topaz)
   - [ ] [CSRF](https://docs.gofiber.io/api/middleware/csrf)
   - [ ] [Encrypt Cookie](https://docs.gofiber.io/api/middleware/encryptcookie) (probably not relevant)
   - [ ] [Limiter](https://docs.gofiber.io/api/middleware/limiter)

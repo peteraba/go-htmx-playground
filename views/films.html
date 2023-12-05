@@ -4,46 +4,55 @@
   <div class="flex-1">
     <div class="p-4">
       <h1 class="p-2 text-white text-2xl">List of Movies</h1>
-      <div class="overflow-x-auto">
-        <table id="film-list" class="table table-zebra table-fixed">
-          <!-- head -->
-          <thead>
-          <tr>
-            <th class="w-12">
-              <label>
-                <input type="checkbox" class="checkbox" />
-              </label>
-            </th>
-            <th>Title</th>
-            <th>Director</th>
-          </tr>
-          </thead>
-          <tbody>
+      <form action="/films-delete" method="POST">
+        <div class="overflow-x-auto">
+          <table id="film-list" class="table table-zebra table-fixed">
+            <!-- head -->
+            <thead>
+            <tr>
+              <th class="w-12">
+                <label class="hidden">
+                  <input type="checkbox" class="checkbox" id="check-all" />
+                </label>
+              </th>
+              <th>Title</th>
+              <th>Director</th>
+            </tr>
+            </thead>
+            <tbody>
 
-          {{ if not .Films }}
-          <tr>
-            <td colspan="3">Empty list</td>
-          </tr>
-          {{ end }}
-          {{ range .Films }}
-          {{ block "film-list-element" .}}
-          <tr>
-            <th class="w-12">
-              <label>
-                <input type="checkbox" class="checkbox" />
-              </label>
-            </th>
-            <td>{{ .Title }}</td>
-            <td>{{ .Director }}</td>
-          </tr>
-          {{ end }}
-          {{ end }}
-          </tbody>
-        </table>
-      </div>
+            {{ if not .Films }}
+            <tr>
+              <td colspan="3">Empty list</td>
+            </tr>
+            {{ end }}
+            {{ range $idx, $element := .Films }}
+            <tr>
+              <th class="w-12">
+                <label>
+                  <input type="checkbox" class="checkbox film-check" name="films[]" value="{{ $element.Title }}" />
+                </label>
+              </th>
+              <td>{{ $element.Title }}</td>
+              <td>{{ $element.Director }}</td>
+            </tr>
+            {{ end }}
+            </tbody>
+          </table>
+        </div>
 
-      {{template "views/pagination" .Pagination}}
+        <div class="float-none">
+          <div class="float-left">
+            {{template "views/pagination" .Pagination}}
+          </div>
+          <div class="float-right p-1 py-4">
+            <p>
+              <button type="submit" class="btn btn-error btn-outline" id="delete-selected">Delete Selected</button>
+            </p>
+          </div>
+        </div>
 
+      </form>
     </div>
   </div>
   <div class="flex-1">
@@ -58,18 +67,24 @@
           <input type="text" placeholder="Director" name="director" id="film-director" class="input input-bordered w-full" />
         </p>
 
-        <p class="p-2">
-          <button type="submit" class="btn btn-outline btn-wide">
-            <span class="htmx-indicator loading loading-spinner hidden" id="spinner" role="status" aria-hidden="true"></span>
-            Submit
-          </button>
-          <a hx-post="/generators/films/2" hx-replace-url="false" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-accent">Gen 2</a>
-          <a hx-post="/generators/films/10" hx-replace-url="false" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-primary">Gen 10</a>
-          <a hx-post="/generators/films/25" hx-replace-url="false" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-secondary">Gen 25</a>
-          <a hx-delete="/films" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-accent">Delete</a>
-        </p>
+        <div class="float-none p-2">
+          <p class="float-left">
+            <button type="submit" class="btn btn-outline btn-wide">
+              <span class="htmx-indicator loading loading-spinner hidden" id="spinner" role="status" aria-hidden="true"></span>
+              Submit
+            </button>
+          </p>
+          <p class="float-right">
+            <a hx-post="/generators/films/2" hx-replace-url="false" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-accent">Gen 2</a>
+            <a hx-post="/generators/films/10" hx-replace-url="false" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-primary">Gen 10</a>
+            <a hx-post="/generators/films/25" hx-replace-url="false" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-secondary">Gen 25</a>
+            <a hx-delete="/films" hx-target="#wrapper" hx-swap="innerHTML" class="btn btn-error">Delete All</a>
+          </p>
+        </div>
       </form>
 
     </div>
   </div>
 </div>
+
+<script src="/assets/films.js"></script>

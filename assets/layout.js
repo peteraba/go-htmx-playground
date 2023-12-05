@@ -7,21 +7,47 @@ $(function () {
 $(function () {
     const messages = $("#user-messages");
 
-    const source = new EventSource(baseUrl + "/sse");
+    const source = new EventSource(baseUrl + "/messages");
     source.onopen = (event) => {
-        console.log("sse connection open");
+        console.debug("/messages sse connection open");
     }
     source.onerror = (event) => {
-        console.error("sse connection error");
+        console.debug("/messages sse connection error");
     }
-    source.onmessage = (event) => {
-        const payload = JSON.parse(event.data),
-            type = payload.type,
-            msg = payload.message;
 
+    const alert = (type, msg) => {
         const alert = $(`<p class="alert alert-${type}"><span>${msg}</span></p>`);
         alert.appendTo(messages);
 
         setTimeout(() => {alert.detach()}, 5000);
+    }
+
+    let firstConnection = true;
+    const reload = () => {
+        console.debug("reload received", liveReload);
+        if (firstConnection) {
+            firstConnection = false;
+            console.debug("first connection, reloading skipped");
+            return;
+        }
+        if (liveReload) {
+            console.debug("reload to be executed", liveReload);
+            window.location.reload();
+        }
+    }
+
+    source.onmessage = (event) => {
+        console.log("message received", event.data);
+        const payload = JSON.parse(event.data),
+            type = payload.type,
+            msg = payload.message;
+
+        switch (type) {
+            case "reload":
+                reload();
+                break;
+            default:
+                alert(type, msg);
+        }
     }
 });

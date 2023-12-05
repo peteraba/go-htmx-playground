@@ -32,6 +32,24 @@ func (f Film) List(c *fiber.Ctx) error {
 	return f.list(c, c.Path())
 }
 
+type ExpectedPayload struct {
+	Films []string
+}
+
+func (f Film) DeleteForm(c *fiber.Ctx) error {
+	body := new(ExpectedPayload)
+	if err := c.BodyParser(body); err != nil {
+		return err
+	}
+
+	for _, film := range body.Films {
+		f.repo.DeleteByTitle(film)
+		f.notifier.Success(fmt.Sprintf("Film deleted: %s", film), c.IP())
+	}
+
+	return c.Redirect("/films", http.StatusMovedPermanently)
+}
+
 func (f Film) Create(c *fiber.Ctx) error {
 	newFilm := model.Film{
 		Title:    c.FormValue("title"),
@@ -44,7 +62,7 @@ func (f Film) Create(c *fiber.Ctx) error {
 	}
 
 	f.repo.Insert(newFilm)
-	f.notifier.Info(fmt.Sprintf("`%s` added.", newFilm.Title), c.IP())
+	f.notifier.Success(fmt.Sprintf("`%s` added.", newFilm.Title), c.IP())
 
 	return f.list(c, "/films")
 }
@@ -74,8 +92,12 @@ func (f Film) Generate(c *fiber.Ctx) error {
 }
 
 func (f Film) Delete(c *fiber.Ctx) error {
-	f.repo.Truncate()
-	f.notifier.Info(fmt.Sprintf("All films deleted."), c.IP())
+	if f.repo.CountFilms() == 0 {
+		f.notifier.Info("No films to delete.", c.IP())
+	} else {
+		f.repo.Truncate()
+		f.notifier.Success(fmt.Sprintf("All films deleted."), c.IP())
+	}
 
 	return f.list(c, "/films")
 }

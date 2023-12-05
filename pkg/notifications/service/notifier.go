@@ -18,11 +18,21 @@ func NewNotifier() *Notifier {
 }
 
 func (n *Notifier) Sub(ip string) chan model.Notification {
-	sseChannel := make(chan model.Notification)
+	sseChannel := make(chan model.Notification, 10)
 
 	n.sseChannelsByIP[ip] = append(n.sseChannelsByIP[ip], sseChannel)
 
 	return sseChannel
+}
+
+func (n *Notifier) broadcast(nType model.NotificationType) {
+	for _, sseChannels := range n.sseChannelsByIP {
+		for _, sseChannel := range sseChannels {
+			sseChannel <- model.Notification{
+				Type: nType,
+			}
+		}
+	}
 }
 
 func (n *Notifier) broadcastByIP(nType model.NotificationType, message, targetIP string) {
@@ -52,4 +62,8 @@ func (n *Notifier) Warning(message, targetIP string) {
 
 func (n *Notifier) Error(message, targetIP string) {
 	n.broadcastByIP(model.ERROR, message, targetIP)
+}
+
+func (n *Notifier) Reload() {
+	n.broadcast(model.RELOAD)
 }
