@@ -10,11 +10,15 @@ tasks:
     cmds:
       - go test ./...
       - golangci-lint run
+      - govulncheck ./...
+#      - capslock
       - go build -o ./build/application ./*.go
 
   install:
     cmds:
       - go install github.com/cosmtrek/air@latest
       - go install github.com/daixiang0/gci@latest
+      - go install golang.org/x/vuln/cmd/govulncheck@latest
+#      - go install github.com/google/capslock/cmd/capslock@latest
       - go mod download
       - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2

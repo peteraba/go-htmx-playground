@@ -15,12 +15,13 @@ task install
 
 ## TODO
 
-- [/] Delete individual movies
-- [/] Check all movies on screen
-- [ ] Only load template that needs to change
-- [ ] Search
-  - [ ] Search movies
-  - [ ] Search films
+- [ ] Features
+  - [x] Delete individual movies
+  - [x] Check all movies on screen
+  - [ ] Only load template that needs to change
+  - [ ] Search
+    - [ ] Search movies
+    - [ ] Search films
 - [ ] Speed improvements
   - [ ] [Compress](https://docs.gofiber.io/api/middleware/compress)
   - [ ] [ETag](https://docs.gofiber.io/api/middleware/etag)
@@ -38,39 +39,43 @@ task install
     - [ ] GET /directors
     - [ ] OpenAPI 3.x definition
 - [ ] Ops improvements
-  - [/] Better logging ([slog](https://github.com/samber/slog-fiber))
+  - [x] Better logging ([slog](https://github.com/samber/slog-fiber))
   - [ ] Tracing
   - [ ] [CORS](https://docs.gofiber.io/api/middleware/cors) (IDEA)
-  - [/] [Metrics](https://docs.gofiber.io/api/middleware/monitor)
+  - [x] [Metrics](https://docs.gofiber.io/api/middleware/monitor)
   - [ ] [Pprof](https://docs.gofiber.io/api/middleware/pprof)
-  - [/] [Recover](https://docs.gofiber.io/api/middleware/recover)
-- [ ] Code quality
-  - [/] golangci-lint
-- [/] Colors module
-- [/] Notifications
-  - [/] htmx-style (SSE?)
+  - [x] [Recover](https://docs.gofiber.io/api/middleware/recover)
+- [x] Code quality
+  - [x] golangci-lint
+- [x] Colors module
+- [x] Notifications
+  - [x] htmx-style (SSE?)
   - [ ] htmx-style (Websockets?)
   - [ ] htmx-style (polling?)
   - [ ] Load/reload on notification
 - [ ] Support for microservice-like deployment (IDEA)
 - [ ] Harden the application
-  - [ ] JWT-integration (IDEA)
+  - [ ] Testing race conditions
+  - [ ] Fuzz testing
+  - [ ] Performance testing
+  - [ ] Authentication
     - [Fiber-Casbin](https://github.com/gofiber/contrib/tree/main/casbin)
     - [Casbin](github.com/casbin/casbin)
+    - [gorbac](https://github.com/mikespook/gorbac)
+    - [topaz](https://github.com/aserto-dev/topaz)
+  - [ ] JWT-integration (IDEA)
     - [zitadel](https://github.com/zitadel/zitadel-go) ([AMR](https://analyzemyrepo.com/analyze/zitadel/zitadel))
     - [hanko](https://www.hanko.io/) ([AMR](https://analyzemyrepo.com/analyze/teamhanko/hanko))
     - [authelia](https://www.authelia.com/) ([AMR](https://analyzemyrepo.com/analyze/authelia/authelia))
     - [hydra](https://github.com/ory/hydra) ([AMR](https://analyzemyrepo.com/analyze/ory/hydra))
-    - [gorbac](https://github.com/mikespook/gorbac)
     - [jwt](https://github.com/golang-jwt/jwt)
-    - [topaz](https://github.com/aserto-dev/topaz)
   - [ ] [CSRF](https://docs.gofiber.io/api/middleware/csrf)
   - [ ] [Encrypt Cookie](https://docs.gofiber.io/api/middleware/encryptcookie) (probably not relevant)
   - [ ] [Limiter](https://docs.gofiber.io/api/middleware/limiter)
   - [ ] [Helmet](https://docs.gofiber.io/api/middleware/helmet)
-  - [/] [Idempotency](https://docs.gofiber.io/api/middleware/idempotency)
-  - [ ] [Capslock integration](https://github.com/google/capslock)
-  - [ ] [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)
+  - [x] [Idempotency](https://docs.gofiber.io/api/middleware/idempotency)
+  - [x] [Capslock integration](https://github.com/google/capslock)
+  - [x] [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)
   - [ ] [OpenSSF](https://securityscorecards.dev/)
   - [ ] Semantic Versioning
     - [ ] Automatic tagging (IDEA)
@@ -81,7 +86,7 @@ task install
 # Notes
 JS goodies:
 - https://github.com/fabiospampinato/cash#fn
-- 
+
 Go goodies:
 - https://github.com/bugbytes-io/htmx-go-demo/blob/master/index.html
 - https://github.com/donseba/go-htmx
