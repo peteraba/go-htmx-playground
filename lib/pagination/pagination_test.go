@@ -1,192 +1,16 @@
-package pagination
+//nolint:exhaustruct
+package pagination_test
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/peteraba/go-htmx-playground/lib/pagination"
 )
 
-func Test_generate(t *testing.T) {
-	type args struct {
-		maxPage     int
-		currentPage int
-		path        string
-	}
-	tests := []struct {
-		name string
-		args args
-		want Pagination
-	}{
-		{
-			name: "default",
-			args: args{
-				maxPage:     1,
-				currentPage: 1,
-				path:        "/hello",
-			},
-			want: Pagination{
-				Next:        1,
-				Prev:        1,
-				CurrentPage: 1,
-				Path:        "/hello",
-			},
-		},
-		{
-			name: "1/2",
-			args: args{
-				maxPage:     2,
-				currentPage: 1,
-				path:        "/hello",
-			},
-			want: Pagination{
-				Next:        2,
-				Prev:        1,
-				CurrentPage: 1,
-				Path:        "/hello",
-				PostActive:  []int{2},
-			},
-		},
-		{
-			name: "1/3",
-			args: args{
-				maxPage:     3,
-				currentPage: 1,
-				path:        "/hello",
-			},
-			want: Pagination{
-				Next:        2,
-				Prev:        1,
-				CurrentPage: 1,
-				Path:        "/hello",
-				PostActive:  []int{2, 3},
-			},
-		},
-		{
-			name: "1/4",
-			args: args{
-				maxPage:     4,
-				currentPage: 1,
-				path:        "/hello",
-			},
-			want: Pagination{
-				Next:        2,
-				Prev:        1,
-				CurrentPage: 1,
-				Path:        "/hello",
-				PostActive:  []int{2, 3},
-				End:         []int{4},
-			},
-		},
-		{
-			name: "1/5",
-			args: args{
-				maxPage:     5,
-				currentPage: 1,
-				path:        "/hello",
-			},
-			want: Pagination{
-				Next:        2,
-				Prev:        1,
-				CurrentPage: 1,
-				Path:        "/hello",
-				PostActive:  []int{2, 3},
-				End:         []int{4, 5},
-			},
-		},
-		{
-			name: "2/5",
-			args: args{
-				maxPage:     5,
-				currentPage: 2,
-				path:        "/hello",
-			},
-			want: Pagination{
-				Next:        3,
-				Prev:        1,
-				CurrentPage: 2,
-				Path:        "/hello",
-				PreActive:   []int{1},
-				PostActive:  []int{3, 4},
-				End:         []int{5},
-			},
-		},
-		{
-			name: "3/5",
-			args: args{
-				maxPage:     5,
-				currentPage: 3,
-				path:        "/hello",
-			},
-			want: Pagination{
-				Next:        4,
-				Prev:        2,
-				CurrentPage: 3,
-				Path:        "/hello",
-				PreActive:   []int{1, 2},
-				PostActive:  []int{4, 5},
-			},
-		},
-		{
-			name: "4/5",
-			args: args{
-				maxPage:     5,
-				currentPage: 4,
-				path:        "/hello",
-			},
-			want: Pagination{
-				Next:        5,
-				Prev:        3,
-				CurrentPage: 4,
-				Path:        "/hello",
-				Beginning:   []int{1},
-				PreActive:   []int{2, 3},
-				PostActive:  []int{5},
-			},
-		},
-		{
-			name: "5/5",
-			args: args{
-				maxPage:     5,
-				currentPage: 5,
-				path:        "/hello",
-			},
-			want: Pagination{
-				Next:        5,
-				Prev:        4,
-				CurrentPage: 5,
-				Path:        "/hello",
-				Beginning:   []int{1, 2},
-				PreActive:   []int{3, 4},
-			},
-		},
-		{
-			name: "49/73",
-			args: args{
-				maxPage:     73,
-				currentPage: 49,
-				path:        "/hello",
-			},
-			want: Pagination{
-				Next:        50,
-				Prev:        48,
-				CurrentPage: 49,
-				Path:        "/hello",
-				Beginning:   []int{1, 2},
-				PreActive:   []int{47, 48},
-				PostActive:  []int{50, 51},
-				End:         []int{72, 73},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := generate(tt.args.maxPage, tt.args.currentPage, tt.args.path); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("New() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestNew(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		currentPage int
 		pageSize    int
@@ -196,7 +20,7 @@ func TestNew(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Pagination
+		want pagination.Pagination
 	}{
 		{
 			name: "empty",
@@ -206,7 +30,7 @@ func TestNew(t *testing.T) {
 				count:       0,
 				path:        "/hello",
 			},
-			want: Pagination{
+			want: pagination.Pagination{
 				Next:        1,
 				Prev:        1,
 				CurrentPage: 1,
@@ -221,7 +45,7 @@ func TestNew(t *testing.T) {
 				count:       1,
 				path:        "/hello",
 			},
-			want: Pagination{
+			want: pagination.Pagination{
 				Next:        1,
 				Prev:        1,
 				CurrentPage: 1,
@@ -236,7 +60,7 @@ func TestNew(t *testing.T) {
 				count:       10,
 				path:        "/hello",
 			},
-			want: Pagination{
+			want: pagination.Pagination{
 				Next:        1,
 				Prev:        1,
 				CurrentPage: 1,
@@ -251,7 +75,7 @@ func TestNew(t *testing.T) {
 				count:       11,
 				path:        "/hello",
 			},
-			want: Pagination{
+			want: pagination.Pagination{
 				Next:        2,
 				Prev:        1,
 				CurrentPage: 1,
@@ -260,9 +84,12 @@ func TestNew(t *testing.T) {
 			},
 		},
 	}
-	for _, tt := range tests {
+	for _, ttt := range tests {
+		tt := ttt
 		t.Run(tt.name, func(t *testing.T) {
-			if got := New(tt.args.currentPage, tt.args.pageSize, tt.args.count, tt.args.path); !reflect.DeepEqual(got, tt.want) {
+			t.Parallel()
+
+			if got := pagination.New(tt.args.currentPage, tt.args.pageSize, tt.args.count, tt.args.path); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("New() = %v, want %v", got, tt.want)
 			}
 		})

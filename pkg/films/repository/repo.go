@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"sort"
@@ -38,10 +39,12 @@ func (r *FilmRepo) Insert(newFilms ...model.Film) *FilmRepo {
 		r.filmTitles = append(r.filmTitles, newFilm.Title)
 
 		// set director
-		newDirector := model.Director{Name: newFilm.Director, Titles: []string{newFilm.Title}}
+		var newDirector model.Director
+
 		if d, ok := r.directors[newFilm.Director]; ok {
-			newDirector.Titles = append(d.Titles, newFilm.Title)
+			d.Titles = append(d.Titles, newFilm.Title)
 		} else {
+			newDirector = model.Director{Name: newFilm.Director, Titles: []string{newFilm.Title}}
 			r.directorNames = append(r.directorNames, newFilm.Director)
 		}
 
@@ -82,6 +85,7 @@ func (r *FilmRepo) deleteOneByTitle(title string) *FilmRepo {
 		if r.directorNames == nil {
 			r.directorNames = []string{}
 		}
+
 		delete(r.directors, director.Name)
 	}
 
@@ -116,6 +120,8 @@ func (r *FilmRepo) Truncate() *FilmRepo {
 	return r
 }
 
+var errFilmNotFound = errors.New("film was not found")
+
 // fetchFilmsByTitles is not safe to call concurrently!
 func (r *FilmRepo) fetchFilmsByTitles(titles []string) []model.Film {
 	films := make([]model.Film, 0, len(titles))
@@ -124,23 +130,28 @@ func (r *FilmRepo) fetchFilmsByTitles(titles []string) []model.Film {
 		if f, ok := r.films[title]; ok {
 			films = append(films, f.Clone())
 		} else {
-			fmt.Printf("%v", r.films)
-			panic(fmt.Errorf("film was not found: %s", title))
+			panic(fmt.Errorf("title: %s, err: %w", title, errFilmNotFound))
 		}
 	}
 
 	return films
 }
 
+var (
+	errLimitTooLarge = errors.New("limit too large")
+	errLimitTooSmall = errors.New("limit too small")
+)
+
 func (r *FilmRepo) ListFilms(offset, limit int) ([]model.Film, error) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
 	if limit > r.maxLimit {
-		return nil, fmt.Errorf("limit too large: %d (max: %d)", limit, r.maxLimit)
+		return nil, fmt.Errorf("limit > maxLimit. limit: %d, maxLimit: %d, err: %w", limit, r.maxLimit, errLimitTooLarge)
 	}
+
 	if limit < 1 {
-		return nil, fmt.Errorf("invalid too small: %d (min: 1)", limit)
+		return nil, fmt.Errorf("limit < minLimit. limit: %d, minLimit: %d, err: %w", limit, 1, errLimitTooSmall)
 	}
 
 	if offset >= len(r.films) {
@@ -161,6 +172,8 @@ func (r *FilmRepo) CountFilms() int {
 	return len(r.films)
 }
 
+var errDirectorNotFound = errors.New("director was not found")
+
 // fetchDirectorsByNames is not safe to call concurrently!
 func (r *FilmRepo) fetchDirectorsByNames(names []string) []model.Director {
 	directors := make([]model.Director, 0, len(names))
@@ -176,7 +189,7 @@ func (r *FilmRepo) fetchDirectorsByNames(names []string) []model.Director {
 				With("director names", r.directorNames).
 				Error("director was not found")
 
-			panic(fmt.Errorf("director was not found: %s", name))
+			panic(fmt.Errorf("name: %s, err: %w", name, errDirectorNotFound))
 		}
 	}
 
@@ -188,10 +201,11 @@ func (r *FilmRepo) ListDirectors(offset, limit int) ([]model.Director, error) {
 	defer r.lock.RUnlock()
 
 	if limit > r.maxLimit {
-		return nil, fmt.Errorf("limit too large: %d (max: %d)", limit, r.maxLimit)
+		return nil, fmt.Errorf("limit > maxLimit. limit: %d, maxLimit: %d, err: %w", limit, r.maxLimit, errLimitTooLarge)
 	}
+
 	if limit < 1 {
-		return nil, fmt.Errorf("invalid too small: %d (min: 1)", limit)
+		return nil, fmt.Errorf("limit < minLimit. limit: %d, minLimit: %d, err: %w", limit, 1, errLimitTooSmall)
 	}
 
 	if offset >= len(r.films) {
@@ -205,6 +219,20 @@ func (r *FilmRepo) ListDirectors(offset, limit int) ([]model.Director, error) {
 	return r.fetchDirectorsByNames(r.directorNames[offset : offset+limit]), nil
 }
 
+func (r *FilmRepo) ListAllDirectorNames() []string {
+	r.lock.RLock()
+	defer r.lock.RUnlock()
+
+	return r.directorNames
+}
+
+func (r *FilmRepo) ListAllTitles() []string {
+	r.lock.RLock()
+	defer r.lock.RUnlock()
+
+	return r.filmTitles
+}
+
 func (r *FilmRepo) CountDirectors() int {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
@@ -214,6 +242,7 @@ func (r *FilmRepo) CountDirectors() int {
 
 func NewFilmRepo(logger *slog.Logger, maxLimit int, films ...model.Film) *FilmRepo {
 	repo := &FilmRepo{
+		lock:          sync.RWMutex{},
 		logger:        logger,
 		filmTitles:    []string{},
 		films:         make(map[string]model.Film),

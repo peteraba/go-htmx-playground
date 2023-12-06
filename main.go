@@ -30,6 +30,7 @@ func main() {
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	notifier := notificationsService.NewNotifier(logger)
+	//nolint: exhaustruct
 	app := fiber.New(fiber.Config{
 		Views:     view.NewEngine(),
 		Immutable: true,
@@ -53,6 +54,7 @@ func main() {
 func setupMiddleware(app *fiber.App, logger *slog.Logger) *slog.Logger {
 	app.Use(recover.New())
 
+	//nolint: exhaustruct
 	app.Get("/metrics", monitor.New(monitor.Config{Title: "go|htmx Metrics Page"}))
 	app.Use(slogfiber.New(logger))
 	app.Use(idempotency.New())
@@ -92,11 +94,14 @@ func addFilmHandlers(app *fiber.App, logger *slog.Logger, notifier *notification
 }
 
 func addStaticHandler(app *fiber.App) {
+	const maxAge = 60 * 60
+
+	//nolint: exhaustruct
 	app.Use(filesystem.New(filesystem.Config{
 		Root: http.FS(assetsFS),
 		// PathPrefix:   "/assets",
 		Browse:       false,
 		NotFoundFile: "404.html",
-		MaxAge:       3600,
+		MaxAge:       maxAge,
 	}))
 }

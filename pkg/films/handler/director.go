@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,23 +24,28 @@ func NewDirector(repo *repository.FilmRepo, pageSize int) Director {
 }
 
 func (d Director) List(c *fiber.Ctx) error {
+	bind := fiber.Map{"Path": c.Path(), "Url": c.BaseURL()}
+
 	currentPage := c.QueryInt("page", 1)
 	if currentPage <= 0 {
 		currentPage = 1
 	}
+
 	offset := (currentPage - 1) * d.pageSize
 
 	directors, err := d.repo.ListDirectors(offset, d.pageSize)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
-		return err
+
+		return fmt.Errorf("failed to list directors, err: %w", err)
 	}
 
-	p := pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path())
+	bind["Directors"] = directors
+	bind["Pagination"] = pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path())
 
 	if htmx.IsHx(c.GetReqHeaders()) {
-		return c.Render("templates/directors", fiber.Map{"Path": c.Path(), "Directors": directors, "Pagination": p})
+		return c.Render("templates/directors", bind)
 	}
 
-	return c.Render("templates/directors", fiber.Map{"Path": c.Path(), "Directors": directors, "Pagination": p}, "templates/layout")
+	return c.Render("templates/directors", bind, "templates/layout")
 }

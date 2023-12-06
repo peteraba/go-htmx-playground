@@ -1,4 +1,4 @@
-package repository
+package repository_test
 
 import (
 	"io"
@@ -6,17 +6,22 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/peteraba/go-htmx-playground/pkg/films/model"
+	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
 )
 
 func TestFilmRepo_CountDirectors(t *testing.T) {
+	t.Parallel()
+
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
 		films    []model.Film
 		maxLimit int
 	}
+
 	tests := []struct {
 		name   string
 		fields fields
@@ -25,6 +30,7 @@ func TestFilmRepo_CountDirectors(t *testing.T) {
 		{
 			name: "empty",
 			fields: fields{
+				films:    []model.Film{},
 				maxLimit: 10,
 			},
 			want: 0,
@@ -62,9 +68,12 @@ func TestFilmRepo_CountDirectors(t *testing.T) {
 			want: 1,
 		},
 	}
-	for _, tt := range tests {
+	for _, ttt := range tests {
+		tt := ttt
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
+			t.Parallel()
+
+			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
 			if got := r.CountDirectors(); got != tt.want {
 				t.Errorf("CountDirectors() = %v, want %v", got, tt.want)
 			}
@@ -73,6 +82,8 @@ func TestFilmRepo_CountDirectors(t *testing.T) {
 }
 
 func TestFilmRepo_CountFilms(t *testing.T) {
+	t.Parallel()
+
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
@@ -88,6 +99,7 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 			name: "empty",
 			fields: fields{
 				maxLimit: 10,
+				films:    nil,
 			},
 			want: 0,
 		},
@@ -124,9 +136,12 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 			want: 2,
 		},
 	}
-	for _, tt := range tests {
+	for _, ttt := range tests {
+		tt := ttt
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
+			t.Parallel()
+
+			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
 			if got := r.CountFilms(); got != tt.want {
 				t.Errorf("CountFilms() = %v, want %v", got, tt.want)
 			}
@@ -135,6 +150,8 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 }
 
 func TestFilmRepo_Insert(t *testing.T) {
+	t.Parallel()
+
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
@@ -155,6 +172,7 @@ func TestFilmRepo_Insert(t *testing.T) {
 			name: "from empty",
 			fields: fields{
 				maxLimit: 10,
+				films:    nil,
 			},
 			args: args{
 				newFilms: []model.Film{
@@ -200,9 +218,12 @@ func TestFilmRepo_Insert(t *testing.T) {
 			wantDirectorCount: 2,
 		},
 	}
-	for _, tt := range tests {
+	for _, ttt := range tests {
+		tt := ttt
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
+			t.Parallel()
+
+			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
 			_ = r.Insert(tt.args.newFilms...)
 
 			assert.Equal(t, tt.wantFilmCount, r.CountFilms())
@@ -212,12 +233,15 @@ func TestFilmRepo_Insert(t *testing.T) {
 }
 
 func TestFilmRepo_ListDirectors(t *testing.T) {
+	t.Parallel()
+
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
 		films    []model.Film
 		maxLimit int
 	}
+
 	type args struct {
 		offset int
 		limit  int
@@ -232,11 +256,13 @@ func TestFilmRepo_ListDirectors(t *testing.T) {
 			name: "empty",
 			fields: fields{
 				maxLimit: 10,
+				films:    nil,
 			},
 			args: args{
 				offset: 0,
 				limit:  10,
 			},
+			want: nil,
 		},
 		{
 			name: "single film",
@@ -290,43 +316,51 @@ func TestFilmRepo_ListDirectors(t *testing.T) {
 			},
 		},
 	}
-	for _, tt := range tests {
+	for _, ttt := range tests {
+		tt := ttt
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
+			t.Parallel()
+
+			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
 			got, err := r.ListDirectors(tt.args.offset, tt.args.limit)
-			assert.NoError(t, err)
+			require.NoError(t, err)
+
 			assert.Equal(t, tt.want, got)
 		})
 	}
 }
 
 func TestFilmRepo_ListFilms(t *testing.T) {
+	t.Parallel()
+
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
 		films    []model.Film
 		maxLimit int
 	}
+
 	type args struct {
 		offset int
 		limit  int
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    []model.Film
-		wantErr bool
+		name   string
+		fields fields
+		args   args
+		want   []model.Film
 	}{
 		{
 			name: "empty",
 			fields: fields{
 				maxLimit: 10,
+				films:    nil,
 			},
 			args: args{
 				offset: 0,
 				limit:  10,
 			},
+			want: nil,
 		},
 		{
 			name: "single film",
@@ -381,17 +415,23 @@ func TestFilmRepo_ListFilms(t *testing.T) {
 			},
 		},
 	}
-	for _, tt := range tests {
+	for _, ttt := range tests {
+		tt := ttt
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
+			t.Parallel()
+
+			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
 			got, err := r.ListFilms(tt.args.offset, tt.args.limit)
-			assert.NoError(t, err)
+			require.NoError(t, err)
+
 			assert.Equal(t, tt.want, got)
 		})
 	}
 }
 
 func TestFilmRepo_Truncate(t *testing.T) {
+	t.Parallel()
+
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
@@ -406,6 +446,7 @@ func TestFilmRepo_Truncate(t *testing.T) {
 			name: "empty",
 			fields: fields{
 				maxLimit: 10,
+				films:    nil,
 			},
 		},
 		{
@@ -419,9 +460,12 @@ func TestFilmRepo_Truncate(t *testing.T) {
 			},
 		},
 	}
-	for _, tt := range tests {
+	for _, ttt := range tests {
+		tt := ttt
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
+			t.Parallel()
+
+			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
 
 			r.Truncate()
 			assert.Equal(t, 0, r.CountFilms())
@@ -431,6 +475,8 @@ func TestFilmRepo_Truncate(t *testing.T) {
 }
 
 func TestFilmRepo_DeleteByTitle(t *testing.T) {
+	t.Parallel()
+
 	const maxLimit = 10
 
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
@@ -529,14 +575,20 @@ func TestFilmRepo_DeleteByTitle(t *testing.T) {
 			},
 		},
 	}
-	for _, tt := range tests {
+	for _, ttt := range tests {
+		tt := ttt
 		t.Run(tt.name, func(t *testing.T) {
-			r := NewFilmRepo(dummyLogger, maxLimit, tt.fields.films...)
+			t.Parallel()
 
-			r.DeleteByTitle(tt.args.title)
+			sut := repository.NewFilmRepo(dummyLogger, maxLimit, tt.fields.films...)
 
-			assert.Equal(t, tt.want.filmTitles, r.filmTitles)
-			assert.Equal(t, tt.want.directorNames, r.directorNames)
+			sut.DeleteByTitle(tt.args.title)
+
+			gotTitles := sut.ListAllTitles()
+			assert.Equal(t, tt.want.filmTitles, gotTitles)
+
+			gotDirectorNames := sut.ListAllDirectorNames()
+			assert.Equal(t, tt.want.directorNames, gotDirectorNames)
 		})
 	}
 }

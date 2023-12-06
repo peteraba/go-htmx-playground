@@ -6,8 +6,7 @@ import (
 	"github.com/peteraba/go-htmx-playground/lib/htmx"
 )
 
-type Home struct {
-}
+type Home struct{}
 
 func NewHome() Home {
 	return Home{}

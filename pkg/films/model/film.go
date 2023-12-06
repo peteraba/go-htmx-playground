@@ -1,17 +1,20 @@
 package model
 
-import "github.com/go-playground/validator/v10"
+import (
+	"github.com/go-playground/validator/v10"
+)
 
-// use a single instance of Validate, it caches struct info
+// nolint: gochecknoglobals
 var validate *validator.Validate
 
+// nolint: gochecknoinits
 func init() {
 	validate = validator.New(validator.WithRequiredStructEnabled())
 }
 
 type Film struct {
-	Title    string `validate:"required" fake:"{moviename}"`
-	Director string `validate:"required" fake:"{name}"`
+	Title    string `fake:"{moviename}" validate:"required"`
+	Director string `fake:"{name}"      validate:"required"`
 }
 
 func (f Film) Clone() Film {
@@ -19,6 +22,7 @@ func (f Film) Clone() Film {
 }
 
 func (f Film) Validate() error {
+	//nolint: wrapcheck
 	return validate.Struct(&f)
 }
 

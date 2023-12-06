@@ -40,9 +40,11 @@ func (f Film) Create(c *fiber.Ctx) error {
 		Title:    c.FormValue("title"),
 		Director: c.FormValue("director"),
 	}
+
 	err := newFilm.Validate()
 	if err != nil {
 		f.notifier.Error(err.Error(), c.IP())
+
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
@@ -53,22 +55,27 @@ func (f Film) Create(c *fiber.Ctx) error {
 }
 
 func (f Film) Generate(c *fiber.Ctx) error {
-	n, err := c.ParamsInt("num")
-	if err != nil || n < 5 || n >= 50 || !htmx.IsHx(c.GetReqHeaders()) {
+	randomNumber, err := c.ParamsInt("num")
+	if err != nil || randomNumber < 5 || randomNumber >= 50 || !htmx.IsHx(c.GetReqHeaders()) {
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
 	prevCount := f.repo.CountFilms()
-	for i := 0; i < n; i++ {
+
+	for i := 0; i < randomNumber; i++ {
+		//nolint: exhaustruct
 		newFilm := model.Film{}
+
 		err = gofakeit.Struct(&newFilm)
 		if err != nil {
 			f.notifier.Error(err.Error(), c.IP())
+
 			return c.SendStatus(http.StatusInternalServerError)
 		}
 
 		f.repo.Insert(newFilm)
 	}
+
 	newCount := f.repo.CountFilms()
 
 	f.notifier.Info(fmt.Sprintf("%d unique films generated.", newCount-prevCount), c.IP())
@@ -91,14 +98,18 @@ func (f Film) DeleteForm(c *fiber.Ctx) error {
 // Delete is a handler which handles truncating films and individual deletes for browsers with JS support enabled.
 func (f Film) Delete(c *fiber.Ctx) error {
 	titles, _ := f.getFilmsToDelete(c)
-	if len(titles) > 0 {
+
+	switch {
+	case len(titles) > 0:
 		f.logger.Debug("JS support enabled. Deleting films...")
 		f.repo.DeleteByTitle(titles...)
 		f.notifier.Success(fmt.Sprintf("Films deleted: %d", len(titles)), c.IP())
-	} else if f.repo.CountFilms() == 0 {
+
+	case f.repo.CountFilms() == 0:
 		f.logger.Debug("No films to delete.")
 		f.notifier.Info("No titles to delete.", c.IP())
-	} else {
+
+	default:
 		f.logger.Debug("JS support not enabled. Truncating films...")
 		f.repo.Truncate()
 	}
@@ -113,25 +124,27 @@ type ExpectedPayload struct {
 func (f Film) getFilmsToDelete(c *fiber.Ctx) ([]string, error) {
 	body := new(ExpectedPayload)
 	if err := c.BodyParser(body); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse request body, err: %w", err)
 	}
 
 	return body.Films, nil
 }
 
 func (f Film) list(c *fiber.Ctx, basePath string) error {
-	bind := fiber.Map{"Path": c.Path(), "Url": c.BaseURL()}
+	bind := fiber.Map{"Path": c.Path(), "Url": basePath}
 
 	currentPage := c.QueryInt("page", 1)
 	if currentPage <= 0 {
 		currentPage = 1
 	}
+
 	offset := (currentPage - 1) * f.pageSize
 
 	films, err := f.repo.ListFilms(offset, f.pageSize)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		return err
+		f.logger.With("err", err).Error("Error while listing films.")
+
+		return c.SendStatus(http.StatusInternalServerError)
 	}
 
 	bind["Films"] = films

@@ -41,7 +41,7 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 			err      error
 		)
 
-		sseChannel <- model.Notification{Type: model.RELOAD}
+		sseChannel <- model.Notification{Type: model.RELOAD, Message: ""}
 
 		for {
 			sseEvent = <-sseChannel
@@ -49,12 +49,14 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 			bolB, err = json.Marshal(sseEvent)
 			if err != nil {
 				s.logger.With("err", err).Error("Error while marshaling JSON.")
+
 				return
 			}
 
 			size, err = fmt.Fprintf(w, "data: %s\n\n", string(bolB))
 			if err != nil {
 				s.logger.With("err", err).Error("Error while writing buffer.")
+
 				return
 			}
 			s.logger.With("type", sseEvent.Type, "bytes", size).Info("Message sent.")

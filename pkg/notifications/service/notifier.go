@@ -12,26 +12,26 @@ type Notifier struct {
 }
 
 func NewNotifier(logger *slog.Logger) *Notifier {
-	sseChannelsByIP := make(map[string][]chan model.Notification)
 	return &Notifier{
 		logger:          logger,
-		sseChannelsByIP: sseChannelsByIP,
+		sseChannelsByIP: make(map[string][]chan model.Notification),
 	}
 }
 
 func (n *Notifier) Sub(ip string) chan model.Notification {
-	sseChannel := make(chan model.Notification, 10)
+	sseChannel := make(chan model.Notification, 1)
 
 	n.sseChannelsByIP[ip] = append(n.sseChannelsByIP[ip], sseChannel)
 
 	return sseChannel
 }
 
-func (n *Notifier) broadcast(nType model.NotificationType) {
+func (n *Notifier) broadcast(nType model.NotificationType, message string) {
 	for _, sseChannels := range n.sseChannelsByIP {
 		for _, sseChannel := range sseChannels {
 			sseChannel <- model.Notification{
-				Type: nType,
+				Type:    nType,
+				Message: message,
 			}
 		}
 	}
@@ -42,6 +42,7 @@ func (n *Notifier) broadcastByIP(nType model.NotificationType, message, targetIP
 	if !ok {
 		n.logger.With("ip", targetIP).Error("SSE channel not found. ip")
 	}
+
 	for _, sseChannel := range sseChannels {
 		sseChannel <- model.Notification{
 			Type:    nType,
@@ -67,5 +68,5 @@ func (n *Notifier) Error(message, targetIP string) {
 }
 
 func (n *Notifier) Reload() {
-	n.broadcast(model.RELOAD)
+	n.broadcast(model.RELOAD, "")
 }

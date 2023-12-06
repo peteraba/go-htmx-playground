@@ -38,14 +38,14 @@ task install
     - [ ] GET /directors
     - [ ] OpenAPI 3.x definition
 - [ ] Ops improvements
-  - [ ] Better logging ([slog](https://github.com/samber/slog-fiber))
+  - [/] Better logging ([slog](https://github.com/samber/slog-fiber))
   - [ ] Tracing
   - [ ] [CORS](https://docs.gofiber.io/api/middleware/cors) (IDEA)
   - [/] [Metrics](https://docs.gofiber.io/api/middleware/monitor)
   - [ ] [Pprof](https://docs.gofiber.io/api/middleware/pprof)
   - [/] [Recover](https://docs.gofiber.io/api/middleware/recover)
 - [ ] Code quality
-  - [ ] 
+  - [/] golangci-lint
 - [/] Colors module
 - [/] Notifications
   - [/] htmx-style (SSE?)
