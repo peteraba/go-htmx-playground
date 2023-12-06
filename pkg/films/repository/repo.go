@@ -42,7 +42,8 @@ func (r *FilmRepo) Insert(newFilms ...model.Film) *FilmRepo {
 		var newDirector model.Director
 
 		if d, ok := r.directors[newFilm.Director]; ok {
-			d.Titles = append(d.Titles, newFilm.Title)
+			newDirector = d.Clone()
+			newDirector.Titles = append(newDirector.Titles, newFilm.Title)
 		} else {
 			newDirector = model.Director{Name: newFilm.Director, Titles: []string{newFilm.Title}}
 			r.directorNames = append(r.directorNames, newFilm.Director)

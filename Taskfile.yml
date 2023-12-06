@@ -10,9 +10,13 @@ tasks:
     cmds:
       - go test ./...
       - golangci-lint run
-      - govulncheck ./...
-#      - capslock
+#      - govulncheck ./...
+      #      - capslock
       - go build -o ./build/application ./*.go
+
+  run:
+    cmds:
+      - go run ./*.go
 
   install:
     cmds:

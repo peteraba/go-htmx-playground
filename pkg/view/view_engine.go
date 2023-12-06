@@ -16,16 +16,21 @@ var viewsFS embed.FS
 func NewEngine() *html.Engine {
 	engine := html.NewFileSystem(http.FS(viewsFS), ".html")
 	engine.
-		AddFunc("str_slice", func(s []string) template.HTML {
-			//nolint: gosec
-			return template.HTML(strings.Join(s, ","))
+		AddFunc("str_slice", func(str []string) template.HTML {
+			for i, v := range str {
+				str[i] = template.HTMLEscapeString(v)
+			}
+
+			// nolint: gosec
+			return template.HTML(strings.Join(str, ", "))
 		}).
 		AddFunc("url", func(str string) template.URL {
 			_, err := url.ParseRequestURI(str)
 			if err != nil {
-				panic(err)
+				return ""
 			}
-			//nolint: gosec
+
+			// nolint: gosec
 			return template.URL(str)
 		})
 
