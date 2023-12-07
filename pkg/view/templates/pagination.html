@@ -1,32 +1,83 @@
 {{ $path := .Path }}
+{{ $target := .Target }}
 <div class="join p-1 py-4">
     <!-- prev -->
-    <a class="join-item btn btn-outline{{if le .CurrentPage 1}} btn-disabled{{end}}" href="{{ $path }}{{ .Prev }}">Previous page</a>
+    <a href="{{ $path }}{{ .Prev }}"
+       class="join-item btn btn-outline{{if le .CurrentPage 1}} btn-disabled{{end}}"
+       hx-get="{{ $path }}{{ .Prev }}"
+       hx-replace-url="true"
+       hx-push-url="true"
+       hx-target="{{ $target }}"
+       hx-swap="innerHTML"
+        >Previous page</a>
+
     <!-- beginning -->
     {{ range .Beginning }}
-    <a class="join-item btn btn-outline" href="{{ $path }}{{ . }}">{{ . }}</a>
+    <a href="{{ $path }}{{ . }}"
+       class="join-item btn btn-outline"
+       hx-get="{{ $path }}{{ . }}"
+       hx-replace-url="true"
+       hx-push-url="true"
+       hx-target="{{ $target }}"
+       hx-swap="innerHTML"
+        >{{ . }}</a>
     {{ end }}
+
     <!-- sep -->
     {{if .Beginning }}
     <a class="join-item btn btn-outline btn-disabled">...</a>
     {{end}}
+
     <!-- current block -->
     {{ range .PreActive }}
-    <a class="join-item btn btn-outline" href="{{ $path }}{{ . }}">{{ . }}</a>
+    <a href="{{ $path }}{{ . }}"
+       class="join-item btn btn-outline"
+       hx-get="{{ $path }}{{ . }}"
+       hx-replace-url="true"
+       hx-push-url="true"
+       hx-target="{{ $target }}"
+       hx-swap="innerHTML"
+        >{{ . }}</a>
     {{ end }}
+
     <span class="join-item btn btn-outline btn-active">{{ .CurrentPage }}</span>
+
     {{ range .PostActive }}
-    <a class="join-item btn btn-outline" href="{{ $path }}{{ . }}">{{ . }}</a>
+    <a href="{{ $path }}{{ . }}"
+       class="join-item btn btn-outline"
+       hx-get="{{ $path }}{{ . }}"
+       hx-replace-url="true"
+       hx-push-url="true"
+       hx-target="{{ $target }}"
+       hx-swap="innerHTML"
+        >{{ . }}</a>
     {{ end }}
     <!-- end of current -->
+
     <!-- sep -->
     {{if .End }}
     <a class="join-item btn btn-outline btn-disabled">...</a>
     {{end}}
+
     <!-- end -->
     {{ range .End }}
-    <a class="join-item btn btn-outline" href="{{ $path }}{{ . }}">{{ . }}</a>
+    <a href="{{ $path }}{{ . }}"
+       class="join-item btn btn-outline"
+       hx-get="{{ $path }}{{ . }}"
+       hx-replace-url="true"
+       hx-push-url="true"
+       hx-target="{{ $target }}"
+       hx-swap="innerHTML"
+        >{{ . }}</a>
     {{ end }}
+
     <!-- next -->
-    <a class="join-item btn btn-outline{{if eq .Next .CurrentPage}} btn-disabled{{end}}" href="{{ $path }}{{ .Next }}">Next page</a>
+    <a href="{{ $path }}{{ .Next }}"
+       class="join-item btn btn-outline{{if eq .Next .CurrentPage}} btn-disabled{{end}}"
+       hx-get="{{ $path }}{{ .Next }}"
+       hx-replace-url="true"
+       hx-push-url="true"
+       hx-target="{{ $target }}"
+       hx-swap="innerHTML"
+        >Next page</a>
 </div>

@@ -18,14 +18,40 @@
 <div id="wrapper">
     <div class="navbar bg-base-300 drawer">
         <div class="flex-1">
-            <a class="btn btn-ghost text-white text-xl" style="gap:0">go<span class="text-primary p-0">|</span>htmx</a>
+            <a class="btn btn-ghost text-white text-xl"
+               href="/"
+               style="gap:0">go<span class="text-primary p-0">|</span>htmx</a>
         </div>
         <div class="flex-none gap-2">
             <ul class="menu menu-horizontal px-1">
-                <li><a hx-get="/" hx-replace-url="true" hx-target="#wrapper" hx-swap="innerHTML">Home</a></li>
-                <li><a hx-get="/films" hx-replace-url="true" hx-target="#wrapper" hx-swap="innerHTML">Films</a></li>
-                <li><a hx-get="/directors" hx-replace-url="true" hx-target="#wrapper" hx-swap="innerHTML">Directors</a></li>
-                <li><a hx-get="/colors" hx-replace-url="true" hx-target="#wrapper" hx-swap="innerHTML">Colors</a></li>
+                <li>
+                    <a hx-get="/"
+                       hx-replace-url="true"
+                       hx-push-url="true"
+                       hx-target="#wrapper"
+                       hx-swap="innerHTML"
+                       class="{{if eq .Path "/"}}link-primary{{end}}">Home</a></li>
+                <li>
+                    <a hx-get="/films"
+                       hx-replace-url="true"
+                       hx-push-url="true"
+                       hx-target="#wrapper"
+                       hx-swap="innerHTML"
+                       class="{{if eq .Path "/films"}}link-primary{{end}}">Films</a></li>
+                <li>
+                    <a hx-get="/directors"
+                       hx-replace-url="true"
+                       hx-push-url="true"
+                       hx-target="#wrapper"
+                       hx-swap="innerHTML"
+                       class="{{if eq .Path "/directors"}}link-primary{{end}}">Directors</a></li>
+                <li>
+                    <a hx-get="/colors"
+                       hx-replace-url="true"
+                       hx-push-url="true"
+                       hx-target="#wrapper"
+                       hx-swap="innerHTML"
+                       class="{{if eq .Path "/color"}}link-primary{{end}}">Colors</a></li>
             </ul>
         </div>
     </div>

@@ -41,7 +41,7 @@ func (d Director) List(c *fiber.Ctx) error {
 	}
 
 	bind["Directors"] = directors
-	bind["Pagination"] = pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path())
+	bind["Pagination"] = pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path(), "#wrapper")
 
 	if htmx.IsHx(c.GetReqHeaders()) {
 		return c.Render("templates/directors", bind)

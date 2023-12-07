@@ -131,7 +131,7 @@ func (f Film) getFilmsToDelete(c *fiber.Ctx) ([]string, error) {
 }
 
 func (f Film) list(c *fiber.Ctx, basePath string) error {
-	bind := fiber.Map{"Path": c.Path(), "Url": basePath}
+	bind := fiber.Map{"Path": c.Path(), "Url": c.BaseURL()}
 
 	currentPage := c.QueryInt("page", 1)
 	if currentPage <= 0 {
@@ -148,12 +148,17 @@ func (f Film) list(c *fiber.Ctx, basePath string) error {
 	}
 
 	bind["Films"] = films
-	bind["Pagination"] = pagination.New(currentPage, f.pageSize, f.repo.CountFilms(), basePath)
+	bind["Pagination"] = pagination.New(currentPage, f.pageSize, f.repo.CountFilms(), basePath, "#movie-list")
 
-	if htmx.IsHx(c.GetReqHeaders()) {
+	switch htmx.GetTarget(c.GetReqHeaders()) {
+	case "wrapper", "#wrapper":
 		return c.Render("templates/films", bind)
-	}
 
-	// Render index
-	return c.Render("templates/films", bind, "templates/layout")
+	case "movie-list", "#movie-list":
+		return c.Render("templates/films_list", bind)
+
+	default:
+		// Render index
+		return c.Render("templates/films", bind, "templates/layout")
+	}
 }

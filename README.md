@@ -18,10 +18,11 @@ task install
 - [ ] Features
   - [x] Delete individual movies
   - [x] Check all movies on screen
-  - [ ] Only load template that needs to change
+  - [x] Only load template that needs to change
   - [ ] Search
     - [ ] Search movies
     - [ ] Search films
+  - [x] Fix back buttons
 - [ ] Speed improvements
   - [ ] [Compress](https://docs.gofiber.io/api/middleware/compress)
   - [ ] [ETag](https://docs.gofiber.io/api/middleware/etag)

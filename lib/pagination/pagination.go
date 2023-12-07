@@ -7,13 +7,14 @@ type Pagination struct {
 	Next        int
 	CurrentPage int
 	Path        string
+	Target      string
 	Beginning   []int
 	PreActive   []int
 	PostActive  []int
 	End         []int
 }
 
-func New(currentPage, pageSize, count int, path string) Pagination {
+func New(currentPage, pageSize, count int, path, target string) Pagination {
 	if strings.Contains(path, "?") {
 		path += "&page="
 	} else {
@@ -33,10 +34,10 @@ func New(currentPage, pageSize, count int, path string) Pagination {
 		currentPage = maxPage
 	}
 
-	return generate(maxPage, currentPage, path)
+	return generate(maxPage, currentPage, path, target)
 }
 
-func generate(maxPage, currentPage int, path string) Pagination {
+func generate(maxPage, currentPage int, path, target string) Pagination {
 	var start, preActive, postActive, end []int
 
 	prev := getPrev(currentPage)
@@ -52,6 +53,7 @@ func generate(maxPage, currentPage int, path string) Pagination {
 		Next:        next,
 		CurrentPage: currentPage,
 		Path:        path,
+		Target:      target,
 		Beginning:   start,
 		PreActive:   preActive,
 		PostActive:  postActive,

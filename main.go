@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -28,7 +29,8 @@ var assetsFS embed.FS
 func main() {
 	const maxListLength = 10
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	// logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	notifier := notificationsService.NewNotifier(logger)
 	//nolint: exhaustruct
 	app := fiber.New(fiber.Config{

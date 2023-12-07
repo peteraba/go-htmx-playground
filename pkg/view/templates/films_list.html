@@ -1,0 +1,57 @@
+<div class="p-4">
+  <h1 class="p-2 text-white text-2xl">List of Movies</h1>
+  <form action="/films-delete"
+        method="post"
+        hx-delete="/films"
+        hx-target="#movie-list"
+        hx-swap="innerHTML"
+        >
+    <div class="overflow-x-auto">
+      <table id="film-list" class="table table-zebra table-fixed">
+        <!-- head -->
+        <thead>
+        <tr>
+          <th class="w-12">
+            <label class="hidden">
+              <input type="checkbox" class="checkbox" id="check-all" />
+            </label>
+          </th>
+          <th>Title</th>
+          <th>Director</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {{ if not .Films }}
+        <tr>
+          <td colspan="3">Empty list</td>
+        </tr>
+        {{ end }}
+        {{ range $idx, $element := .Films }}
+        <tr>
+          <th class="w-12">
+            <label>
+              <input type="checkbox" class="checkbox film-check" name="films[]" value="{{ $element.Title }}" />
+            </label>
+          </th>
+          <td>{{ $element.Title }}</td>
+          <td>{{ $element.Director }}</td>
+        </tr>
+        {{ end }}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="float-none">
+      <div class="float-left">
+        {{template "templates/pagination" .Pagination}}
+      </div>
+      <div class="float-right p-1 py-4">
+        <p>
+          <button type="submit" class="btn btn-error btn-outline" id="delete-selected">Delete Selected</button>
+        </p>
+      </div>
+    </div>
+
+  </form>
+</div>

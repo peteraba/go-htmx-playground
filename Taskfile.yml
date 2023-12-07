@@ -16,7 +16,7 @@ tasks:
 
   run:
     cmds:
-      - go run ./*.go
+      - go build -o ./build/application ./*.go
 
   install:
     cmds:
