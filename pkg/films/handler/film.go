@@ -140,13 +140,14 @@ func (f Film) list(c *fiber.Ctx, basePath string) error {
 
 	offset := (currentPage - 1) * f.pageSize
 
-	films, err := f.repo.ListFilms(offset, f.pageSize)
+	films, err := f.repo.ListFilms(offset, f.pageSize, c.Query("q"))
 	if err != nil {
 		f.logger.With("err", err).Error("Error while listing films.")
 
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
+	bind["Search"] = c.Query("q")
 	bind["Films"] = films
 	bind["Pagination"] = pagination.New(currentPage, f.pageSize, f.repo.CountFilms(), basePath, "#movie-list")
 

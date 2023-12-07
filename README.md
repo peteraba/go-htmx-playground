@@ -20,9 +20,14 @@ task install
   - [x] Check all movies on screen
   - [x] Only load template that needs to change
   - [ ] Search
-    - [ ] Search movies
+    - [x] Search movies
     - [ ] Search films
+- [ ] Fix bugs
   - [x] Fix back buttons
+  - [ ] Fix JS being lost on re-loading parts
+  - [ ] Fix check-all remaining hidden on generating / adding movies
+  - [ ] Fix search design
+  - [ ] Make sure search is highlighted on reload / load only the table???
 - [ ] Speed improvements
   - [ ] [Compress](https://docs.gofiber.io/api/middleware/compress)
   - [ ] [ETag](https://docs.gofiber.io/api/middleware/etag)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/samber/lo"
@@ -143,7 +144,7 @@ var (
 	errLimitTooSmall = errors.New("limit too small")
 )
 
-func (r *FilmRepo) ListFilms(offset, limit int) ([]model.Film, error) {
+func (r *FilmRepo) ListFilms(offset, limit int, search string) ([]model.Film, error) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
@@ -159,11 +160,21 @@ func (r *FilmRepo) ListFilms(offset, limit int) ([]model.Film, error) {
 		return nil, nil
 	}
 
+	var films []model.Film
 	if offset+limit >= len(r.films) {
-		return r.fetchFilmsByTitles(r.filmTitles[offset:]), nil
+		films = r.fetchFilmsByTitles(r.filmTitles[offset:])
+	} else {
+		films = r.fetchFilmsByTitles(r.filmTitles[offset : offset+limit])
 	}
 
-	return r.fetchFilmsByTitles(r.filmTitles[offset : offset+limit]), nil
+	if search == "" {
+		return films, nil
+	}
+
+	search = strings.ToLower(search)
+	return lo.Filter(films, func(f model.Film, idx int) bool {
+		return strings.Contains(strings.ToLower(f.Title), search)
+	}), nil
 }
 
 func (r *FilmRepo) CountFilms() int {

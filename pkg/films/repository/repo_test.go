@@ -421,7 +421,7 @@ func TestFilmRepo_ListFilms(t *testing.T) {
 			t.Parallel()
 
 			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
-			got, err := r.ListFilms(tt.args.offset, tt.args.limit)
+			got, err := r.ListFilms(tt.args.offset, tt.args.limit, "")
 			require.NoError(t, err)
 
 			assert.Equal(t, tt.want, got)

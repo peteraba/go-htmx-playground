@@ -1,5 +1,16 @@
 <div class="p-4">
   <h1 class="p-2 text-white text-2xl">List of Movies</h1>
+  <p>
+    <input type="text"
+           name="q"
+           method="get"
+           hx-get="/films"
+           hx-trigger="keyup changed delay:500ms"
+           hx-target="#movie-list"
+           hx-swap="innerHTML"
+           placeholder="Search..."
+          value="{{ .Search }}">
+  </p>
   <form action="/films-delete"
         method="post"
         hx-delete="/films"

@@ -16,6 +16,7 @@ func TestNew(t *testing.T) {
 		pageSize    int
 		count       int
 		path        string
+		target      string
 	}
 	tests := []struct {
 		name string
@@ -29,12 +30,14 @@ func TestNew(t *testing.T) {
 				pageSize:    10,
 				count:       0,
 				path:        "/hello",
+				target:      "foo",
 			},
 			want: pagination.Pagination{
 				Next:        1,
 				Prev:        1,
 				CurrentPage: 1,
 				Path:        "/hello?page=",
+				Target:      "foo",
 			},
 		},
 		{
@@ -44,12 +47,14 @@ func TestNew(t *testing.T) {
 				pageSize:    10,
 				count:       1,
 				path:        "/hello",
+				target:      "foo",
 			},
 			want: pagination.Pagination{
 				Next:        1,
 				Prev:        1,
 				CurrentPage: 1,
 				Path:        "/hello?page=",
+				Target:      "foo",
 			},
 		},
 		{
@@ -59,12 +64,14 @@ func TestNew(t *testing.T) {
 				pageSize:    10,
 				count:       10,
 				path:        "/hello",
+				target:      "foo",
 			},
 			want: pagination.Pagination{
 				Next:        1,
 				Prev:        1,
 				CurrentPage: 1,
 				Path:        "/hello?page=",
+				Target:      "foo",
 			},
 		},
 		{
@@ -74,6 +81,7 @@ func TestNew(t *testing.T) {
 				pageSize:    10,
 				count:       11,
 				path:        "/hello",
+				target:      "foo",
 			},
 			want: pagination.Pagination{
 				Next:        2,
@@ -81,6 +89,7 @@ func TestNew(t *testing.T) {
 				CurrentPage: 1,
 				Path:        "/hello?page=",
 				PostActive:  []int{2},
+				Target:      "foo",
 			},
 		},
 	}
@@ -89,7 +98,7 @@ func TestNew(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			if got := pagination.New(tt.args.currentPage, tt.args.pageSize, tt.args.count, tt.args.path); !reflect.DeepEqual(got, tt.want) {
+			if got := pagination.New(tt.args.currentPage, tt.args.pageSize, tt.args.count, tt.args.path, "foo"); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("New() = %v, want %v", got, tt.want)
 			}
 		})

@@ -1,9 +1,8 @@
 package htmx
 
 const (
-	HeaderHxCurrentUrl = "Hx-Current-Url"
-	HeaderHxRequest    = "Hx-Request"
-	HeaderHxTarget     = "Hx-Target"
+	HeaderHxRequest = "Hx-Request"
+	HeaderHxTarget  = "Hx-Target"
 )
 
 func IsHx(headers map[string][]string) bool {
