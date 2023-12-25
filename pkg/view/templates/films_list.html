@@ -1,6 +1,6 @@
 <div class="p-4">
   <h1 class="p-2 text-white text-2xl">List of Movies</h1>
-  <p>
+  <p class="p-1">
     <input type="text"
            name="q"
            method="get"
@@ -9,7 +9,8 @@
            hx-target="#movie-list"
            hx-swap="innerHTML"
            placeholder="Search..."
-          value="{{ .Search }}">
+           class="input input-bordered w-full"
+           value="{{ .Search }}">
   </p>
   <form action="/films-delete"
         method="post"

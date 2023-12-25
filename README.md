@@ -6,12 +6,28 @@ Nothing in here is production ready. Copy-paste at your own risk.
 
 ## Installation instructions
 
+### Install Zitadel
+
+Follow one of the following guides:
+
+- [k8s](https://zitadel.com/docs/self-hosting/deploy/kubernetes)
+- [docker](https://zitadel.com/docs/self-hosting/deploy/docker)
+- [linux](https://zitadel.com/docs/self-hosting/deploy/linux)
+
+### Install go-htmx
+
 ```bash
 git clone https://github.com/peteraba/go-htmx-playground
 cd go-htmx-playground
 sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
 task install
 ```
+
+## Tools being used in this project
+
+- [Task](https://taskfile.dev/) - Task runner (like Make, but nicer)
+- [Air](https://github.com/cosmtrek/air) - rebuilding project on file change
+- 
 
 ## TODO
 
@@ -22,6 +38,10 @@ task install
   - [ ] Search
     - [x] Search movies
     - [ ] Search films
+- [ ] Project health
+  - [ ] Badges
+  - [ ] Process to upgrade tools
+  - [ ] Process to upgrade vendor libraries
 - [ ] Fix bugs
   - [x] Fix back buttons
   - [ ] Fix JS being lost on re-loading parts
@@ -64,9 +84,9 @@ task install
   - [ ] Testing race conditions
   - [ ] Fuzz testing
   - [ ] Performance testing
-  - [ ] Authentication
+  - [ ] Authorization
     - [Fiber-Casbin](https://github.com/gofiber/contrib/tree/main/casbin)
-    - [Casbin](github.com/casbin/casbin)
+    - [Casbin](https://github.com/casbin/casbin)
     - [gorbac](https://github.com/mikespook/gorbac)
     - [topaz](https://github.com/aserto-dev/topaz)
   - [ ] JWT-integration (IDEA)
@@ -99,8 +119,8 @@ Go goodies:
 - [Templating Cheatsheet](https://docs.google.com/document/d/17-eD5SO8ChKi4a4DXJq24SxOgb8AYdBeEpW9pcqj1Ok/edit)
 
 HOT JavaScript frameworks to check:
-- https://alpinejs.dev/
-- https://stimulus.hotwired.dev/
+- https://alpinejs.dev/start-here
+- https://unpoly.com/
 
 HOT CSS frameworks to check:
 - https://daisyui.com/
