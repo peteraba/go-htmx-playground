@@ -6,7 +6,12 @@ tasks:
       - air -c air.linux.conf -d
     silent: true
 
+  generate:
+    cmds:
+      - templ generate
+
   check:
+    deps: [generate]
     cmds:
       - go test ./...
       - golangci-lint run
@@ -19,14 +24,23 @@ tasks:
       - go build -o ./build/application ./*.go
 
   run:
+    deps: [build]
     cmds:
-      - go build -o ./build/application ./*.go
+      - ./build/application
 
   install:
     cmds:
+      # air is used to watch files and rebuild, restart app
       - go install github.com/cosmtrek/air@latest
+      # tooling for deterministic imports
       - go install github.com/daixiang0/gci@latest
+      # advanced HTML templating support
+      - go install github.com/a-h/templ/cmd/templ@latest
+      # tooling to keep on top of vulnerabilities
 #      - go install golang.org/x/vuln/cmd/govulncheck@latest
+      # tooling to keep on top of vulnerabilities
 #      - go install github.com/google/capslock/cmd/capslock@latest
-      - go mod download
+      # install metalinter
       - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+      # install used vendor libraries
+      - go mod download

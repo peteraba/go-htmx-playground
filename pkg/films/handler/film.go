@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/a-h/templ"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gofiber/fiber/v2"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/peteraba/go-htmx-playground/lib/pagination"
 	"github.com/peteraba/go-htmx-playground/pkg/films/model"
 	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
+	"github.com/peteraba/go-htmx-playground/pkg/films/view"
 	notificationsService "github.com/peteraba/go-htmx-playground/pkg/notifications/service"
 )
 
@@ -131,7 +133,7 @@ func (f Film) getFilmsToDelete(c *fiber.Ctx) ([]string, error) {
 }
 
 func (f Film) list(c *fiber.Ctx, basePath string) error {
-	bind := fiber.Map{"Path": c.Path(), "Url": c.BaseURL()}
+	searchTerm := c.Query("q")
 
 	currentPage := c.QueryInt("page", 1)
 	if currentPage <= 0 {
@@ -140,26 +142,28 @@ func (f Film) list(c *fiber.Ctx, basePath string) error {
 
 	offset := (currentPage - 1) * f.pageSize
 
-	films, err := f.repo.ListFilms(offset, f.pageSize, c.Query("q"))
+	films, err := f.repo.ListFilms(offset, f.pageSize, searchTerm)
 	if err != nil {
 		f.logger.With("err", err).Error("Error while listing films.")
 
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	bind["Search"] = c.Query("q")
-	bind["Films"] = films
-	bind["Pagination"] = pagination.New(currentPage, f.pageSize, f.repo.CountFilms(), basePath, "#movie-list")
+	listPagination := pagination.New(currentPage, f.pageSize, f.repo.CountFilms(), basePath, "#movie-list")
+
+	return render(c, films, listPagination, searchTerm)
+}
+
+func render(c *fiber.Ctx, films []model.Film, listPagination pagination.Pagination, searchTerm string) error {
+	var component templ.Component
 
 	switch htmx.GetTarget(c.GetReqHeaders()) {
-	case "wrapper", "#wrapper":
-		return c.Render("templates/films", bind)
-
 	case "movie-list", "#movie-list":
-		return c.Render("templates/films_list", bind)
+		component = view.FilmList(films, listPagination.Template(), searchTerm)
 
 	default:
-		// Render index
-		return c.Render("templates/films", bind, "templates/layout")
+		component = view.FilmsPage(films, listPagination.Template(), searchTerm)
 	}
+
+	return component.Render(c.Context(), c.Response().BodyWriter())
 }

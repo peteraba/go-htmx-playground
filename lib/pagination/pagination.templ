@@ -1,0 +1,80 @@
+package pagination
+
+import (
+    "strings"
+)
+
+func concatURL(elems ...string) templ.SafeURL {
+    return templ.URL(strings.Join(elems, ""))
+}
+
+func concatURLString(elems ...string) string {
+    return string(concatURL(elems...))
+}
+
+templ (p Pagination) prev() {
+    <a href={ concatURL(p.Path, p.Prev) }
+       class={"join-item", "btn", "btn-outline", templ.KV("btn-disabled", p.IsPrevDisabled)}
+       hx-get={ concatURLString(p.Path, p.Prev) }
+       hx-replace-url="true"
+       hx-push-url="true"
+       hx-target={ p.Target }
+       hx-swap="innerHTML"
+        >Previous page</a>
+}
+
+templ (p Pagination) item(item string) {
+    <a href={ concatURL(p.Path, item) }
+       class="join-item btn btn-outline"
+       hx-get={ concatURLString(p.Path, item) }
+       hx-replace-url="true"
+       hx-push-url="true"
+       hx-target={ p.Target }
+       hx-swap="innerHTML"
+        >{ item }</a>
+}
+
+templ (p Pagination) sep() {
+    <a class="join-item btn btn-outline btn-disabled">...</a>
+}
+
+templ (p Pagination) current() {
+    <span class="join-item btn btn-outline btn-active">{ p.CurrentPage }</span>
+}
+
+templ (p Pagination) next() {
+    <a href={ concatURL(p.Path, p.Next) }
+       class={"join-item", "btn", "btn-outline", templ.KV("btn-disabled", p.IsNextDisabled)}
+       hx-get={ concatURLString(p.Path, p.Next) }
+       hx-replace-url="true"
+       hx-push-url="true"
+       hx-target={ p.Target }
+       hx-swap="innerHTML"
+        >Next page</a>
+}
+
+templ (p Pagination) Template() {
+    <div class="join p-1 py-4">
+        @p.prev()
+        if len(p.Beginning) > 0 {
+            for _, item := range p.Beginning {
+                @p.item(item)
+            }
+            @p.sep()
+        }
+        for _, item := range p.PreActive {
+            @p.item(item)
+        }
+        @p.current()
+        for _, item := range p.PostActive {
+            @p.item(item)
+        }
+        if len(p.End) > 0 {
+            @p.sep()
+            for _, item := range p.End {
+                @p.item(item)
+            }
+        }
+        @p.next()
+    </div>
+}

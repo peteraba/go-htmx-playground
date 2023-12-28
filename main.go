@@ -14,13 +14,13 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	slogfiber "github.com/samber/slog-fiber"
 
+	"github.com/peteraba/go-htmx-playground/lib/htmx"
 	colorsHandler "github.com/peteraba/go-htmx-playground/pkg/colors/handler"
 	filmsHandler "github.com/peteraba/go-htmx-playground/pkg/films/handler"
 	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
 	homeHandler "github.com/peteraba/go-htmx-playground/pkg/home/handler"
 	notificationsHandler "github.com/peteraba/go-htmx-playground/pkg/notifications/handler"
 	notificationsService "github.com/peteraba/go-htmx-playground/pkg/notifications/service"
-	"github.com/peteraba/go-htmx-playground/pkg/view"
 )
 
 //go:embed assets/*
@@ -34,7 +34,6 @@ func main() {
 	notifier := notificationsService.NewNotifier(logger)
 	//nolint: exhaustruct
 	app := fiber.New(fiber.Config{
-		Views:     view.NewEngine(),
 		Immutable: true,
 	})
 
@@ -55,6 +54,7 @@ func main() {
 
 func setupMiddleware(app *fiber.App, logger *slog.Logger) *slog.Logger {
 	app.Use(recover.New())
+	app.Use(htmx.New())
 
 	//nolint: exhaustruct
 	app.Get("/metrics", monitor.New(monitor.Config{Title: "go|htmx Metrics Page"}))

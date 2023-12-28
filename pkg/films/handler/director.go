@@ -6,9 +6,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/peteraba/go-htmx-playground/lib/htmx"
 	"github.com/peteraba/go-htmx-playground/lib/pagination"
 	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
+	"github.com/peteraba/go-htmx-playground/pkg/films/view"
 )
 
 type Director struct {
@@ -24,8 +24,6 @@ func NewDirector(repo *repository.FilmRepo, pageSize int) Director {
 }
 
 func (d Director) List(c *fiber.Ctx) error {
-	bind := fiber.Map{"Path": c.Path(), "Url": c.BaseURL()}
-
 	currentPage := c.QueryInt("page", 1)
 	if currentPage <= 0 {
 		currentPage = 1
@@ -40,12 +38,9 @@ func (d Director) List(c *fiber.Ctx) error {
 		return fmt.Errorf("failed to list directors, err: %w", err)
 	}
 
-	bind["Directors"] = directors
-	bind["Pagination"] = pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path(), "#wrapper")
+	listPagination := pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path(), "#wrapper")
 
-	if htmx.IsHx(c.GetReqHeaders()) {
-		return c.Render("templates/directors", bind)
-	}
+	component := view.DirectorsPage(directors, listPagination.Template())
 
-	return c.Render("templates/directors", bind, "templates/layout")
+	return component.Render(c.Context(), c.Response().BodyWriter())
 }

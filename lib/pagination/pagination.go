@@ -1,17 +1,22 @@
 package pagination
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
 
 type Pagination struct {
-	Prev        int
-	Next        int
-	CurrentPage int
-	Path        string
-	Target      string
-	Beginning   []int
-	PreActive   []int
-	PostActive  []int
-	End         []int
+	Prev           string
+	Next           string
+	CurrentPage    string
+	Path           string
+	Target         string
+	Beginning      []string
+	PreActive      []string
+	PostActive     []string
+	End            []string
+	IsPrevDisabled bool
+	IsNextDisabled bool
 }
 
 func New(currentPage, pageSize, count int, path, target string) Pagination {
@@ -38,10 +43,10 @@ func New(currentPage, pageSize, count int, path, target string) Pagination {
 }
 
 func generate(maxPage, currentPage int, path, target string) Pagination {
-	var start, preActive, postActive, end []int
+	var start, preActive, postActive, end []string
 
-	prev := getPrev(currentPage)
-	next := getNext(currentPage, maxPage)
+	prevPage := getPrev(currentPage)
+	nextPage := getNext(currentPage, maxPage)
 
 	start = getStart(currentPage)
 	preActive = getPreActive(currentPage)
@@ -49,16 +54,28 @@ func generate(maxPage, currentPage int, path, target string) Pagination {
 	end = getEnd(currentPage, maxPage)
 
 	return Pagination{
-		Prev:        prev,
-		Next:        next,
-		CurrentPage: currentPage,
-		Path:        path,
-		Target:      target,
-		Beginning:   start,
-		PreActive:   preActive,
-		PostActive:  postActive,
-		End:         end,
+		Prev:           strconv.Itoa(prevPage),
+		Next:           strconv.Itoa(nextPage),
+		CurrentPage:    strconv.Itoa(currentPage),
+		Path:           path,
+		Target:         target,
+		Beginning:      start,
+		PreActive:      preActive,
+		PostActive:     postActive,
+		End:            end,
+		IsPrevDisabled: currentPage == 1,
+		IsNextDisabled: currentPage == maxPage,
 	}
+}
+
+func toIntStringSlice(numbers ...int) []string {
+	result := make([]string, 0, len(numbers))
+
+	for _, num := range numbers {
+		result = append(result, strconv.Itoa(num))
+	}
+
+	return result
 }
 
 func getPrev(currentPage int) int {
@@ -77,41 +94,41 @@ func getNext(currentPage, maxPage int) int {
 	return currentPage
 }
 
-func getStart(currentPage int) []int {
+func getStart(currentPage int) []string {
 	if currentPage >= 5 {
-		return []int{1, 2}
+		return []string{"1", "2"}
 	} else if currentPage >= 4 {
-		return []int{1}
+		return []string{"1"}
 	}
 
 	return nil
 }
 
-func getPreActive(currentPage int) []int {
+func getPreActive(currentPage int) []string {
 	if currentPage >= 3 {
-		return []int{currentPage - 2, currentPage - 1}
+		return toIntStringSlice(currentPage-2, currentPage-1)
 	} else if currentPage >= 2 {
-		return []int{currentPage - 1}
+		return toIntStringSlice(currentPage - 1)
 	}
 
 	return nil
 }
 
-func getPostActive(currentPage, maxPage int) []int {
+func getPostActive(currentPage, maxPage int) []string {
 	if currentPage <= maxPage-2 {
-		return []int{currentPage + 1, currentPage + 2}
+		return toIntStringSlice(currentPage+1, currentPage+2)
 	} else if currentPage <= maxPage-1 {
-		return []int{currentPage + 1}
+		return toIntStringSlice(currentPage + 1)
 	}
 
 	return nil
 }
 
-func getEnd(currentPage, maxPage int) []int {
+func getEnd(currentPage, maxPage int) []string {
 	if currentPage <= maxPage-4 {
-		return []int{maxPage - 1, maxPage}
+		return toIntStringSlice(maxPage-1, maxPage)
 	} else if currentPage <= maxPage-3 {
-		return []int{maxPage}
+		return toIntStringSlice(maxPage)
 	}
 
 	return nil

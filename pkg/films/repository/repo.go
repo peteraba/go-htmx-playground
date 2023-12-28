@@ -172,6 +172,7 @@ func (r *FilmRepo) ListFilms(offset, limit int, search string) ([]model.Film, er
 	}
 
 	search = strings.ToLower(search)
+
 	return lo.Filter(films, func(f model.Film, idx int) bool {
 		return strings.Contains(strings.ToLower(f.Title), search)
 	}), nil

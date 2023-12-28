@@ -1,10 +1,25 @@
-<div class="min-h-screen flex">
-  <div class="flex-1" id="movie-list">
+package view
 
-    {{template "templates/films_list" .}}
+import (
+    "github.com/peteraba/go-htmx-playground/pkg/films/model"
+)
 
-  </div>
-  <div class="flex-1">
+templ wrapFilmPage(form templ.Component) {
+    <div class="min-h-screen flex">
+      <div class="flex-1" id="movie-list">
+
+        { children... }
+
+      </div>
+      <div class="flex-1">
+
+        @form
+
+      </div>
+    </div>
+}
+
+templ form() {
     <div class="p-4">
       <h1 class="p-2 text-white text-2xl">Add Film</h1>
 
@@ -47,9 +62,17 @@
           </p>
         </div>
       </form>
-
     </div>
-  </div>
-</div>
+}
 
-<script src="/assets/films.js"></script>
+templ script() {
+    <script src="/assets/films.js"></script>
+}
+
+
+templ FilmsPage(films []model.Film, pagination templ.Component, searchTerm string) {
+    @wrapFilmPage(form()) {
+        @FilmList(films, pagination, searchTerm)
+        @script()
+    }
+}

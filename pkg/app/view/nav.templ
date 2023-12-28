@@ -1,0 +1,54 @@
+package view
+
+type TopNav struct {
+    isHome, isFilms, isDirectors, isColors bool
+}
+
+func NewTopNav(path string) TopNav {
+    return TopNav{
+        isHome: path == "/",
+        isFilms: path == "/films",
+        isDirectors:  path == "/directors",
+        isColors: path == "/colors",
+    }
+}
+
+templ (tn TopNav) Nav() {
+    <div class="navbar bg-base-300 drawer">
+      <div class="flex-1">
+        <a class="btn btn-ghost text-white text-xl" href="/" style="gap:0">go<span class="text-primary p-0">|</span>htmx</a>
+      </div>
+      <div class="flex-none gap-2">
+        <ul class="menu menu-horizontal px-1">
+          <li>
+            <a hx-get="/"
+               hx-replace-url="true"
+               hx-push-url="true"
+               hx-target="#wrapper"
+               hx-swap="innerHTML"
+               class={templ.KV("link-primary", tn.isHome)}>Home</a></li>
+          <li>
+            <a hx-get="/films"
+               hx-replace-url="true"
+               hx-push-url="true"
+               hx-target="#wrapper"
+               hx-swap="innerHTML"
+               class={templ.KV("link-primary", tn.isFilms)}>Films</a></li>
+          <li>
+            <a hx-get="/directors"
+               hx-replace-url="true"
+               hx-push-url="true"
+               hx-target="#wrapper"
+               hx-swap="innerHTML"
+               class={templ.KV("link-primary", tn.isDirectors)}>Directors</a></li>
+          <li>
+            <a hx-get="/colors"
+               hx-replace-url="true"
+               hx-push-url="true"
+               hx-target="#wrapper"
+               hx-swap="innerHTML"
+               class={templ.KV("link-primary", tn.isColors)}>Colors</a></li>
+        </ul>
+      </div>
+    </div>
+}

@@ -1,0 +1,54 @@
+package view
+
+templ htmlWrapper() {
+    <!DOCTYPE html>
+    <html lang="en" data-theme="sunset" id="html">
+    { children... }
+    </html>
+}
+
+script setConstants(url string) {
+    window.baseUrl = url;
+    window.liveReload = true;
+}
+
+templ head(baseUrl string) {
+    <head>
+        <meta charset="UTF-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=0.0"/>
+        <title>go|htmx</title>
+        <link rel="shortcut icon" type="image/jpg" href="/assets/favicon.ico"/>
+        <link href="/assets/daisy.5.3.2.full.min.css" rel="stylesheet" type="text/css"/>
+        <script src="/assets/htmx.1.9.10.min.js" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"></script>
+        <script src="/assets/tailwindcss.3.4.0.min.js"></script>
+        <script src="/assets/cash.8.1.5.min.js"></script>
+        <script defer src="/assets/alpine.3.13.3.min.js"></script>
+        @setConstants(baseUrl)
+        <script src="/assets/layout.js"></script>
+    </head>
+}
+
+templ userMessages() {
+    <div class="toast toast-top toast-end py-20" id="user-messages">
+    </div>
+}
+
+templ body(content string, nav templ.Component) {
+    <body>
+
+    @nav
+
+    <div id="wrapper">
+        @templ.Raw(content)
+    </div>
+
+    </body>
+}
+
+templ Layout(baseUrl, content string, nav templ.Component) {
+    @htmlWrapper() {
+        @head(baseUrl)
+        @body(content, nav)
+    }
+}
