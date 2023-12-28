@@ -4,8 +4,6 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-
-	"github.com/peteraba/go-htmx-playground/pkg/app/view"
 )
 
 const (
@@ -54,36 +52,4 @@ func AcceptHTML(headers map[string][]string) bool {
 	}
 
 	return false
-}
-
-func New() fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		headers := c.GetReqHeaders()
-		if !AcceptHTML(headers) {
-			return c.Next() // nolint: wrapcheck
-		}
-
-		c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
-
-		err := c.Next()
-		if err != nil {
-			return err // nolint: wrapcheck
-		}
-
-		if IsHx(headers) {
-			return nil
-		}
-
-		content := c.Response().Body()
-		c.Response().ResetBody()
-
-		// wrap
-		topNav := view.NewTopNav(c.Path())
-		navComponent := topNav.Nav()
-
-		component := view.Layout(c.BaseURL(), string(content), navComponent)
-		err = component.Render(c.Context(), c.Response().BodyWriter())
-
-		return err
-	}
 }

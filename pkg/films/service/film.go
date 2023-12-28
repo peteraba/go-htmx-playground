@@ -16,8 +16,8 @@ type Film struct {
 	logger *slog.Logger
 }
 
-func NewFilm(repo *repository.FilmRepo, logger *slog.Logger) Film {
-	return Film{
+func NewFilm(repo *repository.FilmRepo, logger *slog.Logger) *Film {
+	return &Film{
 		repo:   repo,
 		logger: logger,
 	}
@@ -49,20 +49,28 @@ func (f Film) Generate(num int) (int, error) {
 	return newCount - prevCount, nil
 }
 
-func (f Film) DeleteByTitle(titles ...string) error {
+func (f Film) DeleteByTitle(titles ...string) (int, error) {
+	oldCount := f.repo.CountFilms("")
+
 	f.repo.DeleteByTitle(titles...)
 
-	return nil
+	newCount := f.repo.CountFilms("")
+
+	return oldCount - newCount, nil
 }
 
 func (f Film) Count(searchTerm string) (int, error) {
 	return f.repo.CountFilms(searchTerm), nil
 }
 
-func (f Film) Truncate() error {
+func (f Film) Truncate() (int, error) {
+	oldCount := f.repo.CountFilms("")
+
 	_ = f.repo.Truncate()
 
-	return nil
+	newCount := f.repo.CountFilms("")
+
+	return oldCount - newCount, nil
 }
 
 func (f Film) List(currentPage, pageSize int, basePath, searchTerm string) ([]model.Film, pagination.Pagination, error) {

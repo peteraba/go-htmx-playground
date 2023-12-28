@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/peteraba/go-htmx-playground/lib/htmx"
+	"github.com/peteraba/go-htmx-playground/lib/log"
 	"github.com/peteraba/go-htmx-playground/lib/pagination"
 	"github.com/peteraba/go-htmx-playground/pkg/films/model"
 	"github.com/peteraba/go-htmx-playground/pkg/films/service"
@@ -17,19 +19,29 @@ import (
 )
 
 type Film struct {
-	logger   *slog.Logger
-	service  service.Film
-	pageSize int
-	notifier *notificationsService.Notifier
+	logger       *slog.Logger
+	service      *service.Film
+	pageSize     int
+	notifier     *notificationsService.Notifier
+	buildVersion string
 }
 
-func NewFilm(filmService service.Film, pageSize int, notifier *notificationsService.Notifier, logger *slog.Logger) Film {
+func NewFilm(filmService *service.Film, pageSize int, notifier *notificationsService.Notifier, logger *slog.Logger, version string) Film {
 	return Film{
-		logger:   logger,
-		service:  filmService,
-		pageSize: pageSize,
-		notifier: notifier,
+		logger:       logger,
+		service:      filmService,
+		pageSize:     pageSize,
+		notifier:     notifier,
+		buildVersion: version,
 	}
+}
+
+func (f Film) getVersion() string {
+	if f.buildVersion == "development" {
+		return time.Now().Format(time.RFC3339Nano)
+	}
+
+	return f.buildVersion
 }
 
 func (f Film) List(c *fiber.Ctx) error {
@@ -79,21 +91,29 @@ func (f Film) DeleteForm(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = f.service.DeleteByTitle(titles...)
+	count, err := f.service.DeleteByTitle(titles...)
 	if err != nil {
 		f.notifier.Error(err.Error(), c.IP())
 
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	return c.Redirect("/titles", http.StatusMovedPermanently)
+	f.notifier.Info(fmt.Sprintf("%d unique films deleted.", count), c.IP())
+
+	return c.Redirect("/films", http.StatusMovedPermanently)
 }
 
 // Delete is a handler which handles truncating films and individual deletes for browsers with JS support enabled.
 func (f Film) Delete(c *fiber.Ctx) error {
+	if c.Query("truncate") == "true" || c.Query("truncate") == "1" {
+		return f.truncate(c)
+	}
+
 	titles, err := f.getFilmsToDelete(c)
 	if err != nil {
-		return f.truncate(c)
+		f.notifier.Error(err.Error(), c.IP())
+
+		return c.SendStatus(http.StatusInternalServerError)
 	}
 
 	return f.deleteTitles(c, titles)
@@ -102,30 +122,41 @@ func (f Film) Delete(c *fiber.Ctx) error {
 func (f Film) deleteTitles(c *fiber.Ctx, titles []string) error {
 	f.logger.Debug("JS support enabled. Deleting films...")
 
-	err := f.service.DeleteByTitle(titles...)
+	count, err := f.service.DeleteByTitle(titles...)
 	if err != nil {
 		f.notifier.Error(err.Error(), c.IP())
 
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	f.notifier.Success(fmt.Sprintf("Films deleted: %d", len(titles)), c.IP())
+	f.logger.Info(fmt.Sprintf("%d unique films deleted.", count))
+	f.notifier.Success(fmt.Sprintf("Films deleted: %d.", count), c.IP())
 
-	return f.list(c, "/titles")
+	return f.list(c, "/films")
 }
 
 // Delete is a handler which handles truncating films and individual deletes for browsers with JS support enabled.
 func (f Film) truncate(c *fiber.Ctx) error {
-	count, _ := f.service.Count("")
-	if count == 0 {
-		f.logger.Debug("No films to delete.")
-		f.notifier.Info("No titles to delete.", c.IP())
-	} else {
-		f.logger.Debug("JS support not enabled. Truncating films...")
-		_ = f.service.Truncate()
+	count, err := f.service.Count("")
+	if err != nil {
+		f.logger.Error("error counting films", log.Err(err))
+		f.notifier.Info(fmt.Sprintf("Error counting films: %s", err), c.IP())
+
+		return f.list(c, "/films")
 	}
 
-	return f.list(c, "/titles")
+	_, err = f.service.Truncate()
+	if err != nil {
+		f.logger.Error("error truncating films", log.Err(err))
+		f.notifier.Error(fmt.Sprintf("Error truncating films: %s", err), c.IP())
+
+		return c.SendStatus(http.StatusInternalServerError)
+	}
+
+	f.notifier.Success(fmt.Sprintf("Films truncated: %d.", count), c.IP())
+	f.logger.Info(fmt.Sprintf("%d unique films truncated.", count))
+
+	return f.list(c, "/films")
 }
 
 type ExpectedPayload struct {
@@ -151,15 +182,15 @@ func (f Film) list(c *fiber.Ctx, basePath string) error {
 
 	films, filmPagination, err := f.service.List(currentPage, f.pageSize, basePath, searchTerm)
 	if err != nil {
-		f.logger.With("err", err).Error("Error while listing films.")
+		f.logger.Error("Error while listing films.", log.Err(err))
 
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	return render(c, films, filmPagination, searchTerm)
+	return f.render(c, films, filmPagination, searchTerm)
 }
 
-func render(c *fiber.Ctx, films []model.Film, filmPagination pagination.Pagination, searchTerm string) error {
+func (f Film) render(c *fiber.Ctx, films []model.Film, filmPagination pagination.Pagination, searchTerm string) error {
 	var component templ.Component
 
 	switch htmx.GetTarget(c.GetReqHeaders()) {
@@ -167,7 +198,7 @@ func render(c *fiber.Ctx, films []model.Film, filmPagination pagination.Paginati
 		component = view.FilmList(films, filmPagination.Template(), searchTerm)
 
 	default:
-		component = view.FilmsPage(films, filmPagination.Template(), searchTerm)
+		component = view.FilmsPage(films, filmPagination.Template(), searchTerm, f.getVersion())
 	}
 
 	return component.Render(c.Context(), c.Response().BodyWriter())

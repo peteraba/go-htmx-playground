@@ -16,8 +16,13 @@ $(function () {
     }
 
     const alert = (type, msg) => {
+        console.debug("alert", type, msg);
+
         const alert = $(`<p class="alert alert-${type}"><span>${msg}</span></p>`);
         alert.appendTo(messages);
+
+        console.log(messages);
+        console.log(alert);
 
         setTimeout(() => {alert.detach()}, 5000);
     }

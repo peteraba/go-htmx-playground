@@ -2,19 +2,17 @@ package main
 
 import (
 	"embed"
-	"io"
 	"log/slog"
 	"net/http"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"github.com/gofiber/fiber/v2/middleware/idempotency"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	slogfiber "github.com/samber/slog-fiber"
 
-	"github.com/peteraba/go-htmx-playground/lib/htmx"
+	"github.com/peteraba/go-htmx-playground/pkg/app/middleware"
 	colorsHandler "github.com/peteraba/go-htmx-playground/pkg/colors/handler"
 	filmsHandler "github.com/peteraba/go-htmx-playground/pkg/films/handler"
 	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
@@ -24,14 +22,15 @@ import (
 	notificationsService "github.com/peteraba/go-htmx-playground/pkg/notifications/service"
 )
 
+var Version = "development" // nolint:gochecknoglobals
+
 //go:embed assets/*
 var assetsFS embed.FS
 
 func main() {
 	const maxListLength = 10
 
-	// logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	notifier := notificationsService.NewNotifier(logger)
 	//nolint: exhaustruct
 	app := fiber.New(fiber.Config{
@@ -55,12 +54,12 @@ func main() {
 
 func setupMiddleware(app *fiber.App, logger *slog.Logger) *slog.Logger {
 	app.Use(recover.New())
-	app.Use(htmx.New())
+	app.Use(middleware.Htmx(Version))
 
 	//nolint: exhaustruct
 	app.Get("/metrics", monitor.New(monitor.Config{Title: "go|htmx Metrics Page"}))
 	app.Use(slogfiber.New(logger))
-	app.Use(idempotency.New())
+	// app.Use(idempotency.New())
 
 	return logger
 }
@@ -86,7 +85,7 @@ func addFilmHandlers(app *fiber.App, logger *slog.Logger, notifier *notification
 	repo := repository.NewFilmRepo(logger, maxListLength)
 
 	fService := filmsService.NewFilm(repo, logger)
-	fHandler := filmsHandler.NewFilm(fService, maxListLength, notifier, logger)
+	fHandler := filmsHandler.NewFilm(fService, maxListLength, notifier, logger, Version)
 	app.Get("/films", fHandler.List)
 	app.Post("/films", fHandler.Create)
 	app.Post("/films-delete", fHandler.DeleteForm)

@@ -1,6 +1,8 @@
 package view
 
 import (
+    "strings"
+
     "github.com/peteraba/go-htmx-playground/pkg/films/model"
 )
 
@@ -44,35 +46,38 @@ templ form() {
                hx-target="#movie-list"
                hx-swap="innerHTML"
                class="btn btn-accent btn-outline">Gen 2</a>
+
             <a hx-post="/generators/films/10"
                hx-replace-url="false"
                hx-target="#movie-list"
                hx-swap="innerHTML"
                class="btn btn-primary btn-outline">Gen 10</a>
+
             <a hx-post="/generators/films/25"
                hx-replace-url="false"
                hx-target="#movie-list"
                hx-swap="innerHTML"
                class="btn btn-secondary btn-outline">Gen 25</a>
-            <a hx-delete="/films"
+
+            <a hx-delete="/films?truncate=true"
                hx-replace-url="false"
                hx-target="#movie-list"
                hx-swap="innerHTML"
-               class="btn btn-error btn-outline">Delete All</a>
+               class="btn btn-error btn-outline">Truncate</a>
           </p>
         </div>
       </form>
     </div>
 }
 
-templ script() {
-    <script src="/assets/films.js"></script>
+templ script(build string) {
+    <script src={ strings.Join([]string{"/assets/films.js?", build}, "") }></script>
 }
 
 
-templ FilmsPage(films []model.Film, pagination templ.Component, searchTerm string) {
+templ FilmsPage(films []model.Film, pagination templ.Component, searchTerm, build string) {
     @wrapFilmPage(form()) {
         @FilmList(films, pagination, searchTerm)
-        @script()
+        @script(build)
     }
 }

@@ -50,7 +50,7 @@ templ FilmList(films []model.Film, pagination templ.Component, searchTerm string
                     <tr>
                       <th class="w-12">
                         <label>
-                          <input type="checkbox" class="checkbox film-check" name="films[]" value="{ film.Title }" />
+                          <input type="checkbox" class="checkbox film-check" name="films[]" value={ film.Title } />
                         </label>
                       </th>
                       <td>{ film.Title }</td>

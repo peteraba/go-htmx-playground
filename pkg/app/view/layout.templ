@@ -1,5 +1,9 @@
 package view
 
+import (
+    "strings"
+)
+
 templ htmlWrapper() {
     <!DOCTYPE html>
     <html lang="en" data-theme="sunset" id="html">
@@ -12,7 +16,7 @@ script setConstants(url string) {
     window.liveReload = true;
 }
 
-templ head(baseUrl string) {
+templ head(baseUrl, buildVersion string) {
     <head>
         <meta charset="UTF-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -25,19 +29,17 @@ templ head(baseUrl string) {
         <script src="/assets/cash.8.1.5.min.js"></script>
         <script defer src="/assets/alpine.3.13.3.min.js"></script>
         @setConstants(baseUrl)
-        <script src="/assets/layout.js"></script>
+        <script src={ strings.Join([]string{"/assets/layout.js?", buildVersion}, "") }></script>
     </head>
-}
-
-templ userMessages() {
-    <div class="toast toast-top toast-end py-20" id="user-messages">
-    </div>
 }
 
 templ body(content string, nav templ.Component) {
     <body>
 
     @nav
+
+    <div class="toast toast-top toast-end py-20" id="user-messages">
+    </div>
 
     <div id="wrapper">
         @templ.Raw(content)
@@ -46,9 +48,9 @@ templ body(content string, nav templ.Component) {
     </body>
 }
 
-templ Layout(baseUrl, content string, nav templ.Component) {
+templ Layout(baseUrl, content string, nav templ.Component, buildVersion string) {
     @htmlWrapper() {
-        @head(baseUrl)
+        @head(baseUrl, buildVersion)
         @body(content, nav)
     }
 }

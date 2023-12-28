@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/peteraba/go-htmx-playground/lib/log"
 	"github.com/peteraba/go-htmx-playground/pkg/notifications/model"
 	"github.com/peteraba/go-htmx-playground/pkg/notifications/service"
 )
@@ -44,21 +45,24 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 		sseChannel <- model.Notification{Type: model.RELOAD, Message: ""}
 
 		for {
+			s.logger.Info(fmt.Sprintf("waiting for message: len() = %d", len(sseChannel)))
 			sseEvent = <-sseChannel
+			s.logger.Info(fmt.Sprintf("received message: len() = %d", len(sseChannel)))
 
 			bolB, err = json.Marshal(sseEvent)
 			if err != nil {
-				s.logger.With("err", err).Error("Error while marshaling JSON.")
+				s.logger.Error("Error while marshaling JSON.", log.Err(err))
 
 				return
 			}
 
 			size, err = fmt.Fprintf(w, "data: %s\n\n", string(bolB))
 			if err != nil {
-				s.logger.With("err", err).Error("Error while writing buffer.")
+				s.logger.Error("Error while writing buffer.", log.Err(err))
 
 				return
 			}
+
 			s.logger.With("type", sseEvent.Type, "bytes", size).Info("Message sent.")
 
 			err = w.Flush()
@@ -66,7 +70,7 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 				// Refreshing page in web browser will establish a new
 				// SSE connection, but only (the last) one is alive, so
 				// dead connections must be closed here.
-				s.logger.With("err", err).Error("Error while flushing. Closing http connection.")
+				s.logger.Error("Error while flushing. Closing http connection.", log.Err(err))
 
 				return
 			}

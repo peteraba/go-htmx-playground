@@ -11,6 +11,8 @@ import "io"
 import "bytes"
 
 import (
+	"strings"
+
 	"github.com/peteraba/go-htmx-playground/pkg/films/model"
 )
 
@@ -112,11 +114,11 @@ func form() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a hx-delete=\"/films\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-error btn-outline\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a hx-delete=\"/films?truncate=true\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-error btn-outline\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var8 := `Delete All`
+		templ_7745c5c3_Var8 := `Truncate`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -132,7 +134,7 @@ func form() templ.Component {
 	})
 }
 
-func script() templ.Component {
+func script(build string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -145,7 +147,15 @@ func script() templ.Component {
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script src=\"/assets/films.js\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(strings.Join([]string{"/assets/films.js?", build}, "")))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -165,7 +175,7 @@ func script() templ.Component {
 	})
 }
 
-func FilmsPage(films []model.Film, pagination templ.Component, searchTerm string) templ.Component {
+func FilmsPage(films []model.Film, pagination templ.Component, searchTerm, build string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -192,7 +202,7 @@ func FilmsPage(films []model.Film, pagination templ.Component, searchTerm string
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = script().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = script(build).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -91,7 +91,15 @@ func FilmList(films []model.Film, pagination templ.Component, searchTerm string)
 			}
 		} else {
 			for _, film := range films {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<tr><th class=\"w-12\"><label><input type=\"checkbox\" class=\"checkbox film-check\" name=\"films[]\" value=\"{ film.Title }\"></label></th><td>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<tr><th class=\"w-12\"><label><input type=\"checkbox\" class=\"checkbox film-check\" name=\"films[]\" value=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(film.Title))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></label></th><td>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

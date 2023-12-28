@@ -16,6 +16,7 @@ $(function () {
 
     filmsCheckAll.on("click", (e) => {
         const checked = e.currentTarget.checked;
+        console.info(`checked: ${checked}`);
         filmChecks.each((idx) => {
             $(filmChecks[idx]).attr("checked", checked);
         });
