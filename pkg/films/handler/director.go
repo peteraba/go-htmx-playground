@@ -38,7 +38,7 @@ func (d Director) List(c *fiber.Ctx) error {
 		return fmt.Errorf("failed to list directors, err: %w", err)
 	}
 
-	listPagination := pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path(), "#wrapper")
+	listPagination := pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path(), nil, "#wrapper")
 
 	component := view.DirectorsPage(directors, listPagination.Template())
 

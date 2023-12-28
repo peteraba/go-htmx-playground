@@ -144,7 +144,7 @@ var (
 	errLimitTooSmall = errors.New("limit too small")
 )
 
-func (r *FilmRepo) ListFilms(offset, limit int, search string) ([]model.Film, error) {
+func (r *FilmRepo) ListFilms(offset, limit int, searchTerm string) ([]model.Film, error) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
@@ -167,22 +167,33 @@ func (r *FilmRepo) ListFilms(offset, limit int, search string) ([]model.Film, er
 		films = r.fetchFilmsByTitles(r.filmTitles[offset : offset+limit])
 	}
 
-	if search == "" {
+	if searchTerm == "" {
 		return films, nil
 	}
 
-	search = strings.ToLower(search)
+	searchTerm = strings.ToLower(searchTerm)
 
 	return lo.Filter(films, func(f model.Film, idx int) bool {
-		return strings.Contains(strings.ToLower(f.Title), search)
+		return strings.Contains(strings.ToLower(f.Title), searchTerm)
 	}), nil
 }
 
-func (r *FilmRepo) CountFilms() int {
+func (r *FilmRepo) CountFilms(searchTerm string) int {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
-	return len(r.films)
+	if searchTerm == "" {
+		return len(r.films)
+	}
+
+	searchTerm = strings.ToLower(searchTerm)
+
+	films := r.fetchFilmsByTitles(r.filmTitles)
+	filteredFilms := lo.Filter(films, func(f model.Film, idx int) bool {
+		return strings.Contains(strings.ToLower(f.Title), searchTerm)
+	})
+
+	return len(filteredFilms)
 }
 
 var errDirectorNotFound = errors.New("director was not found")

@@ -90,9 +90,13 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 		films    []model.Film
 		maxLimit int
 	}
+	type args struct {
+		searchTerm string
+	}
 	tests := []struct {
 		name   string
 		fields fields
+		args   args
 		want   int
 	}{
 		{
@@ -100,6 +104,9 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 			fields: fields{
 				maxLimit: 10,
 				films:    nil,
+			},
+			args: args{
+				searchTerm: "",
 			},
 			want: 0,
 		},
@@ -110,6 +117,9 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 					{Title: "Forrest Gump", Director: "Ethan White"},
 				},
 				maxLimit: 10,
+			},
+			args: args{
+				searchTerm: "",
 			},
 			want: 1,
 		},
@@ -122,6 +132,9 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 				},
 				maxLimit: 10,
 			},
+			args: args{
+				searchTerm: "",
+			},
 			want: 2,
 		},
 		{
@@ -133,7 +146,24 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 				},
 				maxLimit: 10,
 			},
+			args: args{
+				searchTerm: "",
+			},
 			want: 2,
+		},
+		{
+			name: "directors with multiple films and search term",
+			fields: fields{
+				films: []model.Film{
+					{Title: "Forrest Gump", Director: "Ethan White"},
+					{Title: "Die Hard", Director: "Ethan White"},
+				},
+				maxLimit: 10,
+			},
+			args: args{
+				searchTerm: "orrest",
+			},
+			want: 1,
 		},
 	}
 	for _, ttt := range tests {
@@ -142,7 +172,7 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 			t.Parallel()
 
 			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
-			if got := r.CountFilms(); got != tt.want {
+			if got := r.CountFilms(tt.args.searchTerm); got != tt.want {
 				t.Errorf("CountFilms() = %v, want %v", got, tt.want)
 			}
 		})
@@ -226,7 +256,7 @@ func TestFilmRepo_Insert(t *testing.T) {
 			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
 			_ = r.Insert(tt.args.newFilms...)
 
-			assert.Equal(t, tt.wantFilmCount, r.CountFilms())
+			assert.Equal(t, tt.wantFilmCount, r.CountFilms(""))
 			assert.Equal(t, tt.wantDirectorCount, r.CountDirectors())
 		})
 	}
@@ -438,15 +468,22 @@ func TestFilmRepo_Truncate(t *testing.T) {
 		films    []model.Film
 		maxLimit int
 	}
+	type args struct {
+		searchTerm string
+	}
 	tests := []struct {
 		name   string
 		fields fields
+		args   args
 	}{
 		{
 			name: "empty",
 			fields: fields{
 				maxLimit: 10,
 				films:    nil,
+			},
+			args: args{
+				searchTerm: "",
 			},
 		},
 		{
@@ -458,6 +495,9 @@ func TestFilmRepo_Truncate(t *testing.T) {
 				},
 				maxLimit: 10,
 			},
+			args: args{
+				searchTerm: "",
+			},
 		},
 	}
 	for _, ttt := range tests {
@@ -468,8 +508,7 @@ func TestFilmRepo_Truncate(t *testing.T) {
 			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
 
 			r.Truncate()
-			assert.Equal(t, 0, r.CountFilms())
-			assert.Equal(t, 0, r.CountFilms())
+			assert.Equal(t, 0, r.CountFilms(tt.args.searchTerm))
 		})
 	}
 }

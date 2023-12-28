@@ -18,6 +18,7 @@ import (
 	colorsHandler "github.com/peteraba/go-htmx-playground/pkg/colors/handler"
 	filmsHandler "github.com/peteraba/go-htmx-playground/pkg/films/handler"
 	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
+	filmsService "github.com/peteraba/go-htmx-playground/pkg/films/service"
 	homeHandler "github.com/peteraba/go-htmx-playground/pkg/home/handler"
 	notificationsHandler "github.com/peteraba/go-htmx-playground/pkg/notifications/handler"
 	notificationsService "github.com/peteraba/go-htmx-playground/pkg/notifications/service"
@@ -84,7 +85,8 @@ func addColorHandlers(app *fiber.App) {
 func addFilmHandlers(app *fiber.App, logger *slog.Logger, notifier *notificationsService.Notifier, maxListLength int) {
 	repo := repository.NewFilmRepo(logger, maxListLength)
 
-	fHandler := filmsHandler.NewFilm(logger, repo, notifier, maxListLength)
+	fService := filmsService.NewFilm(repo, logger)
+	fHandler := filmsHandler.NewFilm(fService, maxListLength, notifier, logger)
 	app.Get("/films", fHandler.List)
 	app.Post("/films", fHandler.Create)
 	app.Post("/films-delete", fHandler.DeleteForm)

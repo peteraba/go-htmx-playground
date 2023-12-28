@@ -16,6 +16,7 @@ func TestNew(t *testing.T) {
 		pageSize    int
 		count       int
 		path        string
+		params      map[string]string
 		target      string
 	}
 	tests := []struct {
@@ -106,7 +107,7 @@ func TestNew(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			if got := pagination.New(tt.args.currentPage, tt.args.pageSize, tt.args.count, tt.args.path, "foo"); !reflect.DeepEqual(got, tt.want) {
+			if got := pagination.New(tt.args.currentPage, tt.args.pageSize, tt.args.count, tt.args.path, tt.args.params, "foo"); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("New() = %v, want %v", got, tt.want)
 			}
 		})

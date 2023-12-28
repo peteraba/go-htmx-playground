@@ -1,8 +1,11 @@
 package pagination
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 type Pagination struct {
@@ -19,12 +22,13 @@ type Pagination struct {
 	IsNextDisabled bool
 }
 
-func New(currentPage, pageSize, count int, path, target string) Pagination {
-	if strings.Contains(path, "?") {
-		path += "&page="
-	} else {
-		path += "?page="
-	}
+func New(currentPage, pageSize, count int, path string, params map[string]string, target string) Pagination {
+	s := lo.MapToSlice(params, func(k, v string) string {
+		return fmt.Sprintf("%s=%s", k, v)
+	})
+	s = append(s, "page=")
+
+	path = fmt.Sprintf("%s?%s", path, strings.Join(s, "&"))
 
 	maxPage := count / pageSize
 	if count%pageSize > 0 {
