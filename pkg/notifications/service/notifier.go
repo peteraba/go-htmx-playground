@@ -26,6 +26,19 @@ func (n *Notifier) Sub(ip string) chan model.Notification {
 	return sseChannel
 }
 
+// nolint: varnamelen
+func (n *Notifier) Unsub(ip string, sseChannel chan model.Notification) {
+	for i, channel := range n.sseChannelsByIP[ip] {
+		if channel != sseChannel {
+			continue
+		}
+
+		n.sseChannelsByIP[ip] = append(n.sseChannelsByIP[ip][:i], n.sseChannelsByIP[ip][i+1:]...)
+
+		close(channel)
+	}
+}
+
 func (n *Notifier) broadcast(nType model.NotificationType, message string) {
 	for _, sseChannels := range n.sseChannelsByIP {
 		for _, sseChannel := range sseChannels {

@@ -19,19 +19,19 @@ import (
 )
 
 type Film struct {
-	logger       *slog.Logger
 	service      *service.Film
 	pageSize     int
 	notifier     *notificationsService.Notifier
+	logger       *slog.Logger
 	buildVersion string
 }
 
 func NewFilm(filmService *service.Film, pageSize int, notifier *notificationsService.Notifier, logger *slog.Logger, version string) Film {
 	return Film{
-		logger:       logger,
 		service:      filmService,
 		pageSize:     pageSize,
 		notifier:     notifier,
+		logger:       logger,
 		buildVersion: version,
 	}
 }
@@ -56,11 +56,13 @@ func (f Film) Create(c *fiber.Ctx) error {
 
 	err := newFilm.Validate()
 	if err != nil {
+		f.logger.Error("Error while validating new film.", log.Err(err))
 		f.notifier.Error(err.Error(), c.IP())
 
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
+	f.logger.With("title", newFilm.Title, "director", newFilm.Director).Info("Added new film.")
 	f.notifier.Success(fmt.Sprintf("`%s` added.", newFilm.Title), c.IP())
 
 	return f.list(c, "/films")
@@ -74,11 +76,13 @@ func (f Film) Generate(c *fiber.Ctx) error {
 
 	generated, err := f.service.Generate(randomNumber)
 	if err != nil {
+		f.logger.Error("Error while generating films.", log.Err(err))
 		f.notifier.Error(err.Error(), c.IP())
 
 		return c.SendStatus(http.StatusBadRequest)
 	}
 
+	f.logger.Info(fmt.Sprintf("%d unique films generated.", generated))
 	f.notifier.Info(fmt.Sprintf("%d unique films generated.", generated), c.IP())
 
 	return f.list(c, "/films")
@@ -93,11 +97,13 @@ func (f Film) DeleteForm(c *fiber.Ctx) error {
 
 	count, err := f.service.DeleteByTitle(titles...)
 	if err != nil {
+		f.logger.Error("Error while deleting films.", log.Err(err))
 		f.notifier.Error(err.Error(), c.IP())
 
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
+	f.logger.Info(fmt.Sprintf("%d unique films deleted.", count))
 	f.notifier.Info(fmt.Sprintf("%d unique films deleted.", count), c.IP())
 
 	return c.Redirect("/films", http.StatusMovedPermanently)
@@ -111,6 +117,7 @@ func (f Film) Delete(c *fiber.Ctx) error {
 
 	titles, err := f.getFilmsToDelete(c)
 	if err != nil {
+		f.logger.Error("Error while getting films to delete.", log.Err(err))
 		f.notifier.Error(err.Error(), c.IP())
 
 		return c.SendStatus(http.StatusInternalServerError)
@@ -120,10 +127,9 @@ func (f Film) Delete(c *fiber.Ctx) error {
 }
 
 func (f Film) deleteTitles(c *fiber.Ctx, titles []string) error {
-	f.logger.Debug("JS support enabled. Deleting films...")
-
 	count, err := f.service.DeleteByTitle(titles...)
 	if err != nil {
+		f.logger.Error("Error while deleting films.", log.Err(err))
 		f.notifier.Error(err.Error(), c.IP())
 
 		return c.SendStatus(http.StatusInternalServerError)
@@ -153,8 +159,8 @@ func (f Film) truncate(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	f.notifier.Success(fmt.Sprintf("Films truncated: %d.", count), c.IP())
 	f.logger.Info(fmt.Sprintf("%d unique films truncated.", count))
+	f.notifier.Success(fmt.Sprintf("Films truncated: %d.", count), c.IP())
 
 	return f.list(c, "/films")
 }

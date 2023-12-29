@@ -1,25 +1,31 @@
 package handler
 
 import (
-	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/peteraba/go-htmx-playground/lib/log"
 	"github.com/peteraba/go-htmx-playground/lib/pagination"
 	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
 	"github.com/peteraba/go-htmx-playground/pkg/films/view"
+	notificationsService "github.com/peteraba/go-htmx-playground/pkg/notifications/service"
 )
 
 type Director struct {
 	repo     *repository.FilmRepo
 	pageSize int
+	notifier *notificationsService.Notifier
+	logger   *slog.Logger
 }
 
-func NewDirector(repo *repository.FilmRepo, pageSize int) Director {
+func NewDirector(repo *repository.FilmRepo, pageSize int, notifier *notificationsService.Notifier, logger *slog.Logger) Director {
 	return Director{
 		repo:     repo,
 		pageSize: pageSize,
+		notifier: notifier,
+		logger:   logger,
 	}
 }
 
@@ -33,9 +39,10 @@ func (d Director) List(c *fiber.Ctx) error {
 
 	directors, err := d.repo.ListDirectors(offset, d.pageSize)
 	if err != nil {
-		c.Status(http.StatusInternalServerError)
+		d.logger.Error("Error while listing directors.", log.Err(err))
+		d.notifier.Error(err.Error(), c.IP())
 
-		return fmt.Errorf("failed to list directors, err: %w", err)
+		return c.SendStatus(http.StatusInternalServerError)
 	}
 
 	listPagination := pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path(), nil, "#wrapper")

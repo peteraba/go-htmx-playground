@@ -25,6 +25,50 @@ func NewSSE(logger *slog.Logger, notifier *service.Notifier) SSE {
 	}
 }
 
+func (s SSE) handleEvent(w *bufio.Writer, sseEvent model.Notification) bool {
+	var (
+		bolB []byte
+		size int
+		err  error
+	)
+
+	s.logger.Info("1")
+
+	bolB, err = json.Marshal(sseEvent)
+	if err != nil {
+		s.logger.Error("Error while marshaling JSON.", log.Err(err))
+
+		return false
+	}
+
+	s.logger.Info("2")
+
+	size, err = fmt.Fprintf(w, "data: %s\n\n", string(bolB))
+	if err != nil {
+		s.logger.Error("Error while writing buffer.", log.Err(err))
+
+		return false
+	}
+
+	s.logger.Info("3")
+	s.logger.With("type", sseEvent.Type, "bytes", size).Info("Message sent.")
+
+	err = w.Flush()
+	if err != nil {
+		// Refreshing page in web browser will establish a new
+		// SSE connection, but only (the last) one is alive, so
+		// dead connections must be closed here.
+		s.logger.Error("Error while flushing. Closing HTTP connection.", log.Err(err))
+
+		return false
+	}
+
+	s.logger.Info("4")
+	s.logger.Info("Messages flushed.")
+
+	return true
+}
+
 func (s SSE) ServeMessages(c *fiber.Ctx) error {
 	c.Set("Content-Type", "text/event-stream")
 	c.Set("Cache-Control", "no-cache")
@@ -34,44 +78,20 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 	sseChannel := s.notifier.Sub(c.IP())
 
 	c.Context().SetBodyStreamWriter(func(w *bufio.Writer) {
+		defer func() {
+			s.logger.With("ip", c.IP()).Info("SSE connection closed.")
+			s.notifier.Unsub(c.IP(), sseChannel)
+		}()
+
 		s.logger.Info("Broadcasting messages is ready.")
-		var (
-			sseEvent model.Notification
-			bolB     []byte
-			size     int
-			err      error
-		)
+		s.logger.Info("A")
 
 		sseChannel <- model.Notification{Type: model.RELOAD, Message: ""}
 
+		s.logger.Info("B")
+
 		for {
-			s.logger.Info(fmt.Sprintf("waiting for message: len() = %d", len(sseChannel)))
-			sseEvent = <-sseChannel
-			s.logger.Info(fmt.Sprintf("received message: len() = %d", len(sseChannel)))
-
-			bolB, err = json.Marshal(sseEvent)
-			if err != nil {
-				s.logger.Error("Error while marshaling JSON.", log.Err(err))
-
-				return
-			}
-
-			size, err = fmt.Fprintf(w, "data: %s\n\n", string(bolB))
-			if err != nil {
-				s.logger.Error("Error while writing buffer.", log.Err(err))
-
-				return
-			}
-
-			s.logger.With("type", sseEvent.Type, "bytes", size).Info("Message sent.")
-
-			err = w.Flush()
-			if err != nil {
-				// Refreshing page in web browser will establish a new
-				// SSE connection, but only (the last) one is alive, so
-				// dead connections must be closed here.
-				s.logger.Error("Error while flushing. Closing http connection.", log.Err(err))
-
+			if !s.handleEvent(w, <-sseChannel) {
 				return
 			}
 		}

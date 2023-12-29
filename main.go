@@ -92,7 +92,7 @@ func addFilmHandlers(app *fiber.App, logger *slog.Logger, notifier *notification
 	app.Delete("/films", fHandler.Delete)
 	app.Post("/generators/films/:num<min(5);max(50)>", fHandler.Generate)
 
-	dHandler := filmsHandler.NewDirector(repo, maxListLength)
+	dHandler := filmsHandler.NewDirector(repo, maxListLength, notifier, logger)
 	app.Get("/directors", dHandler.List)
 }
 
