@@ -83,6 +83,7 @@ task install
 - [ ] Support for microservice-like deployment (IDEA)
 - [ ] Arch changes
   - [x] Use templ
+  - [x] Use urfave/cli to support multiple commands
   - [ ] Use alpineJS or similar
 - [ ] Harden the application
   - [ ] Testing race conditions
