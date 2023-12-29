@@ -31,15 +31,14 @@ func Htmx(buildVersion string) fiber.Handler {
 		c.Response().ResetBody()
 
 		// wrap
-		topNav := view.NewTopNav(c.Path())
-		navComponent := topNav.Nav()
+		topNav := view.Nav()
 
 		version := buildVersion
 		if buildVersion == "development" {
 			version = time.Now().Format(time.RFC3339Nano)
 		}
 
-		component := view.Layout(c.BaseURL(), string(content), navComponent, version)
+		component := view.Layout(c.BaseURL(), string(content), topNav, version)
 		err = component.Render(c.Context(), c.Response().BodyWriter())
 
 		return err

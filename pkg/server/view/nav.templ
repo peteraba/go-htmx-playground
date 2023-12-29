@@ -1,19 +1,6 @@
 package view
 
-type TopNav struct {
-    isHome, isFilms, isDirectors, isColors bool
-}
-
-func NewTopNav(path string) TopNav {
-    return TopNav{
-        isHome: path == "/",
-        isFilms: path == "/films",
-        isDirectors:  path == "/directors",
-        isColors: path == "/colors",
-    }
-}
-
-templ (tn TopNav) Nav() {
+templ Nav() {
     <div class="navbar bg-base-300 drawer">
         <div class="flex-1">
             <a

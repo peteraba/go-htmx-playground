@@ -10,20 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
-type TopNav struct {
-	isHome, isFilms, isDirectors, isColors bool
-}
-
-func NewTopNav(path string) TopNav {
-	return TopNav{
-		isHome:      path == "/",
-		isFilms:     path == "/films",
-		isDirectors: path == "/directors",
-		isColors:    path == "/colors",
-	}
-}
-
-func (tn TopNav) Nav() templ.Component {
+func Nav() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -104,9 +91,9 @@ func (tn TopNav) Nav() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Var9 := `
-        document.body.addEventListener("htmx:pushedIntoHistory", function(event) {
-            Alpine.store("navUrl", event.detail.path);
-        });
+    document.body.addEventListener("htmx:pushedIntoHistory", function(event) {
+        Alpine.store("navUrl", event.detail.path);
+    });
     `
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
