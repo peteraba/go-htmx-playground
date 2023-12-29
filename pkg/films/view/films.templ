@@ -1,8 +1,6 @@
 package view
 
 import (
-    "strings"
-
     "github.com/peteraba/go-htmx-playground/pkg/films/model"
 )
 
@@ -70,10 +68,6 @@ templ form() {
     </div>
 }
 
-templ script(build string) {
-    <script src={ strings.Join([]string{"/assets/films.js?", build}, "") }></script>
-}
-
 templ wrapFilmList(searchTerm string) {
     <div class="p-4">
         <h1 class="p-2 text-white text-2xl">List of Movies</h1>
@@ -91,17 +85,26 @@ templ wrapFilmList(searchTerm string) {
                 value={ searchTerm } />
         </p>
 
-        { children... }
+        <div id="movie-list">
+            { children... }
+        </div>
     </div>
 }
 
 templ FilmList(films []model.Film, pagination templ.Component) {
+    <script>
+    function toggleAll(isChecked) {
+        document.querySelectorAll("#movie-list .film-check").forEach((elem) => {
+            elem.checked = isChecked;
+        })
+    }
+    </script>
     <form action="/films-delete"
         method="post"
         hx-delete="/films"
         hx-target="#movie-list"
         hx-swap="innerHTML"
-        id="movie-list"
+        x-data="{}"
         >
         <div class="overflow-x-auto">
             <table id="film-list" class="table table-zebra table-fixed">
@@ -109,9 +112,7 @@ templ FilmList(films []model.Film, pagination templ.Component) {
                 <thead>
                     <tr>
                         <th class="w-12">
-                            <label class="hidden">
-                            <input type="checkbox" class="checkbox" id="check-all" />
-                            </label>
+                            <input type="checkbox" class="checkbox" x-on:click="toggleAll($el.checked)" />
                         </th>
                         <th>Title</th>
                         <th>Director</th>
@@ -157,6 +158,5 @@ templ FilmsPage(films []model.Film, pagination templ.Component, searchTerm, buil
         @wrapFilmList(searchTerm) {
             @FilmList(films, pagination)
         }
-        @script(build)
     }
 }
