@@ -83,7 +83,7 @@ func (f Film) Generate(c *fiber.Ctx) error {
 	}
 
 	f.logger.Info(fmt.Sprintf("%d unique films generated.", generated))
-	f.notifier.Info(fmt.Sprintf("%d unique films generated.", generated), c.IP())
+	f.notifier.Success(fmt.Sprintf("%d unique films generated.", generated), c.IP())
 
 	return f.list(c, "/films")
 }
