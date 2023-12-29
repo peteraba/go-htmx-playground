@@ -209,7 +209,7 @@ func FilmList(films []model.Film, pagination templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><form action=\"/films-delete\" method=\"post\" hx-delete=\"/films\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" x-data=\"{}\"><div class=\"overflow-x-auto\"><table id=\"film-list\" class=\"table table-zebra table-fixed\"><!--")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><form action=\"/films-delete\" method=\"post\" hx-delete=\"/films\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" x-data><div class=\"overflow-x-auto\"><table id=\"film-list\" class=\"table table-zebra table-fixed\"><!--")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

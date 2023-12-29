@@ -6,7 +6,7 @@ import (
 
 templ htmlWrapper() {
     <!DOCTYPE html>
-    <html lang="en" data-theme="sunset" id="html">
+    <html x-data lang="en">
     { children... }
     </html>
 }
@@ -30,11 +30,16 @@ templ head(baseUrl, buildVersion string) {
         <script defer src="/assets/alpine.3.13.3.min.js" integrity="sha384-Rpe/8orFUm5Q1GplYBHxbuA8Az8O8C5sAoOsdbRWkqPjKFaxPgGZipj4zeHL7lxX"></script>
         @setConstants(baseUrl)
         <script src={ strings.Join([]string{"/assets/layout.js?", buildVersion}, "") }></script>
+        <script>
+            document.addEventListener("alpine:init", () => {
+                Alpine.store('theme', localStorage.getItem('theme'))
+            });
+        </script>
     </head>
 }
 
 templ body(content string, nav templ.Component) {
-    <body>
+    <body x-data :data-theme="$store.theme">
 
     @nav
 

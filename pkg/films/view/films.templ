@@ -104,7 +104,7 @@ templ FilmList(films []model.Film, pagination templ.Component) {
         hx-delete="/films"
         hx-target="#movie-list"
         hx-swap="innerHTML"
-        x-data="{}"
+        x-data
         >
         <div class="overflow-x-auto">
             <table id="film-list" class="table table-zebra table-fixed">
