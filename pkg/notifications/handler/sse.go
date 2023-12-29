@@ -81,9 +81,7 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 		sseChannel <- model.Notification{Type: model.RELOAD, Message: ""}
 
 		for {
-			if !s.handleEvent(w, <-sseChannel) {
-				return
-			}
+			s.handleEvent(w, <-sseChannel)
 		}
 	})
 
