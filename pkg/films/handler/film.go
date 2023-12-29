@@ -201,7 +201,7 @@ func (f Film) render(c *fiber.Ctx, films []model.Film, filmPagination pagination
 
 	switch htmx.GetTarget(c.GetReqHeaders()) {
 	case "movie-list", "#movie-list":
-		component = view.FilmList(films, filmPagination.Template(), searchTerm)
+		component = view.FilmList(films, filmPagination.Template())
 
 	default:
 		component = view.FilmsPage(films, filmPagination.Template(), searchTerm, f.getVersion())

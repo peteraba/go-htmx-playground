@@ -8,7 +8,7 @@ import (
 
 templ wrapFilmPage(form templ.Component) {
     <div class="min-h-screen flex">
-      <div class="flex-1" id="movie-list">
+      <div class="flex-1">
 
         { children... }
 
@@ -74,10 +74,89 @@ templ script(build string) {
     <script src={ strings.Join([]string{"/assets/films.js?", build}, "") }></script>
 }
 
+templ wrapFilmList(searchTerm string) {
+    <div class="p-4">
+        <h1 class="p-2 text-white text-2xl">List of Movies</h1>
+        <p class="p-1">
+            <input
+                type="text"
+                name="q"
+                method="get"
+                hx-get="/films"
+                hx-trigger="keyup changed delay:1000ms"
+                hx-target="#movie-list"
+                hx-swap="innerHTML"
+                placeholder="Search..."
+                class="input input-bordered w-full"
+                value={ searchTerm } />
+        </p>
+
+        { children... }
+    </div>
+}
+
+templ FilmList(films []model.Film, pagination templ.Component) {
+    <form action="/films-delete"
+        method="post"
+        hx-delete="/films"
+        hx-target="#movie-list"
+        hx-swap="innerHTML"
+        id="movie-list"
+        >
+        <div class="overflow-x-auto">
+            <table id="film-list" class="table table-zebra table-fixed">
+                <!-- head -->
+                <thead>
+                    <tr>
+                        <th class="w-12">
+                            <label class="hidden">
+                            <input type="checkbox" class="checkbox" id="check-all" />
+                            </label>
+                        </th>
+                        <th>Title</th>
+                        <th>Director</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                if len(films) == 0 {
+                    <tr>
+                        <td colspan="3">Empty list</td>
+                    </tr>
+                }
+                for _, film := range films {
+                    <tr>
+                        <th class="w-12">
+                            <label>
+                                <input type="checkbox" class="checkbox film-check" name="films[]" value={ film.Title } />
+                            </label>
+                        </th>
+                        <td>{ film.Title }</td>
+                        <td>{ film.Director }</td>
+                    </tr>
+                }
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="float-none">
+            <div class="float-left">
+                @pagination
+            </div>
+            <div class="float-right p-1 py-4">
+                <p><button type="submit" class="btn btn-error btn-outline" id="delete-selected">Delete Selected</button></p>
+            </div>
+        </div>
+
+    </form>
+}
 
 templ FilmsPage(films []model.Film, pagination templ.Component, searchTerm, build string) {
     @wrapFilmPage(form()) {
-        @FilmList(films, pagination, searchTerm)
+        @wrapFilmList(searchTerm) {
+            @FilmList(films, pagination)
+        }
         @script(build)
     }
 }
