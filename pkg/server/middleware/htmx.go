@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/peteraba/go-htmx-playground/lib/htmx"
-	"github.com/peteraba/go-htmx-playground/pkg/app/view"
+	"github.com/peteraba/go-htmx-playground/pkg/server/view"
 )
 
 func Htmx(buildVersion string) fiber.Handler {
