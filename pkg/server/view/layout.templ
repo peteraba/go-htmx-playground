@@ -32,7 +32,8 @@ templ head(baseUrl, buildVersion string) {
         <script src={ strings.Join([]string{"/assets/layout.js?", buildVersion}, "") }></script>
         <script>
             document.addEventListener("alpine:init", () => {
-                Alpine.store('theme', localStorage.getItem('theme'))
+                Alpine.store("theme", localStorage.getItem("theme"))
+                Alpine.store("navUrl", window.location.pathname)
             });
         </script>
     </head>

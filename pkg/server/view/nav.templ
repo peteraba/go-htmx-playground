@@ -16,17 +16,25 @@ func NewTopNav(path string) TopNav {
 templ (tn TopNav) Nav() {
     <div class="navbar bg-base-300 drawer">
       <div class="flex-1">
-        <a class="btn btn-ghost text-white text-xl" href="/" style="gap:0">go<span class="text-primary p-0">|</span>htmx</a>
+        <a
+            class="btn btn-ghost text-white text-xl"
+            href="/"
+            style="gap:0"
+            hx-get="/"
+            hx-push-url="true"
+            hx-target="#wrapper"
+            >go<span class="text-primary p-0">|</span>htmx</a>
       </div>
       <div class="flex-none gap-2">
-        <ul class="menu menu-horizontal px-1" id="topnav">
+        <ul class="menu menu-horizontal px-1" x-data>
           <li>
             <a hx-get="/"
                hx-replace-url="true"
                hx-push-url="true"
                hx-target="#wrapper"
                hx-swap="innerHTML"
-               class={templ.KV("link-primary", tn.isHome)}>Home</a></li>
+               :class="$store.navUrl === '/' ? 'link-primary' : ''"
+               >Home</a></li>
 
           <li>
             <a hx-get="/films"
@@ -34,7 +42,8 @@ templ (tn TopNav) Nav() {
                hx-push-url="true"
                hx-target="#wrapper"
                hx-swap="innerHTML"
-               class={templ.KV("link-primary", tn.isFilms)}>Films</a></li>
+               :class="$store.navUrl === '/films' ? 'link-primary' : ''"
+               >Films</a></li>
 
           <li>
             <a hx-get="/directors"
@@ -42,7 +51,8 @@ templ (tn TopNav) Nav() {
                hx-push-url="true"
                hx-target="#wrapper"
                hx-swap="innerHTML"
-               class={templ.KV("link-primary", tn.isDirectors)}>Directors</a></li>
+               :class="$store.navUrl === '/directors' ? 'link-primary' : ''"
+               >Directors</a></li>
 
           <li>
             <a hx-get="/colors"
@@ -50,9 +60,15 @@ templ (tn TopNav) Nav() {
                hx-push-url="true"
                hx-target="#wrapper"
                hx-swap="innerHTML"
-               class={templ.KV("link-primary", tn.isColors)}>Colors</a></li>
+               :class="$store.navUrl === '/colors' ? 'link-primary' : ''"
+               >Colors</a></li>
 
         </ul>
       </div>
     </div>
+    <script>
+        document.body.addEventListener("htmx:pushedIntoHistory", function(event) {
+            Alpine.store("navUrl", event.detail.path);
+        });
+    </script>
 }

@@ -145,7 +145,8 @@ func head(baseUrl, buildVersion string) templ.Component {
 		}
 		templ_7745c5c3_Var9 := `
             document.addEventListener("alpine:init", () => {
-                Alpine.store('theme', localStorage.getItem('theme'))
+                Alpine.store("theme", localStorage.getItem("theme"))
+                Alpine.store("navUrl", window.location.pathname)
             });
         `
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
