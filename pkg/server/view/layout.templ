@@ -22,12 +22,12 @@ templ head(baseUrl, buildVersion string) {
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <meta name="viewport" content="width=device-width, initial-scale=0.0"/>
         <title>go|htmx</title>
-        <link rel="shortcut icon" type="image/jpg" href="/assets/favicon.ico"/>
-        <link href="/assets/daisy.5.3.2.full.min.css" rel="stylesheet" type="text/css" />
+        <link rel="shortcut icon" type="image/jpg" href="/assets/favicon.ico" integrity="sha384-JPFHMR89EqYwTWMcQVCxEMIDsNEETMhK+ARr0kTybAYlbIMEH+/w7RHu4GFHyYDd" />
+        <link href="/assets/daisy.5.3.2.full.min.css" rel="stylesheet" type="text/css" integrity="sha384-fqIwHNoBh10Z0edbqJ81ZgDaswjJocJnysAJbL5EWJboVMa7w/HoeATOziyYD6C0" />
         <script src="/assets/htmx.1.9.10.min.js" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"></script>
-        <script src="/assets/tailwindcss.3.4.0.min.js"></script>
-        <script src="/assets/cash.8.1.5.min.js"></script>
-        <script defer src="/assets/alpine.3.13.3.min.js"></script>
+        <script src="/assets/tailwindcss.3.4.0.min.js" integrity="sha384-nZmqDzhF4C7PSkoowmbJy82B0r9ntFzUL46bvnFUE/fRbN5N7v67KmuMSXVAQJO0"></script>
+        <script src="/assets/cash.8.1.5.min.js" integrity="sha384-sneJ8IAzK7XeryU1YdEpAKSjiDCFZct7PbBhhggDMnkDMoiXbxD+k72hbdfSSeTx"></script>
+        <script defer src="/assets/alpine.3.13.3.min.js" integrity="sha384-Rpe/8orFUm5Q1GplYBHxbuA8Az8O8C5sAoOsdbRWkqPjKFaxPgGZipj4zeHL7lxX"></script>
         @setConstants(baseUrl)
         <script src={ strings.Join([]string{"/assets/layout.js?", buildVersion}, "") }></script>
     </head>

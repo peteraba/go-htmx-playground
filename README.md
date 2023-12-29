@@ -73,6 +73,7 @@ task install
   - [x] [Recover](https://docs.gofiber.io/api/middleware/recover)
 - [x] Code quality
   - [x] golangci-lint
+  - [x] Refactoring for more modular code
 - [x] Colors module
 - [x] Notifications
   - [x] htmx-style (SSE?)
@@ -80,6 +81,9 @@ task install
   - [ ] htmx-style (polling?)
   - [ ] Load/reload on notification
 - [ ] Support for microservice-like deployment (IDEA)
+- [ ] Arch changes
+  - [x] Use templ
+  - [ ] Use alpineJS or similar
 - [ ] Harden the application
   - [ ] Testing race conditions
   - [ ] Fuzz testing
@@ -108,6 +112,7 @@ task install
     - [ ] Easy releases (IDEA)
     - [ ] Tooling to enforce semantic versioning
   - [ ] [AnalyzeMyRepo](https://analyzemyrepo.com/analyze/teamhanko/hanko)
+  - [x] Integirty sums added for assets
 
 # Notes
 JS goodies:

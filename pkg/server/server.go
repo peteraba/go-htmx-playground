@@ -1,7 +1,10 @@
 package server
 
 import (
+	"crypto/sha512"
 	"embed"
+	"encoding/base64"
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -39,4 +42,34 @@ func AddStaticHandler(app *fiber.App) {
 		NotFoundFile: "404.html",
 		MaxAge:       maxAge,
 	}))
+}
+
+func ListAssets(withIntegrity bool) error {
+	list, err := assetsFS.ReadDir("assets")
+	if err != nil {
+		return fmt.Errorf("failed to read assets directory: %w", err)
+	}
+
+	for _, file := range list {
+		if withIntegrity {
+			content, err := assetsFS.ReadFile(fmt.Sprintf("assets/%s", file.Name()))
+			if err != nil {
+				return fmt.Errorf("failed to read file %s: %w", file.Name(), err)
+			}
+
+			sum := sha512.Sum384(content)
+			sumSlice := make([]byte, sha512.Size384)
+
+			for i := 0; i < sha512.Size384; i++ {
+				sumSlice[i] = sum[i]
+			}
+
+			encoded := base64.StdEncoding.EncodeToString(sumSlice)
+			fmt.Printf("%s %s\n", file.Name(), encoded) // nolint: forbidigo
+		} else {
+			fmt.Println(file.Name()) // nolint: forbidigo
+		}
+	}
+
+	return nil
 }

@@ -26,7 +26,22 @@ tasks:
   run:
     deps: [build]
     cmds:
-      - ./build/application
+      - ./build/application server
+
+  version:
+    deps: [build]
+    cmds:
+      - ./build/application version
+
+  assets:
+    deps: [build]
+    cmds:
+      - ./build/application assets -i
+
+  help:
+    deps: [build]
+    cmds:
+      - ./build/application --help
 
   install:
     cmds:

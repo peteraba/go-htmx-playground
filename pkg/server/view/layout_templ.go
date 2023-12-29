@@ -78,7 +78,7 @@ func head(baseUrl, buildVersion string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link rel=\"shortcut icon\" type=\"image/jpg\" href=\"/assets/favicon.ico\"><link href=\"/assets/daisy.5.3.2.full.min.css\" rel=\"stylesheet\" type=\"text/css\"><script src=\"/assets/htmx.1.9.10.min.js\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link rel=\"shortcut icon\" type=\"image/jpg\" href=\"/assets/favicon.ico\" integrity=\"sha384-JPFHMR89EqYwTWMcQVCxEMIDsNEETMhK+ARr0kTybAYlbIMEH+/w7RHu4GFHyYDd\"><link href=\"/assets/daisy.5.3.2.full.min.css\" rel=\"stylesheet\" type=\"text/css\" integrity=\"sha384-fqIwHNoBh10Z0edbqJ81ZgDaswjJocJnysAJbL5EWJboVMa7w/HoeATOziyYD6C0\"><script src=\"/assets/htmx.1.9.10.min.js\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -87,7 +87,7 @@ func head(baseUrl, buildVersion string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><script src=\"/assets/tailwindcss.3.4.0.min.js\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><script src=\"/assets/tailwindcss.3.4.0.min.js\" integrity=\"sha384-nZmqDzhF4C7PSkoowmbJy82B0r9ntFzUL46bvnFUE/fRbN5N7v67KmuMSXVAQJO0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -96,7 +96,7 @@ func head(baseUrl, buildVersion string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><script src=\"/assets/cash.8.1.5.min.js\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><script src=\"/assets/cash.8.1.5.min.js\" integrity=\"sha384-sneJ8IAzK7XeryU1YdEpAKSjiDCFZct7PbBhhggDMnkDMoiXbxD+k72hbdfSSeTx\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -105,7 +105,7 @@ func head(baseUrl, buildVersion string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><script defer src=\"/assets/alpine.3.13.3.min.js\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><script defer src=\"/assets/alpine.3.13.3.min.js\" integrity=\"sha384-Rpe/8orFUm5Q1GplYBHxbuA8Az8O8C5sAoOsdbRWkqPjKFaxPgGZipj4zeHL7lxX\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
