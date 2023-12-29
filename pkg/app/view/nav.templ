@@ -19,7 +19,7 @@ templ (tn TopNav) Nav() {
         <a class="btn btn-ghost text-white text-xl" href="/" style="gap:0">go<span class="text-primary p-0">|</span>htmx</a>
       </div>
       <div class="flex-none gap-2">
-        <ul class="menu menu-horizontal px-1">
+        <ul class="menu menu-horizontal px-1" id="topnav">
           <li>
             <a hx-get="/"
                hx-replace-url="true"
@@ -27,6 +27,7 @@ templ (tn TopNav) Nav() {
                hx-target="#wrapper"
                hx-swap="innerHTML"
                class={templ.KV("link-primary", tn.isHome)}>Home</a></li>
+
           <li>
             <a hx-get="/films"
                hx-replace-url="true"
@@ -34,6 +35,7 @@ templ (tn TopNav) Nav() {
                hx-target="#wrapper"
                hx-swap="innerHTML"
                class={templ.KV("link-primary", tn.isFilms)}>Films</a></li>
+
           <li>
             <a hx-get="/directors"
                hx-replace-url="true"
@@ -41,6 +43,7 @@ templ (tn TopNav) Nav() {
                hx-target="#wrapper"
                hx-swap="innerHTML"
                class={templ.KV("link-primary", tn.isDirectors)}>Directors</a></li>
+
           <li>
             <a hx-get="/colors"
                hx-replace-url="true"
@@ -48,6 +51,7 @@ templ (tn TopNav) Nav() {
                hx-target="#wrapper"
                hx-swap="innerHTML"
                class={templ.KV("link-primary", tn.isColors)}>Colors</a></li>
+
         </ul>
       </div>
     </div>

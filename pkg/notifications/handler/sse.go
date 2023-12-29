@@ -32,16 +32,12 @@ func (s SSE) handleEvent(w *bufio.Writer, sseEvent model.Notification) bool {
 		err  error
 	)
 
-	s.logger.Info("1")
-
 	bolB, err = json.Marshal(sseEvent)
 	if err != nil {
 		s.logger.Error("Error while marshaling JSON.", log.Err(err))
 
 		return false
 	}
-
-	s.logger.Info("2")
 
 	size, err = fmt.Fprintf(w, "data: %s\n\n", string(bolB))
 	if err != nil {
@@ -50,7 +46,6 @@ func (s SSE) handleEvent(w *bufio.Writer, sseEvent model.Notification) bool {
 		return false
 	}
 
-	s.logger.Info("3")
 	s.logger.With("type", sseEvent.Type, "bytes", size).Info("Message sent.")
 
 	err = w.Flush()
@@ -63,7 +58,6 @@ func (s SSE) handleEvent(w *bufio.Writer, sseEvent model.Notification) bool {
 		return false
 	}
 
-	s.logger.Info("4")
 	s.logger.Info("Messages flushed.")
 
 	return true
@@ -80,15 +74,11 @@ func (s SSE) ServeMessages(c *fiber.Ctx) error {
 	c.Context().SetBodyStreamWriter(func(w *bufio.Writer) {
 		defer func() {
 			s.logger.With("ip", c.IP()).Info("SSE connection closed.")
-			s.notifier.Unsub(c.IP(), sseChannel)
 		}()
 
 		s.logger.Info("Broadcasting messages is ready.")
-		s.logger.Info("A")
 
 		sseChannel <- model.Notification{Type: model.RELOAD, Message: ""}
-
-		s.logger.Info("B")
 
 		for {
 			if !s.handleEvent(w, <-sseChannel) {

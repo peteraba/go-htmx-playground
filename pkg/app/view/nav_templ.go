@@ -63,7 +63,7 @@ func (tn TopNav) Nav() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div><div class=\"flex-none gap-2\"><ul class=\"menu menu-horizontal px-1\"><li>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div><div class=\"flex-none gap-2\"><ul class=\"menu menu-horizontal px-1\" id=\"topnav\"><li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
