@@ -92,7 +92,12 @@ func Nav() templ.Component {
 		}
 		templ_7745c5c3_Var9 := `
     document.body.addEventListener("htmx:pushedIntoHistory", function(event) {
-        Alpine.store("navUrl", event.detail.path);
+        let path = event.detail.path;
+        if (path.indexOf("?") > -1) {
+            path = path.substring(0, path.indexOf("?"))
+        }
+
+        Alpine.store("navUrl", path);
     });
     `
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)

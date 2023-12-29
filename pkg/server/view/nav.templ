@@ -58,7 +58,12 @@ templ Nav() {
     </div>
     <script>
     document.body.addEventListener("htmx:pushedIntoHistory", function(event) {
-        Alpine.store("navUrl", event.detail.path);
+        let path = event.detail.path;
+        if (path.indexOf("?") > -1) {
+            path = path.substring(0, path.indexOf("?"))
+        }
+
+        Alpine.store("navUrl", path);
     });
     </script>
 }

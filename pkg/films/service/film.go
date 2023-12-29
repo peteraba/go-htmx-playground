@@ -83,7 +83,10 @@ func (f Film) List(currentPage, pageSize int, basePath, searchTerm string) ([]mo
 
 	filmCount := f.repo.CountFilms(searchTerm)
 
-	params := map[string]string{"q": searchTerm}
+	params := make(map[string]string)
+	if searchTerm != "" {
+		params["q"] = searchTerm
+	}
 
 	filmPagination := pagination.New(currentPage, pageSize, filmCount, basePath, params, "#movie-list")
 

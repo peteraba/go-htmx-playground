@@ -24,7 +24,6 @@ tasks:
       - go build -o ./build/application ./*.go
 
   run:
-    deps: [build]
     cmds:
       - ./build/application server
 
