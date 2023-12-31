@@ -117,7 +117,7 @@ func head(baseUrl, buildVersion string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(strings.Join([]string{"/assets/layout.js?", buildVersion}, "")))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(strings.Join([]string{"/assets/sse.js?", buildVersion}, "")))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

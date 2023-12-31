@@ -28,7 +28,7 @@ templ head(baseUrl, buildVersion string) {
         <script src="/assets/tailwindcss.3.4.0.min.js" integrity="sha384-nZmqDzhF4C7PSkoowmbJy82B0r9ntFzUL46bvnFUE/fRbN5N7v67KmuMSXVAQJO0"></script>
         <script defer src="/assets/alpine.3.13.3.min.js" integrity="sha384-Rpe/8orFUm5Q1GplYBHxbuA8Az8O8C5sAoOsdbRWkqPjKFaxPgGZipj4zeHL7lxX"></script>
         @setConstants(baseUrl)
-        <script src={ strings.Join([]string{"/assets/layout.js?", buildVersion}, "") }></script>
+        <script src={ strings.Join([]string{"/assets/sse.js?", buildVersion}, "") }></script>
         <script>
             document.addEventListener("alpine:init", () => {
                 Alpine.store("theme", localStorage.getItem("theme"))
