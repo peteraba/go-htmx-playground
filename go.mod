@@ -11,6 +11,7 @@ require (
 	github.com/samber/slog-fiber v1.9.0
 	github.com/stretchr/testify v1.8.4
 	github.com/urfave/cli/v2 v2.27.0
+	github.com/valyala/fasthttp v1.50.0
 	github.com/zitadel/zitadel-go/v3 v3.0.0-next.2
 )
 
@@ -39,7 +40,6 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/tinylib/msgp v1.1.8 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.50.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	github.com/zitadel/logging v0.5.0 // indirect
@@ -47,7 +47,7 @@ require (
 	github.com/zitadel/schema v1.3.0 // indirect
 	go.opentelemetry.io/otel v1.21.0 // indirect
 	go.opentelemetry.io/otel/trace v1.21.0 // indirect
-	golang.org/x/crypto v0.16.0 // indirect
+	golang.org/x/crypto v0.17.0 // indirect
 	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848 // indirect
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/oauth2 v0.15.0 // indirect
