@@ -11,8 +11,8 @@ import (
 	"github.com/peteraba/go-htmx-playground/lib/auth"
 	"github.com/peteraba/go-htmx-playground/pkg/colors"
 	"github.com/peteraba/go-htmx-playground/pkg/dashboard"
-	"github.com/peteraba/go-htmx-playground/pkg/films"
 	"github.com/peteraba/go-htmx-playground/pkg/home"
+	"github.com/peteraba/go-htmx-playground/pkg/movies"
 	"github.com/peteraba/go-htmx-playground/pkg/notifications"
 	notificationsService "github.com/peteraba/go-htmx-playground/pkg/notifications/service"
 	"github.com/peteraba/go-htmx-playground/pkg/server"
@@ -24,7 +24,7 @@ const maxListLength = 10
 
 // nolint: exhaustruct, gomnd, varnamelen, wrapcheck, funlen
 func main() {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 
 	app := &cli.App{
 		Commands: []*cli.Command{
@@ -110,7 +110,7 @@ func main() {
 					notifications.Setup(app, logger, notifier)
 					home.Setup(app, logger)
 					colors.Setup(app)
-					films.Setup(app, logger, notifier, maxListLength, Version)
+					movies.Setup(app, logger, notifier, maxListLength, Version)
 
 					// protected routes
 					dashboard.Setup(app, requireAuthHandler, logger)

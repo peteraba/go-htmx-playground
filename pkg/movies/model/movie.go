@@ -12,16 +12,16 @@ func init() {
 	validate = validator.New(validator.WithRequiredStructEnabled())
 }
 
-type Film struct {
+type Movie struct {
 	Title    string `fake:"{moviename}" validate:"required"`
 	Director string `fake:"{name}"      validate:"required"`
 }
 
-func (f Film) Clone() Film {
-	return Film{Title: f.Title, Director: f.Director}
+func (f Movie) Clone() Movie {
+	return Movie{Title: f.Title, Director: f.Director}
 }
 
-func (f Film) Validate() error {
+func (f Movie) Validate() error {
 	//nolint: wrapcheck
 	return validate.Struct(&f)
 }

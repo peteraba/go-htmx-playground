@@ -25,13 +25,13 @@ templ Nav(isAuthenticated bool) {
                 </li>
 
                 <li>
-                    <a hx-get="/films"
+                    <a hx-get="/movies"
                         hx-replace-url="true"
                         hx-push-url="true"
                         hx-target="#wrapper"
                         hx-swap="innerHTML"
-                        :class="$store.navUrl === '/films' ? 'link-primary' : ''"
-                        >Films</a>
+                        :class="$store.navUrl === '/movies' ? 'link-primary' : ''"
+                        >Movies</a>
                 </li>
 
                 <li>

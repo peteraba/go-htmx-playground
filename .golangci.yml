@@ -1,4 +1,6 @@
 linters-settings:
+  cyclop:
+    max-complexity: 12
   gci:
     sections:
       - standard # Standard section: captures all standard packages.

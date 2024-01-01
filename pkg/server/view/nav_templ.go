@@ -59,11 +59,11 @@ func Nav(isAuthenticated bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li><li><a hx-get=\"/films\" hx-replace-url=\"true\" hx-push-url=\"true\" hx-target=\"#wrapper\" hx-swap=\"innerHTML\" :class=\"$store.navUrl === &#39;/films&#39; ? &#39;link-primary&#39; : &#39;&#39;\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li><li><a hx-get=\"/movies\" hx-replace-url=\"true\" hx-push-url=\"true\" hx-target=\"#wrapper\" hx-swap=\"innerHTML\" :class=\"$store.navUrl === &#39;/movies&#39; ? &#39;link-primary&#39; : &#39;&#39;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var6 := `Films`
+		templ_7745c5c3_Var6 := `Movies`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

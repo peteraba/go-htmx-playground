@@ -49,13 +49,12 @@ task install
 - [ ] Interop improvements
   - [ ] [CORS](https://docs.gofiber.io/api/middleware/cors) (IDEA)
   - [ ] JSON response from endpoints
-    - [ ] GET /
+    - [x] GET /movies
+    - [x] POST /movies
+    - [ ] DELETE /movies
+    - [ ] POST /film-generators
+    - [x] GET /directors
     - [ ] GET /colors
-    - [ ] GET /films
-    - [ ] POST /films
-    - [ ] DELETE /colors
-    - [ ] POST /generators/films/:num<min(5);max(50)>
-    - [ ] GET /directors
     - [ ] OpenAPI 3.x definition
 - [ ] Ops improvements
   - [x] Better logging ([slog](https://github.com/samber/slog-fiber))

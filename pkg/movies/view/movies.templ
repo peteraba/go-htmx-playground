@@ -1,10 +1,12 @@
 package view
 
 import (
-    "github.com/peteraba/go-htmx-playground/pkg/films/model"
+	"github.com/gosimple/slug"
+
+    "github.com/peteraba/go-htmx-playground/pkg/movies/model"
 )
 
-templ wrapFilmPage(form templ.Component) {
+templ wrapMoviePage(form templ.Component) {
     <div class="min-h-screen flex">
         <div class="flex-1">
 
@@ -21,14 +23,14 @@ templ wrapFilmPage(form templ.Component) {
 
 templ form() {
     <div class="p-4">
-        <h1 class="p-2 text-white text-2xl">Add Film</h1>
+        <h1 class="p-2 text-white text-2xl">Add Movie</h1>
 
-        <form hx-post="/films" hx-target="#wrapper" hx-swap="innerHTML" hx-indicator="#spinner">
+        <form hx-post="/movies" hx-target="#wrapper" hx-swap="innerHTML" hx-indicator="#spinner">
             <p class="p-1">
-                <input type="text" placeholder="Title" name="title" id="film-title" class="input input-bordered w-full" />
+                <input type="text" placeholder="Title" name="title" id="movie-title" class="input input-bordered w-full" />
             </p>
             <p class="p-1">
-                <input type="text" placeholder="Director" name="director" id="film-director" class="input input-bordered w-full" />
+                <input type="text" placeholder="Director" name="director" id="movie-director" class="input input-bordered w-full" />
             </p>
 
             <div class="float-none p-2">
@@ -39,25 +41,25 @@ templ form() {
                     </button>
                 </p>
                 <p class="float-right">
-                    <a hx-post="/generators/films/2"
+                    <a hx-post="/generators/movies/2"
                         hx-replace-url="false"
                         hx-target="#movie-list"
                         hx-swap="innerHTML"
                         class="btn btn-accent btn-outline">Gen 2</a>
 
-                    <a hx-post="/generators/films/10"
+                    <a hx-post="/generators/movies/10"
                         hx-replace-url="false"
                         hx-target="#movie-list"
                         hx-swap="innerHTML"
                         class="btn btn-primary btn-outline">Gen 10</a>
 
-                    <a hx-post="/generators/films/25"
+                    <a hx-post="/generators/movies/25"
                         hx-replace-url="false"
                         hx-target="#movie-list"
                         hx-swap="innerHTML"
                         class="btn btn-secondary btn-outline">Gen 25</a>
 
-                    <a hx-delete="/films?truncate=true"
+                    <a hx-delete="/movies?truncate=true"
                         hx-replace-url="false"
                         hx-target="#movie-list"
                         hx-swap="innerHTML"
@@ -68,7 +70,7 @@ templ form() {
     </div>
 }
 
-templ wrapFilmList(searchTerm string) {
+templ wrapMovieList(searchTerm string) {
     <div class="p-4">
         <h1 class="p-2 text-white text-2xl">List of Movies</h1>
         <p class="p-1">
@@ -76,7 +78,7 @@ templ wrapFilmList(searchTerm string) {
                 type="text"
                 name="q"
                 method="get"
-                hx-get="/films"
+                hx-get="/movies"
                 hx-trigger="keyup changed delay:1000ms"
                 hx-target="#movie-list"
                 hx-swap="innerHTML"
@@ -91,23 +93,22 @@ templ wrapFilmList(searchTerm string) {
     </div>
 }
 
-templ FilmList(films []model.Film, pagination templ.Component) {
+templ MovieList(movies []model.Movie, pagination templ.Component) {
     <script>
     function toggleAll(isChecked) {
-        document.querySelectorAll("#movie-list .film-check").forEach((elem) => {
+        document.querySelectorAll("#movie-list .movie-check").forEach((elem) => {
             elem.checked = isChecked;
         })
     }
     </script>
-    <form action="/films-delete"
+    <form action="/movies-delete"
         method="post"
-        hx-delete="/films"
+        hx-delete="/movies"
         hx-target="#movie-list"
         hx-swap="innerHTML"
-        x-data
-        >
+        x-data>
         <div class="overflow-x-auto">
-            <table id="film-list" class="table table-zebra table-fixed">
+            <table id="movie-list" class="table table-zebra table-fixed">
                 <!-- head -->
                 <thead>
                     <tr>
@@ -119,20 +120,20 @@ templ FilmList(films []model.Film, pagination templ.Component) {
                     </tr>
                 </thead>
                 <tbody>
-                if len(films) == 0 {
+                if len(movies) == 0 {
                     <tr>
                         <td colspan="3">Empty list</td>
                     </tr>
                 }
-                for _, film := range films {
+                for _, movie := range movies {
                     <tr>
                         <th class="w-12">
                             <label>
-                                <input type="checkbox" class="checkbox film-check" name="films[]" value={ film.Title } />
+                                <input type="checkbox" class="checkbox movie-check" name="movies[]" value={ slug.Make(movie.Title) } />
                             </label>
                         </th>
-                        <td>{ film.Title }</td>
-                        <td>{ film.Director }</td>
+                        <td>{ movie.Title }</td>
+                        <td>{ movie.Director }</td>
                     </tr>
                 }
                 </tbody>
@@ -151,10 +152,10 @@ templ FilmList(films []model.Film, pagination templ.Component) {
     </form>
 }
 
-templ FilmsPage(films []model.Film, pagination templ.Component, searchTerm, build string) {
-    @wrapFilmPage(form()) {
-        @wrapFilmList(searchTerm) {
-            @FilmList(films, pagination)
+templ MoviesPage(movies []model.Movie, pagination templ.Component, searchTerm, build string) {
+    @wrapMoviePage(form()) {
+        @wrapMovieList(searchTerm) {
+            @MovieList(movies, pagination)
         }
     }
 }

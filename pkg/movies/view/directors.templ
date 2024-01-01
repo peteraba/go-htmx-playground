@@ -3,7 +3,7 @@ package view
 import (
     "strings"
 
-    "github.com/peteraba/go-htmx-playground/pkg/films/model"
+    "github.com/peteraba/go-htmx-playground/pkg/movies/model"
 )
 
 templ wrap() {
@@ -20,7 +20,7 @@ templ wrap() {
 templ list(directors []model.Director) {
     <h1 class="p-2 text-white text-2xl">List of Directors</h1>
     <div class="overflow-x-auto">
-        <table id="film-list" class="table table-zebra table-fixed">
+        <table id="movie-list" class="table table-zebra table-fixed">
             <!-- head -->
             <thead>
                 <tr>

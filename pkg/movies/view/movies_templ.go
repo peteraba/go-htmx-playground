@@ -11,10 +11,12 @@ import "io"
 import "bytes"
 
 import (
-	"github.com/peteraba/go-htmx-playground/pkg/films/model"
+	"github.com/gosimple/slug"
+
+	"github.com/peteraba/go-htmx-playground/pkg/movies/model"
 )
 
-func wrapFilmPage(form templ.Component) templ.Component {
+func wrapMoviePage(form templ.Component) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -71,12 +73,12 @@ func form() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var3 := `Add Film`
+		templ_7745c5c3_Var3 := `Add Movie`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><form hx-post=\"/films\" hx-target=\"#wrapper\" hx-swap=\"innerHTML\" hx-indicator=\"#spinner\"><p class=\"p-1\"><input type=\"text\" placeholder=\"Title\" name=\"title\" id=\"film-title\" class=\"input input-bordered w-full\"></p><p class=\"p-1\"><input type=\"text\" placeholder=\"Director\" name=\"director\" id=\"film-director\" class=\"input input-bordered w-full\"></p><div class=\"float-none p-2\"><p class=\"float-left\"><button type=\"submit\" class=\"btn btn-outline btn-wide\"><span class=\"htmx-indicator loading loading-spinner hidden\" id=\"spinner\" role=\"status\" aria-hidden=\"true\"></span> ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><form hx-post=\"/movies\" hx-target=\"#wrapper\" hx-swap=\"innerHTML\" hx-indicator=\"#spinner\"><p class=\"p-1\"><input type=\"text\" placeholder=\"Title\" name=\"title\" id=\"movie-title\" class=\"input input-bordered w-full\"></p><p class=\"p-1\"><input type=\"text\" placeholder=\"Director\" name=\"director\" id=\"movie-director\" class=\"input input-bordered w-full\"></p><div class=\"float-none p-2\"><p class=\"float-left\"><button type=\"submit\" class=\"btn btn-outline btn-wide\"><span class=\"htmx-indicator loading loading-spinner hidden\" id=\"spinner\" role=\"status\" aria-hidden=\"true\"></span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -85,7 +87,7 @@ func form() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></p><p class=\"float-right\"><a hx-post=\"/generators/films/2\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-accent btn-outline\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></p><p class=\"float-right\"><a hx-post=\"/generators/movies/2\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-accent btn-outline\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -94,7 +96,7 @@ func form() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a hx-post=\"/generators/films/10\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-primary btn-outline\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a hx-post=\"/generators/movies/10\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-primary btn-outline\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -103,7 +105,7 @@ func form() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a hx-post=\"/generators/films/25\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-secondary btn-outline\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a hx-post=\"/generators/movies/25\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-secondary btn-outline\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -112,7 +114,7 @@ func form() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a hx-delete=\"/films?truncate=true\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-error btn-outline\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a hx-delete=\"/movies?truncate=true\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-error btn-outline\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -132,7 +134,7 @@ func form() templ.Component {
 	})
 }
 
-func wrapFilmList(searchTerm string) templ.Component {
+func wrapMovieList(searchTerm string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -154,7 +156,7 @@ func wrapFilmList(searchTerm string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><p class=\"p-1\"><input type=\"text\" name=\"q\" method=\"get\" hx-get=\"/films\" hx-trigger=\"keyup changed delay:1000ms\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" placeholder=\"Search...\" class=\"input input-bordered w-full\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><p class=\"p-1\"><input type=\"text\" name=\"q\" method=\"get\" hx-get=\"/movies\" hx-trigger=\"keyup changed delay:1000ms\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" placeholder=\"Search...\" class=\"input input-bordered w-full\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -181,7 +183,7 @@ func wrapFilmList(searchTerm string) templ.Component {
 	})
 }
 
-func FilmList(films []model.Film, pagination templ.Component) templ.Component {
+func MovieList(movies []model.Movie, pagination templ.Component) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -200,7 +202,7 @@ func FilmList(films []model.Film, pagination templ.Component) templ.Component {
 		}
 		templ_7745c5c3_Var12 := `
     function toggleAll(isChecked) {
-        document.querySelectorAll("#movie-list .film-check").forEach((elem) => {
+        document.querySelectorAll("#movie-list .movie-check").forEach((elem) => {
             elem.checked = isChecked;
         })
     }
@@ -209,7 +211,7 @@ func FilmList(films []model.Film, pagination templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><form action=\"/films-delete\" method=\"post\" hx-delete=\"/films\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" x-data><div class=\"overflow-x-auto\"><table id=\"film-list\" class=\"table table-zebra table-fixed\"><!--")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><form action=\"/movies-delete\" method=\"post\" hx-delete=\"/movies\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" x-data><div class=\"overflow-x-auto\"><table id=\"movie-list\" class=\"table table-zebra table-fixed\"><!--")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -240,7 +242,7 @@ func FilmList(films []model.Film, pagination templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(films) == 0 {
+		if len(movies) == 0 {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<tr><td colspan=\"3\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -255,12 +257,12 @@ func FilmList(films []model.Film, pagination templ.Component) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		for _, film := range films {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<tr><th class=\"w-12\"><label><input type=\"checkbox\" class=\"checkbox film-check\" name=\"films[]\" value=\"")
+		for _, movie := range movies {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<tr><th class=\"w-12\"><label><input type=\"checkbox\" class=\"checkbox movie-check\" name=\"movies[]\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(film.Title))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(slug.Make(movie.Title)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -269,9 +271,9 @@ func FilmList(films []model.Film, pagination templ.Component) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var17 string
-			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(film.Title)
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/films/view/films.templ`, Line: 133, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/movies/view/movies.templ`, Line: 134, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -282,9 +284,9 @@ func FilmList(films []model.Film, pagination templ.Component) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var18 string
-			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(film.Director)
+			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(movie.Director)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/films/view/films.templ`, Line: 134, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/movies/view/movies.templ`, Line: 135, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -323,7 +325,7 @@ func FilmList(films []model.Film, pagination templ.Component) templ.Component {
 	})
 }
 
-func FilmsPage(films []model.Film, pagination templ.Component, searchTerm, build string) templ.Component {
+func MoviesPage(movies []model.Movie, pagination templ.Component, searchTerm, build string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -348,7 +350,7 @@ func FilmsPage(films []model.Film, pagination templ.Component, searchTerm, build
 					templ_7745c5c3_Buffer = templ.GetBuffer()
 					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 				}
-				templ_7745c5c3_Err = FilmList(films, pagination).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = MovieList(movies, pagination).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -357,7 +359,7 @@ func FilmsPage(films []model.Film, pagination templ.Component, searchTerm, build
 				}
 				return templ_7745c5c3_Err
 			})
-			templ_7745c5c3_Err = wrapFilmList(searchTerm).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = wrapMovieList(searchTerm).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -366,7 +368,7 @@ func FilmsPage(films []model.Film, pagination templ.Component, searchTerm, build
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = wrapFilmPage(form()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = wrapMoviePage(form()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var21), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

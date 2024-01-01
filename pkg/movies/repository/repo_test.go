@@ -8,17 +8,17 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/peteraba/go-htmx-playground/pkg/films/model"
-	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
+	"github.com/peteraba/go-htmx-playground/pkg/movies/model"
+	"github.com/peteraba/go-htmx-playground/pkg/movies/repository"
 )
 
-func TestFilmRepo_CountDirectors(t *testing.T) {
+func TestMovieRepo_CountDirectors(t *testing.T) {
 	t.Parallel()
 
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
-		films    []model.Film
+		movies   []model.Movie
 		maxLimit int
 	}
 
@@ -30,15 +30,15 @@ func TestFilmRepo_CountDirectors(t *testing.T) {
 		{
 			name: "empty",
 			fields: fields{
-				films:    []model.Film{},
+				movies:   []model.Movie{},
 				maxLimit: 10,
 			},
 			want: 0,
 		},
 		{
-			name: "single film",
+			name: "single movie",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 				},
 				maxLimit: 10,
@@ -46,9 +46,9 @@ func TestFilmRepo_CountDirectors(t *testing.T) {
 			want: 1,
 		},
 		{
-			name: "no directors with multiple films",
+			name: "no directors with multiple movies",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Kara Nader"},
 				},
@@ -57,9 +57,9 @@ func TestFilmRepo_CountDirectors(t *testing.T) {
 			want: 2,
 		},
 		{
-			name: "directors with multiple films",
+			name: "directors with multiple movies",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
@@ -73,7 +73,7 @@ func TestFilmRepo_CountDirectors(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
+			r := repository.NewMovieRepo(dummyLogger, tt.fields.maxLimit, tt.fields.movies...)
 			if got := r.CountDirectors(); got != tt.want {
 				t.Errorf("CountDirectors() = %v, want %v", got, tt.want)
 			}
@@ -81,13 +81,13 @@ func TestFilmRepo_CountDirectors(t *testing.T) {
 	}
 }
 
-func TestFilmRepo_CountFilms(t *testing.T) {
+func TestMovieRepo_CountMovies(t *testing.T) {
 	t.Parallel()
 
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
-		films    []model.Film
+		movies   []model.Movie
 		maxLimit int
 	}
 	type args struct {
@@ -103,7 +103,7 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 			name: "empty",
 			fields: fields{
 				maxLimit: 10,
-				films:    nil,
+				movies:   nil,
 			},
 			args: args{
 				searchTerm: "",
@@ -111,9 +111,9 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 			want: 0,
 		},
 		{
-			name: "single film",
+			name: "single movie",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 				},
 				maxLimit: 10,
@@ -124,9 +124,9 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 			want: 1,
 		},
 		{
-			name: "no directors with multiple films",
+			name: "no directors with multiple movies",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Kara Nader"},
 				},
@@ -138,9 +138,9 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 			want: 2,
 		},
 		{
-			name: "directors with multiple films",
+			name: "directors with multiple movies",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
@@ -152,9 +152,9 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 			want: 2,
 		},
 		{
-			name: "directors with multiple films and search term",
+			name: "directors with multiple movies and search term",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
@@ -171,80 +171,80 @@ func TestFilmRepo_CountFilms(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
-			if got := r.CountFilms(tt.args.searchTerm); got != tt.want {
-				t.Errorf("CountFilms() = %v, want %v", got, tt.want)
+			r := repository.NewMovieRepo(dummyLogger, tt.fields.maxLimit, tt.fields.movies...)
+			if got := r.CountMovies(tt.args.searchTerm); got != tt.want {
+				t.Errorf("CountMovies() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestFilmRepo_Insert(t *testing.T) {
+func TestMovieRepo_Insert(t *testing.T) {
 	t.Parallel()
 
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
-		films    []model.Film
+		movies   []model.Movie
 		maxLimit int
 	}
 	type args struct {
-		newFilms []model.Film
+		newMovies []model.Movie
 	}
 	tests := []struct {
 		name              string
 		fields            fields
 		args              args
-		wantFilmCount     int
+		wantMovieCount    int
 		wantDirectorCount int
 	}{
 		{
 			name: "from empty",
 			fields: fields{
 				maxLimit: 10,
-				films:    nil,
+				movies:   nil,
 			},
 			args: args{
-				newFilms: []model.Film{
+				newMovies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
 			},
-			wantFilmCount:     2,
+			wantMovieCount:    2,
 			wantDirectorCount: 1,
 		},
 		{
 			name: "from non-empty",
 			fields: fields{
 				maxLimit: 10,
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Back to the Future", Director: "Ethan White"},
 				},
 			},
 			args: args{
-				newFilms: []model.Film{
+				newMovies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
 			},
-			wantFilmCount:     3,
+			wantMovieCount:    3,
 			wantDirectorCount: 1,
 		},
 		{
-			name: "duplicate filmTitles get skipped",
+			name: "duplicate movieKeys get skipped",
 			fields: fields{
 				maxLimit: 10,
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Kara Nader"},
 				},
 			},
 			args: args{
-				newFilms: []model.Film{
+				newMovies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
 			},
-			wantFilmCount:     2,
+			wantMovieCount:    2,
 			wantDirectorCount: 2,
 		},
 	}
@@ -253,22 +253,22 @@ func TestFilmRepo_Insert(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
-			_ = r.Insert(tt.args.newFilms...)
+			r := repository.NewMovieRepo(dummyLogger, tt.fields.maxLimit, tt.fields.movies...)
+			_ = r.Insert(tt.args.newMovies...)
 
-			assert.Equal(t, tt.wantFilmCount, r.CountFilms(""))
+			assert.Equal(t, tt.wantMovieCount, r.CountMovies(""))
 			assert.Equal(t, tt.wantDirectorCount, r.CountDirectors())
 		})
 	}
 }
 
-func TestFilmRepo_ListDirectors(t *testing.T) {
+func TestMovieRepo_ListDirectors(t *testing.T) {
 	t.Parallel()
 
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
-		films    []model.Film
+		movies   []model.Movie
 		maxLimit int
 	}
 
@@ -286,7 +286,7 @@ func TestFilmRepo_ListDirectors(t *testing.T) {
 			name: "empty",
 			fields: fields{
 				maxLimit: 10,
-				films:    nil,
+				movies:   nil,
 			},
 			args: args{
 				offset: 0,
@@ -295,9 +295,9 @@ func TestFilmRepo_ListDirectors(t *testing.T) {
 			want: nil,
 		},
 		{
-			name: "single film",
+			name: "single movie",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 				},
 				maxLimit: 10,
@@ -311,9 +311,9 @@ func TestFilmRepo_ListDirectors(t *testing.T) {
 			},
 		},
 		{
-			name: "no directors with multiple films",
+			name: "no directors with multiple movies",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Kara Nader"},
 				},
@@ -329,9 +329,9 @@ func TestFilmRepo_ListDirectors(t *testing.T) {
 			},
 		},
 		{
-			name: "directors with multiple films",
+			name: "directors with multiple movies",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
@@ -351,7 +351,7 @@ func TestFilmRepo_ListDirectors(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
+			r := repository.NewMovieRepo(dummyLogger, tt.fields.maxLimit, tt.fields.movies...)
 			got, err := r.ListDirectors(tt.args.offset, tt.args.limit)
 			require.NoError(t, err)
 
@@ -360,89 +360,128 @@ func TestFilmRepo_ListDirectors(t *testing.T) {
 	}
 }
 
-func TestFilmRepo_ListFilms(t *testing.T) {
+func TestMovieRepo_ListMovies(t *testing.T) {
 	t.Parallel()
 
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
-		films    []model.Film
+		movies   []model.Movie
 		maxLimit int
 	}
 
 	type args struct {
-		offset int
-		limit  int
+		offset     int
+		limit      int
+		searchTerm string
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		args   args
-		want   []model.Film
+		want   []model.Movie
 	}{
 		{
 			name: "empty",
 			fields: fields{
 				maxLimit: 10,
-				films:    nil,
+				movies:   nil,
 			},
 			args: args{
-				offset: 0,
-				limit:  10,
+				offset:     0,
+				limit:      10,
+				searchTerm: "",
 			},
-			want: nil,
+			want: []model.Movie{},
 		},
 		{
-			name: "single film",
+			name: "single movie",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
 			args: args{
-				offset: 0,
-				limit:  10,
+				offset:     0,
+				limit:      10,
+				searchTerm: "",
 			},
-			want: []model.Film{
+			want: []model.Movie{
 				{Title: "Forrest Gump", Director: "Ethan White"},
 			},
 		},
 		{
-			name: "films are in alphabetical order",
+			name: "movies are in alphabetical order",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Kara Nader"},
 				},
 				maxLimit: 10,
 			},
 			args: args{
-				offset: 0,
-				limit:  10,
+				offset:     0,
+				limit:      10,
+				searchTerm: "",
 			},
-			want: []model.Film{
+			want: []model.Movie{
 				{Title: "Die Hard", Director: "Kara Nader"},
 				{Title: "Forrest Gump", Director: "Ethan White"},
 			},
 		},
 		{
-			name: "directors with multiple films",
+			name: "directors with multiple movies",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
 			args: args{
-				offset: 0,
-				limit:  10,
+				offset:     0,
+				limit:      10,
+				searchTerm: "",
 			},
-			want: []model.Film{
+			want: []model.Movie{
 				{Title: "Die Hard", Director: "Ethan White"},
 				{Title: "Forrest Gump", Director: "Ethan White"},
 			},
+		},
+		{
+			name: "filtering works",
+			fields: fields{
+				movies: []model.Movie{
+					{Title: "Forrest Gump", Director: "Ethan White"},
+					{Title: "Die Hard", Director: "Ethan White"},
+				},
+				maxLimit: 10,
+			},
+			args: args{
+				offset:     0,
+				limit:      10,
+				searchTerm: "orre",
+			},
+			want: []model.Movie{
+				{Title: "Forrest Gump", Director: "Ethan White"},
+			},
+		},
+		{
+			name: "directors with multiple movies can be filtered out",
+			fields: fields{
+				movies: []model.Movie{
+					{Title: "Forrest Gump", Director: "Ethan White"},
+					{Title: "Die Hard", Director: "Ethan White"},
+				},
+				maxLimit: 10,
+			},
+			args: args{
+				offset:     0,
+				limit:      10,
+				searchTerm: "nope",
+			},
+			want: []model.Movie{},
 		},
 	}
 	for _, ttt := range tests {
@@ -450,8 +489,8 @@ func TestFilmRepo_ListFilms(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
-			got, err := r.ListFilms(tt.args.offset, tt.args.limit, "")
+			r := repository.NewMovieRepo(dummyLogger, tt.fields.maxLimit, tt.fields.movies...)
+			got, err := r.ListMovies(tt.args.offset, tt.args.limit, tt.args.searchTerm)
 			require.NoError(t, err)
 
 			assert.Equal(t, tt.want, got)
@@ -459,13 +498,13 @@ func TestFilmRepo_ListFilms(t *testing.T) {
 	}
 }
 
-func TestFilmRepo_Truncate(t *testing.T) {
+func TestMovieRepo_Truncate(t *testing.T) {
 	t.Parallel()
 
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
-		films    []model.Film
+		movies   []model.Movie
 		maxLimit int
 	}
 	type args struct {
@@ -480,7 +519,7 @@ func TestFilmRepo_Truncate(t *testing.T) {
 			name: "empty",
 			fields: fields{
 				maxLimit: 10,
-				films:    nil,
+				movies:   nil,
 			},
 			args: args{
 				searchTerm: "",
@@ -489,7 +528,7 @@ func TestFilmRepo_Truncate(t *testing.T) {
 		{
 			name: "empty",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
@@ -505,15 +544,15 @@ func TestFilmRepo_Truncate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			r := repository.NewFilmRepo(dummyLogger, tt.fields.maxLimit, tt.fields.films...)
+			r := repository.NewMovieRepo(dummyLogger, tt.fields.maxLimit, tt.fields.movies...)
 
 			r.Truncate()
-			assert.Equal(t, 0, r.CountFilms(tt.args.searchTerm))
+			assert.Equal(t, 0, r.CountMovies(tt.args.searchTerm))
 		})
 	}
 }
 
-func TestFilmRepo_DeleteByTitle(t *testing.T) {
+func TestMovieRepo_DeleteByKey(t *testing.T) {
 	t.Parallel()
 
 	const maxLimit = 10
@@ -521,13 +560,13 @@ func TestFilmRepo_DeleteByTitle(t *testing.T) {
 	dummyLogger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	type fields struct {
-		films []model.Film
+		movies []model.Movie
 	}
 	type args struct {
-		title string
+		keys []string
 	}
 	type want struct {
-		filmTitles    []string
+		movieTitles   []string
 		directorNames []string
 	}
 	tests := []struct {
@@ -539,77 +578,77 @@ func TestFilmRepo_DeleteByTitle(t *testing.T) {
 		{
 			name: "delete from empty",
 			fields: fields{
-				films: []model.Film{},
+				movies: []model.Movie{},
 			},
 			args: args{
-				title: "Forrest Gump",
+				keys: []string{"forrest-gump"},
 			},
 			want: want{
-				filmTitles:    []string{},
+				movieTitles:   []string{},
 				directorNames: []string{},
 			},
 		},
 		{
-			name: "only title to be deleted",
+			name: "only keys to be deleted",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 				},
 			},
 			args: args{
-				title: "Forrest Gump",
+				keys: []string{"forrest-gump"},
 			},
 			want: want{
-				filmTitles:    []string{},
+				movieTitles:   []string{},
 				directorNames: []string{},
 			},
 		},
 		{
-			name: "first title to be deleted",
+			name: "first keys to be deleted",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
 			},
 			args: args{
-				title: "Forrest Gump",
+				keys: []string{"forrest-gump"},
 			},
 			want: want{
-				filmTitles:    []string{"Die Hard"},
+				movieTitles:   []string{"Die Hard"},
 				directorNames: []string{"Ethan White"},
 			},
 		},
 		{
-			name: "second title to be deleted",
+			name: "second keys to be deleted",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 				},
 			},
 			args: args{
-				title: "Die Hard",
+				keys: []string{"die-hard"},
 			},
 			want: want{
-				filmTitles:    []string{"Forrest Gump"},
+				movieTitles:   []string{"Forrest Gump"},
 				directorNames: []string{"Ethan White"},
 			},
 		},
 		{
-			name: "middle title to be deleted",
+			name: "middle keys to be deleted",
 			fields: fields{
-				films: []model.Film{
+				movies: []model.Movie{
 					{Title: "Forrest Gump", Director: "Ethan White"},
 					{Title: "Die Hard", Director: "Ethan White"},
 					{Title: "Fight Club", Director: "Shaylee Hegmann"},
 				},
 			},
 			args: args{
-				title: "Die Hard",
+				keys: []string{"die-hard"},
 			},
 			want: want{
-				filmTitles:    []string{"Fight Club", "Forrest Gump"},
+				movieTitles:   []string{"Fight Club", "Forrest Gump"},
 				directorNames: []string{"Ethan White", "Shaylee Hegmann"},
 			},
 		},
@@ -619,12 +658,12 @@ func TestFilmRepo_DeleteByTitle(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			sut := repository.NewFilmRepo(dummyLogger, maxLimit, tt.fields.films...)
+			sut := repository.NewMovieRepo(dummyLogger, maxLimit, tt.fields.movies...)
 
-			sut.DeleteByTitle(tt.args.title)
+			sut.DeleteMoviesByKey(tt.args.keys...)
 
 			gotTitles := sut.ListAllTitles()
-			assert.Equal(t, tt.want.filmTitles, gotTitles)
+			assert.Equal(t, tt.want.movieTitles, gotTitles)
 
 			gotDirectorNames := sut.ListAllDirectorNames()
 			assert.Equal(t, tt.want.directorNames, gotDirectorNames)

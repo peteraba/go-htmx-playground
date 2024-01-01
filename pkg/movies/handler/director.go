@@ -10,19 +10,19 @@ import (
 	"github.com/peteraba/go-htmx-playground/lib/jason"
 	"github.com/peteraba/go-htmx-playground/lib/log"
 	"github.com/peteraba/go-htmx-playground/lib/pagination"
-	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
-	"github.com/peteraba/go-htmx-playground/pkg/films/view"
+	"github.com/peteraba/go-htmx-playground/pkg/movies/repository"
+	"github.com/peteraba/go-htmx-playground/pkg/movies/view"
 	notificationsService "github.com/peteraba/go-htmx-playground/pkg/notifications/service"
 )
 
 type Director struct {
-	repo     *repository.FilmRepo
+	repo     *repository.MovieRepo
 	pageSize int
 	notifier *notificationsService.Notifier
 	logger   *slog.Logger
 }
 
-func NewDirector(repo *repository.FilmRepo, pageSize int, notifier *notificationsService.Notifier, logger *slog.Logger) Director {
+func NewDirector(repo *repository.MovieRepo, pageSize int, notifier *notificationsService.Notifier, logger *slog.Logger) Director {
 	return Director{
 		repo:     repo,
 		pageSize: pageSize,

@@ -24,7 +24,7 @@ type Options struct {
 	RedirectURI string
 }
 
-// nolint: funlen, cyclop
+// nolint: funlen
 func Setup(app *fiber.App, options Options, logger *slog.Logger) fiber.Handler {
 	logger.Info("Zitadel connection",
 		slog.String("domain", options.Domain),
