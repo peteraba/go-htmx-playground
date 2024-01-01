@@ -56,8 +56,8 @@ templ (p Pagination) next() {
 templ (p Pagination) Template() {
     <div class="join p-1 py-4">
         @p.prev()
-        if len(p.Beginning) > 0 {
-            for _, item := range p.Beginning {
+        if len(p.Start) > 0 {
+            for _, item := range p.Start {
                 @p.item(item)
             }
             @p.sep()

@@ -39,8 +39,10 @@ func TestNew(t *testing.T) {
 				CurrentPage:    "1",
 				Path:           "/hello?page=",
 				Target:         "foo",
+				Last:           "1",
 				IsNextDisabled: true,
 				IsPrevDisabled: true,
+				Query:          make(map[string]interface{}),
 			},
 		},
 		{
@@ -58,8 +60,10 @@ func TestNew(t *testing.T) {
 				CurrentPage:    "1",
 				Path:           "/hello?page=",
 				Target:         "foo",
+				Last:           "1",
 				IsNextDisabled: true,
 				IsPrevDisabled: true,
+				Query:          make(map[string]interface{}),
 			},
 		},
 		{
@@ -77,8 +81,10 @@ func TestNew(t *testing.T) {
 				CurrentPage:    "1",
 				Path:           "/hello?page=",
 				Target:         "foo",
+				Last:           "1",
 				IsNextDisabled: true,
 				IsPrevDisabled: true,
+				Query:          make(map[string]interface{}),
 			},
 		},
 		{
@@ -97,8 +103,10 @@ func TestNew(t *testing.T) {
 				Path:           "/hello?page=",
 				PostActive:     []string{"2"},
 				Target:         "foo",
+				Last:           "2",
 				IsNextDisabled: false,
 				IsPrevDisabled: true,
+				Query:          make(map[string]interface{}),
 			},
 		},
 	}

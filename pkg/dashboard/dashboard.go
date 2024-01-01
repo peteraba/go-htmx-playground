@@ -10,6 +10,6 @@ import (
 
 func Setup(app *fiber.App, requireAuthHandler fiber.Handler, logger *slog.Logger) {
 	dHandler := handler.NewDashboard(logger)
-	app.Use("/dashboard", requireAuthHandler)
 	app.Get("/dashboard", dHandler.Get)
+	app.Use("/dashboard", requireAuthHandler)
 }

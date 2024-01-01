@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	HeaderHxCurrentUrl = "Hx-Current-Url"
+	HeaderHxCurrentURL = "Hx-Current-Url"
 	HeaderHxRequest    = "Hx-Request"
 	HeaderHxTarget     = "Hx-Target"
 )
@@ -40,7 +40,7 @@ func AcceptHTML(headers map[string][]string) bool {
 	}
 
 	for k := range headers {
-		if k == HeaderHxRequest || k == HeaderHxCurrentUrl || k == HeaderHxTarget {
+		if k == HeaderHxRequest || k == HeaderHxCurrentURL || k == HeaderHxTarget {
 			return true
 		}
 	}

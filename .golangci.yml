@@ -17,6 +17,7 @@ linters-settings:
       - i int
       - w *bufio.Writer
       - c *fiber.Ctx
+      - p pagination.Pagination
   wrapcheck:
     ignoreSigs:
       - .Errorf(
@@ -27,10 +28,16 @@ linters-settings:
       - .WithMessage(
       - .WithMessagef(
       - .WithStack(
-      - .SendStatus(
-      - .Redirect(
-      - .Render(
       - validate.Struct(
+      - jason.SendList(
+      - .SendString(
+      - .Status(
+      - .Send(
+      - .JSON(
+      - .SendStatus(
+      - .Render(
+      - .Redirect(
+      - .Next(
     ignoreSigRegexps:
       - \.New.*Error\(
 

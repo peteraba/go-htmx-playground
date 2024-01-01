@@ -24,8 +24,9 @@ type Options struct {
 	RedirectURI string
 }
 
+// nolint: funlen, cyclop
 func Setup(app *fiber.App, options Options, logger *slog.Logger) fiber.Handler {
-	logger.Error("Zitadel connection",
+	logger.Info("Zitadel connection",
 		slog.String("domain", options.Domain),
 		slog.String("clientID", options.ClientID),
 		slog.String("key", options.Key),
@@ -53,6 +54,7 @@ func Setup(app *fiber.App, options Options, logger *slog.Logger) fiber.Handler {
 
 	ctx := context.Background()
 	initializer := openid.DefaultAuthentication(options.ClientID, options.RedirectURI, options.Key)
+
 	authenticator, err := authentication.New(ctx, zitadelClient, options.Key, initializer)
 	if err != nil {
 		logger.Error("zitadel sdk could not initialize", log.Err(err))

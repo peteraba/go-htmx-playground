@@ -15,14 +15,14 @@ func Htmx(buildVersion string) fiber.Handler {
 		headers := c.GetReqHeaders()
 
 		if !htmx.AcceptHTML(headers) {
-			return c.Next() // nolint: wrapcheck
+			return c.Next()
 		}
 
 		c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 
 		err := c.Next()
 		if err != nil {
-			return err // nolint: wrapcheck
+			return err
 		}
 
 		if htmx.IsHx(headers) {
@@ -32,8 +32,7 @@ func Htmx(buildVersion string) fiber.Handler {
 		content := c.Response().Body()
 		c.Response().ResetBody()
 
-		// wrap
-		isAuthenticated := c.Context().UserValue(auth.Authenticated).(bool)
+		isAuthenticated := auth.IsAuthenticated(c.Context())
 		topNav := view.Nav(isAuthenticated)
 
 		version := buildVersion

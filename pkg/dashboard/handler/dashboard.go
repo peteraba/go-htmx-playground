@@ -23,8 +23,7 @@ func (d Dashboard) Get(c *fiber.Ctx) error {
 	c.Accepts(fiber.MIMETextHTML)
 	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 
-	userName := c.Context().UserValue(auth.Name).(string)
-
+	userName := auth.GetString(c.Context(), auth.Name)
 	component := view.Dashboard(userName)
 	err := component.Render(c.Context(), c.Response().BodyWriter())
 

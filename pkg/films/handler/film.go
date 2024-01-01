@@ -50,9 +50,17 @@ func (f Film) List(c *fiber.Ctx) error {
 }
 
 func (f Film) Create(c *fiber.Ctx) error {
-	newFilm := model.Film{
-		Title:    c.FormValue("title"),
-		Director: c.FormValue("director"),
+	var newFilm model.Film
+
+	if htmx.AcceptHTML(c.GetReqHeaders()) {
+		newFilm = model.Film{
+			Title:    c.FormValue("title"),
+			Director: c.FormValue("director"),
+		}
+	} else {
+		if err := c.BodyParser(&newFilm); err != nil {
+			return c.Status(http.StatusBadRequest).SendString(err.Error())
+		}
 	}
 
 	err := newFilm.Validate()

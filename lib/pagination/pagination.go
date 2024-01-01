@@ -22,7 +22,6 @@ type Pagination struct {
 	IsPrevDisabled bool
 	IsNextDisabled bool
 	Query          map[string]interface{}
-	count          int
 }
 
 func (p Pagination) SelfLink() string {
@@ -61,10 +60,6 @@ func (p Pagination) LastLink() string {
 	return fmt.Sprintf("%s%s", p.Path, p.Last)
 }
 
-func (p Pagination) Count() int {
-	return p.count
-}
-
 func New(currentPage, pageSize, count int, path string, params map[string]string, target string) Pagination {
 	s := lo.MapToSlice(params, func(k, v string) string {
 		return fmt.Sprintf("%s=%s", k, v)
@@ -86,10 +81,10 @@ func New(currentPage, pageSize, count int, path string, params map[string]string
 		currentPage = maxPage
 	}
 
-	return generate(maxPage, currentPage, path, target, params, count)
+	return generate(maxPage, currentPage, path, target, params)
 }
 
-func generate(maxPage, currentPage int, path, target string, params map[string]string, count int) Pagination {
+func generate(maxPage, currentPage int, path, target string, params map[string]string) Pagination {
 	var start, preActive, postActive, end []string
 
 	prevPage := getPrev(currentPage)
@@ -118,7 +113,6 @@ func generate(maxPage, currentPage int, path, target string, params map[string]s
 		Last:           strconv.Itoa(maxPage),
 		IsPrevDisabled: currentPage == 1,
 		IsNextDisabled: currentPage == maxPage,
-		count:          count,
 		Query:          query,
 	}
 }
