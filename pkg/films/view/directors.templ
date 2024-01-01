@@ -8,43 +8,41 @@ import (
 
 templ wrap() {
     <div class="min-h-screen flex">
-      <div class="flex-1">
-        <div class="p-4" id="director-list">
-          { children... }
+        <div class="flex-1">
+            <div class="p-4" id="director-list">
+                { children... }
+            </div>
         </div>
-      </div>
-      <div class="flex-1">&nbsp;
-      </div>
+        <div class="flex-1">&nbsp;</div>
     </div>
 }
 
 templ list(directors []model.Director) {
-  <h1 class="p-2 text-white text-2xl">List of Directors</h1>
-  <div class="overflow-x-auto">
-    <table id="film-list" class="table table-zebra table-fixed">
-      <!-- head -->
-      <thead>
-      <tr>
-        <th>Director</th>
-        <th>Titles</th>
-      </tr>
-      </thead>
-      <tbody>
-      if len(directors) == 0 {
-      <tr>
-        <td colspan="2">Empty list</td>
-      </tr>
-      } else {
-        for _, director := range directors {
-          <tr>
-            <td>{ director.Name }</td>
-            <td>{ strings.Join(director.Titles, ", ") }</td>
-          </tr>
-        }
-      }
-      </tbody>
-    </table>
-  </div>
+    <h1 class="p-2 text-white text-2xl">List of Directors</h1>
+    <div class="overflow-x-auto">
+        <table id="film-list" class="table table-zebra table-fixed">
+            <!-- head -->
+            <thead>
+                <tr>
+                    <th>Director</th>
+                    <th>Titles</th>
+                </tr>
+            </thead>
+            <tbody>
+            if len(directors) == 0 {
+                <tr>
+                    <td colspan="2">Empty list</td>
+                </tr>
+            }
+            for _, director := range directors {
+                <tr>
+                    <td>{ director.Name }</td>
+                    <td>{ strings.Join(director.Titles, ", ") }</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 }
 
 templ DirectorsPage(directors []model.Director, pagination templ.Component) {
