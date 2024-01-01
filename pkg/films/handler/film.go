@@ -10,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/peteraba/go-htmx-playground/lib/htmx"
+	"github.com/peteraba/go-htmx-playground/lib/jason"
 	"github.com/peteraba/go-htmx-playground/lib/log"
 	"github.com/peteraba/go-htmx-playground/lib/pagination"
 	"github.com/peteraba/go-htmx-playground/pkg/films/model"
@@ -186,14 +187,20 @@ func (f Film) list(c *fiber.Ctx, basePath string) error {
 		currentPage = 1
 	}
 
-	films, filmPagination, err := f.service.List(currentPage, f.pageSize, basePath, searchTerm)
+	films, p, err := f.service.List(currentPage, f.pageSize, basePath, searchTerm)
 	if err != nil {
 		f.logger.Error("Error while listing films.", log.Err(err))
 
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	return f.render(c, films, filmPagination, searchTerm)
+	if htmx.AcceptHTML(c.GetReqHeaders()) {
+		c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+
+		return f.render(c, films, p, searchTerm)
+	}
+
+	return jason.SendList(c, films, p)
 }
 
 func (f Film) render(c *fiber.Ctx, films []model.Film, filmPagination pagination.Pagination, searchTerm string) error {

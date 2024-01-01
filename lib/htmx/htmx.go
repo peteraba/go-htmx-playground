@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	HeaderHxRequest = "Hx-Request"
-	HeaderHxTarget  = "Hx-Target"
+	HeaderHxCurrentUrl = "Hx-Current-Url"
+	HeaderHxRequest    = "Hx-Request"
+	HeaderHxTarget     = "Hx-Target"
 )
 
 func IsHx(headers map[string][]string) bool {
@@ -36,6 +37,12 @@ func GetTarget(headers map[string][]string) string {
 func AcceptHTML(headers map[string][]string) bool {
 	if len(headers) == 0 {
 		return false
+	}
+
+	for k := range headers {
+		if k == HeaderHxRequest || k == HeaderHxCurrentUrl || k == HeaderHxTarget {
+			return true
+		}
 	}
 
 	acceptHeaders, ok := headers[fiber.HeaderAccept]

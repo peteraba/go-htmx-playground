@@ -13,6 +13,7 @@ import (
 func Htmx(buildVersion string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		headers := c.GetReqHeaders()
+
 		if !htmx.AcceptHTML(headers) {
 			return c.Next() // nolint: wrapcheck
 		}

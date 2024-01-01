@@ -57,26 +57,31 @@ func main() {
 						Name:    "zitadel",
 						Aliases: []string{"z"},
 						Value:   "localhost",
-					},
-					&cli.StringFlag{
-						Name:    "zitadel-client-id",
-						Aliases: []string{"zci"},
-						Value:   "",
+						EnvVars: []string{"ZITADEL"},
 					},
 					&cli.StringFlag{
 						Name:    "zitadel-key",
 						Aliases: []string{"zk"},
 						Value:   "",
+						EnvVars: []string{"ZITADEL_MASTERKEY"},
+					},
+					&cli.StringFlag{
+						Name:    "zitadel-client-id",
+						Aliases: []string{"zci"},
+						Value:   "",
+						EnvVars: []string{"ZITADEL_CLIENT_ID"},
 					},
 					&cli.StringFlag{
 						Name:    "zitadel-port",
 						Aliases: []string{"zp"},
-						Value:   "8080",
+						Value:   "443",
+						EnvVars: []string{"ZITADEL_PORT"},
 					},
 					&cli.BoolFlag{
 						Name:    "zitadel-insecure",
 						Aliases: []string{"zi"},
 						Value:   false,
+						EnvVars: []string{"ZITADEL_INSECURE"},
 					},
 					&cli.IntFlag{
 						Name:    "port",

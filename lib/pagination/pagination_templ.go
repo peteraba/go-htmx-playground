@@ -5,10 +5,12 @@ package pagination
 
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
-import "github.com/a-h/templ"
-import "context"
-import "io"
-import "bytes"
+import (
+	"github.com/a-h/templ"
+	"context"
+	"io"
+	"bytes"
+)
 
 import (
 	"strings"
@@ -35,7 +37,7 @@ func (p Pagination) prev() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{"join-item", "btn", "btn-outline", templ.KV("btn-disabled", p.IsPrevDisabled)}
+		templ_7745c5c3_Var2 := []any{"join-item", "btn", "btn-outline", templ.KV("btn-disabled", p.IsPrevDisabled)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -238,7 +240,7 @@ func (p Pagination) next() templ.Component {
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var13 = []any{"join-item", "btn", "btn-outline", templ.KV("btn-disabled", p.IsNextDisabled)}
+		templ_7745c5c3_Var13 := []any{"join-item", "btn", "btn-outline", templ.KV("btn-disabled", p.IsNextDisabled)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var13...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -317,8 +319,8 @@ func (p Pagination) Template() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(p.Beginning) > 0 {
-			for _, item := range p.Beginning {
+		if len(p.Start) > 0 {
+			for _, item := range p.Start {
 				templ_7745c5c3_Err = p.item(item).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

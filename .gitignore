@@ -4,3 +4,4 @@ build/application
 cockroach-data
 zitadel-linux-amd64
 NOTES.md
+.env

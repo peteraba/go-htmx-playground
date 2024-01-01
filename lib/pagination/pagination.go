@@ -14,12 +14,55 @@ type Pagination struct {
 	CurrentPage    string
 	Path           string
 	Target         string
-	Beginning      []string
+	Start          []string
 	PreActive      []string
 	PostActive     []string
 	End            []string
+	Last           string
 	IsPrevDisabled bool
 	IsNextDisabled bool
+	Query          map[string]interface{}
+	count          int
+}
+
+func (p Pagination) SelfLink() string {
+	return fmt.Sprintf("%s%s", p.Path, p.CurrentPage)
+}
+
+func (p Pagination) FirstLink() string {
+	if p.CurrentPage == "1" {
+		return ""
+	}
+
+	return fmt.Sprintf("%s1", p.Path)
+}
+
+func (p Pagination) PrevLink() string {
+	if p.IsPrevDisabled {
+		return ""
+	}
+
+	return fmt.Sprintf("%s%s", p.Path, p.Prev)
+}
+
+func (p Pagination) NextLink() string {
+	if p.IsNextDisabled {
+		return ""
+	}
+
+	return fmt.Sprintf("%s%s", p.Path, p.Next)
+}
+
+func (p Pagination) LastLink() string {
+	if p.Last == "1" {
+		return ""
+	}
+
+	return fmt.Sprintf("%s%s", p.Path, p.Last)
+}
+
+func (p Pagination) Count() int {
+	return p.count
 }
 
 func New(currentPage, pageSize, count int, path string, params map[string]string, target string) Pagination {
@@ -43,10 +86,10 @@ func New(currentPage, pageSize, count int, path string, params map[string]string
 		currentPage = maxPage
 	}
 
-	return generate(maxPage, currentPage, path, target)
+	return generate(maxPage, currentPage, path, target, params, count)
 }
 
-func generate(maxPage, currentPage int, path, target string) Pagination {
+func generate(maxPage, currentPage int, path, target string, params map[string]string, count int) Pagination {
 	var start, preActive, postActive, end []string
 
 	prevPage := getPrev(currentPage)
@@ -57,18 +100,26 @@ func generate(maxPage, currentPage int, path, target string) Pagination {
 	postActive = getPostActive(currentPage, maxPage)
 	end = getEnd(currentPage, maxPage)
 
+	query := make(map[string]interface{}, len(params))
+	for k, v := range params {
+		query[k] = v
+	}
+
 	return Pagination{
 		Prev:           strconv.Itoa(prevPage),
 		Next:           strconv.Itoa(nextPage),
 		CurrentPage:    strconv.Itoa(currentPage),
 		Path:           path,
 		Target:         target,
-		Beginning:      start,
+		Start:          start,
 		PreActive:      preActive,
 		PostActive:     postActive,
 		End:            end,
+		Last:           strconv.Itoa(maxPage),
 		IsPrevDisabled: currentPage == 1,
 		IsNextDisabled: currentPage == maxPage,
+		count:          count,
+		Query:          query,
 	}
 }
 

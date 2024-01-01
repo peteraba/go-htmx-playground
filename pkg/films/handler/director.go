@@ -6,6 +6,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/peteraba/go-htmx-playground/lib/htmx"
+	"github.com/peteraba/go-htmx-playground/lib/jason"
 	"github.com/peteraba/go-htmx-playground/lib/log"
 	"github.com/peteraba/go-htmx-playground/lib/pagination"
 	"github.com/peteraba/go-htmx-playground/pkg/films/repository"
@@ -29,6 +31,16 @@ func NewDirector(repo *repository.FilmRepo, pageSize int, notifier *notification
 	}
 }
 
+type Response struct {
+	Query map[string]interface{} `json:"query,omitempty"`
+	Self  string                 `json:"self"`
+	First string                 `json:"first,omitempty"`
+	Prev  string                 `json:"prev,omitempty"`
+	Next  string                 `json:"next,omitempty"`
+	Last  string                 `json:"last,omitempty"`
+	Items interface{}            `json:"items"`
+}
+
 func (d Director) List(c *fiber.Ctx) error {
 	currentPage := c.QueryInt("page", 1)
 	if currentPage <= 0 {
@@ -45,9 +57,15 @@ func (d Director) List(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
-	listPagination := pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path(), nil, "#wrapper")
+	p := pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path(), nil, "#wrapper")
 
-	component := view.DirectorsPage(directors, listPagination.Template())
+	if htmx.AcceptHTML(c.GetReqHeaders()) {
+		c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 
-	return component.Render(c.Context(), c.Response().BodyWriter())
+		component := view.DirectorsPage(directors, p.Template())
+
+		return component.Render(c.Context(), c.Response().BodyWriter())
+	}
+
+	return jason.SendList(c, directors, p)
 }

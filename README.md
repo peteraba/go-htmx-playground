@@ -31,28 +31,21 @@ task install
 
 ## TODO
 
-- [ ] Features
-  - [x] Delete individual movies
-  - [x] Check all movies on screen
-  - [x] Only load template that needs to change
-  - [ ] Search
-    - [x] Search movies
-    - [ ] Search films
 - [ ] Project health
   - [ ] Badges
   - [ ] Process to upgrade tools
   - [ ] Process to upgrade vendor libraries
-- [ ] Fix bugs
+- [x] Fix bugs
   - [x] Fix back buttons
-  - [ ] Fix JS being lost on re-loading parts
-  - [ ] Fix check-all remaining hidden on generating / adding movies
-  - [ ] Fix search design
-  - [ ] Make sure search is highlighted on reload / load only the table???
+  - [x] Fix JS being lost on re-loading parts
+  - [x] Fix check-all remaining hidden on generating / adding movies
+  - [x] Fix search design
+  - [x] Make sure search is highlighted on reload / load only the table???
 - [ ] Speed improvements
   - [ ] [Compress](https://docs.gofiber.io/api/middleware/compress)
   - [ ] [ETag](https://docs.gofiber.io/api/middleware/etag)
   - [ ] [Server-Side Caching](https://docs.gofiber.io/api/middleware/cache) (IDEA)
-  - [ ] CDN (IDEA)
+  - [ ] ~~CDN (IDEA)~~
 - [ ] Interop improvements
   - [ ] [CORS](https://docs.gofiber.io/api/middleware/cors) (IDEA)
   - [ ] JSON response from endpoints
@@ -77,14 +70,14 @@ task install
 - [x] Colors module
 - [x] Notifications
   - [x] htmx-style (SSE?)
-  - [ ] htmx-style (Websockets?)
-  - [ ] htmx-style (polling?)
-  - [ ] Load/reload on notification
+  - [ ] ~~htmx-style (Websockets?)~~
+  - [ ] ~~htmx-style (polling?)~~
+  - [ ] ~~Load/reload on notification~~
 - [ ] Support for microservice-like deployment (IDEA)
-- [ ] Arch changes
+- [x] Arch changes
   - [x] Use templ
   - [x] Use urfave/cli to support multiple commands
-  - [ ] Use alpineJS or similar
+  - [x] Use alpineJS or similar
 - [ ] Harden the application
   - [ ] Testing race conditions
   - [ ] Fuzz testing
@@ -94,7 +87,7 @@ task install
     - [Casbin](https://github.com/casbin/casbin)
     - [gorbac](https://github.com/mikespook/gorbac)
     - [topaz](https://github.com/aserto-dev/topaz)
-  - [ ] JWT-integration (IDEA)
+  - [x] JWT-integration (IDEA)
     - [zitadel](https://github.com/zitadel/zitadel-go) ([AMR](https://analyzemyrepo.com/analyze/zitadel/zitadel))
     - [hanko](https://www.hanko.io/) ([AMR](https://analyzemyrepo.com/analyze/teamhanko/hanko))
     - [authelia](https://www.authelia.com/) ([AMR](https://analyzemyrepo.com/analyze/authelia/authelia))
@@ -113,7 +106,7 @@ task install
     - [ ] Easy releases (IDEA)
     - [ ] Tooling to enforce semantic versioning
   - [ ] [AnalyzeMyRepo](https://analyzemyrepo.com/analyze/teamhanko/hanko)
-  - [x] Integirty sums added for assets
+  - [x] Integrity sums added for assets
 
 # Notes
 JS goodies:

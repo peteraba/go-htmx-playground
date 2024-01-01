@@ -25,7 +25,7 @@ type Options struct {
 }
 
 func Setup(app *fiber.App, options Options, logger *slog.Logger) fiber.Handler {
-	logger.Debug("Zitadel connection",
+	logger.Error("Zitadel connection",
 		slog.String("domain", options.Domain),
 		slog.String("clientID", options.ClientID),
 		slog.String("key", options.Key),
@@ -36,6 +36,11 @@ func Setup(app *fiber.App, options Options, logger *slog.Logger) fiber.Handler {
 
 	if options.Domain == "" || options.ClientID == "" || options.Key == "" || options.RedirectURI == "" {
 		logger.Error("Zitadel connection is not configured")
+		os.Exit(1)
+	}
+
+	if options.Port != "443" && !options.Insecure {
+		logger.Error("Zitadel connection is not configured for insecure connection")
 		os.Exit(1)
 	}
 
