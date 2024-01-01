@@ -1,6 +1,6 @@
 package view
 
-templ Home(isAuthenticated bool) {
+templ Home() {
     <div class="component-preview not-prose text-base-content my-6 lg:my-12">
         <div class="hero min-h-screen bg-base-200">
             <div class="hero-content text-center">
@@ -15,13 +15,7 @@ templ Home(isAuthenticated bool) {
                         <a class="btn btn-secondary" href="https://daisyui.com/" target="_blank">Daisy UI</a>
                         <a class="btn btn-secondary" href="https://tailwindcss.com/" target="_blank">TailwindCSS</a>
                         <a class="btn btn-neutral" href="https://taskfile.dev/" target="_blank">Task</a>
-                    </p>
-                    <p class="py-4">
-                        if isAuthenticated {
-                            <a class="btn btn-neutral" href="/auth/logout">Logout</a>
-                        } else {
-                            <a class="btn btn-neutral" href="/auth/login">Login</a>
-                        }
+                        <a class="btn btn-neutral" href="https://zitadel.com/" target="_blank">Zitadel</a>
                     </p>
                 </div>
             </div>

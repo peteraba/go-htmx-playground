@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/peteraba/go-htmx-playground/lib/auth"
 	"github.com/peteraba/go-htmx-playground/lib/htmx"
 	"github.com/peteraba/go-htmx-playground/pkg/server/view"
 )
@@ -31,7 +32,8 @@ func Htmx(buildVersion string) fiber.Handler {
 		c.Response().ResetBody()
 
 		// wrap
-		topNav := view.Nav()
+		isAuthenticated := c.Context().UserValue(auth.Authenticated).(bool)
+		topNav := view.Nav(isAuthenticated)
 
 		version := buildVersion
 		if buildVersion == "development" {

@@ -1,6 +1,6 @@
 package view
 
-templ Nav() {
+templ Nav(isAuthenticated bool) {
     <div class="navbar bg-base-300 drawer">
         <div class="flex-1">
             <a
@@ -53,6 +53,25 @@ templ Nav() {
                         :class="$store.navUrl === '/colors' ? 'link-primary' : ''"
                         >Colors</a>
                 </li>
+
+                if isAuthenticated {
+                    <li>
+                        <a hx-get="/dashboard"
+                            hx-replace-url="true"
+                            hx-push-url="true"
+                            hx-target="#wrapper"
+                            hx-swap="innerHTML"
+                            :class="$store.navUrl === '/dashboard' ? 'link-primary' : ''"
+                            >Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="/auth/logout">Logout</a>
+                    </li>
+                } else {
+                    <li>
+                        <a href="/auth/login">Login</a>
+                    </li>
+                }
             </ul>
         </div>
     </div>
