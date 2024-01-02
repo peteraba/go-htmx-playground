@@ -3,13 +3,13 @@ package handler
 import (
 	"fmt"
 	"log/slog"
-	"net/http"
 	"time"
 
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gosimple/slug"
 
-	"github.com/peteraba/go-htmx-playground/lib/htmx"
+	"github.com/peteraba/go-htmx-playground/lib/contenttype"
 	"github.com/peteraba/go-htmx-playground/lib/jason"
 	"github.com/peteraba/go-htmx-playground/lib/log"
 	"github.com/peteraba/go-htmx-playground/lib/pagination"
@@ -52,23 +52,26 @@ func (f Movie) List(c *fiber.Ctx) error {
 func (f Movie) Create(c *fiber.Ctx) error {
 	var newMovie model.Movie
 
-	if htmx.AcceptHTML(c.GetReqHeaders()) {
+	if contenttype.IsHTML(c.GetReqHeaders()) {
 		newMovie = model.Movie{
+			ID:       "",
 			Title:    c.FormValue("title"),
 			Director: c.FormValue("director"),
 		}
 	} else if err := c.BodyParser(&newMovie); err != nil {
 		f.logger.Error("Error while parsing request body.", log.Err(err))
 
-		return c.Status(http.StatusBadRequest).SendString(err.Error())
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
+
+	newMovie.ID = slug.Make(newMovie.Title)
 
 	err := newMovie.Validate()
 	if err != nil {
 		f.logger.Error("Error while validating new movie.", log.Err(err))
 		f.notifier.Error(err.Error(), c.IP())
 
-		return c.SendStatus(http.StatusBadRequest)
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
 	err = f.service.Insert(newMovie)
@@ -76,7 +79,7 @@ func (f Movie) Create(c *fiber.Ctx) error {
 		f.logger.Error("Error inserting the new movie.", log.Err(err))
 		f.notifier.Error(err.Error(), c.IP())
 
-		return c.SendStatus(http.StatusInternalServerError)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	count, err := f.service.Count("")
@@ -84,7 +87,7 @@ func (f Movie) Create(c *fiber.Ctx) error {
 		f.logger.Error("Error retrieving the new count.", log.Err(err))
 		f.notifier.Error(err.Error(), c.IP())
 
-		return c.SendStatus(http.StatusInternalServerError)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	f.logger.With("title", newMovie.Title, "director", newMovie.Director, "count", count).Info("Added new movie.")
@@ -95,8 +98,8 @@ func (f Movie) Create(c *fiber.Ctx) error {
 
 func (f Movie) Generate(c *fiber.Ctx) error {
 	randomNumber, err := c.ParamsInt("num")
-	if err != nil || randomNumber < 5 || randomNumber >= 50 || !htmx.IsHx(c.GetReqHeaders()) {
-		return c.SendStatus(http.StatusBadRequest)
+	if err != nil || randomNumber < 5 || randomNumber >= 50 || !contenttype.IsHTMX(c.GetReqHeaders()) {
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
 	generated, err := f.service.Generate(randomNumber)
@@ -104,7 +107,7 @@ func (f Movie) Generate(c *fiber.Ctx) error {
 		f.logger.Error("Error while generating movies.", log.Err(err))
 		f.notifier.Error(err.Error(), c.IP())
 
-		return c.SendStatus(http.StatusBadRequest)
+		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
 	f.logger.Info(fmt.Sprintf("%d unique movies generated.", generated))
@@ -113,61 +116,8 @@ func (f Movie) Generate(c *fiber.Ctx) error {
 	return f.list(c, "/movies")
 }
 
-// DeleteForm is a handler for deleting movies for browsers without JS support enabled.
-func (f Movie) DeleteForm(c *fiber.Ctx) error {
-	titles, err := f.getMoviesToDelete(c)
-	if err != nil {
-		return err
-	}
-
-	count, err := f.service.DeleteByTitle(titles...)
-	if err != nil {
-		f.logger.Error("Error while deleting movies.", log.Err(err))
-		f.notifier.Error(err.Error(), c.IP())
-
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	f.logger.Info(fmt.Sprintf("%d unique movies deleted.", count))
-	f.notifier.Info(fmt.Sprintf("%d unique movies deleted.", count), c.IP())
-
-	return c.Redirect("/movies", http.StatusMovedPermanently)
-}
-
-// Delete is a handler which handles truncating movies and individual deletes for browsers with JS support enabled.
-func (f Movie) Delete(c *fiber.Ctx) error {
-	if c.Query("truncate") == "true" || c.Query("truncate") == "1" {
-		return f.truncate(c)
-	}
-
-	titles, err := f.getMoviesToDelete(c)
-	if err != nil {
-		f.logger.Error("Error while getting movies to delete.", log.Err(err))
-		f.notifier.Error(err.Error(), c.IP())
-
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	return f.deleteTitles(c, titles)
-}
-
-func (f Movie) deleteTitles(c *fiber.Ctx, titles []string) error {
-	count, err := f.service.DeleteByTitle(titles...)
-	if err != nil {
-		f.logger.Error("Error while deleting movies.", log.Err(err))
-		f.notifier.Error(err.Error(), c.IP())
-
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	f.logger.Info(fmt.Sprintf("%d unique movies deleted.", count))
-	f.notifier.Success(fmt.Sprintf("Movies deleted: %d.", count), c.IP())
-
-	return f.list(c, "/movies")
-}
-
-// Delete is a handler which handles truncating movies and individual deletes for browsers with JS support enabled.
-func (f Movie) truncate(c *fiber.Ctx) error {
+// Truncate is a handler for deleting all movies.
+func (f Movie) Truncate(c *fiber.Ctx) error {
 	count, err := f.service.Count("")
 	if err != nil {
 		f.logger.Error("error counting movies", log.Err(err))
@@ -181,11 +131,35 @@ func (f Movie) truncate(c *fiber.Ctx) error {
 		f.logger.Error("error truncating movies", log.Err(err))
 		f.notifier.Error(fmt.Sprintf("Error truncating movies: %s", err), c.IP())
 
-		return c.SendStatus(http.StatusInternalServerError)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	f.logger.Info(fmt.Sprintf("%d unique movies truncated.", count))
 	f.notifier.Success(fmt.Sprintf("Movies truncated: %d.", count), c.IP())
+
+	return f.list(c, "/movies")
+}
+
+// Delete is a handler for deleting a movies individually from JSON.
+func (f Movie) Delete(c *fiber.Ctx) error {
+	titles, err := f.getMoviesToDelete(c)
+	if err != nil {
+		f.logger.Error("Error while getting movies to delete.", log.Err(err))
+		f.notifier.Error(err.Error(), c.IP())
+
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
+
+	count, err := f.service.DeleteByTitle(titles...)
+	if err != nil {
+		f.logger.Error("Error while deleting movies.", log.Err(err))
+		f.notifier.Error(err.Error(), c.IP())
+
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	f.logger.Info(fmt.Sprintf("%d unique movies deleted.", count))
+	f.notifier.Success(fmt.Sprintf("Movies deleted: %d.", count), c.IP())
 
 	return f.list(c, "/movies")
 }
@@ -195,6 +169,10 @@ type ExpectedPayload struct {
 }
 
 func (f Movie) getMoviesToDelete(c *fiber.Ctx) ([]string, error) {
+	if c.Params("movie") != "" {
+		return []string{c.Params("movie")}, nil
+	}
+
 	body := new(ExpectedPayload)
 	if err := c.BodyParser(body); err != nil {
 		return nil, fmt.Errorf("failed to parse request body, err: %w", err)
@@ -204,6 +182,10 @@ func (f Movie) getMoviesToDelete(c *fiber.Ctx) ([]string, error) {
 }
 
 func (f Movie) list(c *fiber.Ctx, basePath string) error {
+	if c.Method() != fiber.MethodGet && contenttype.IsPureHTML(c.GetReqHeaders()) {
+		return c.Redirect("/movies", fiber.StatusTemporaryRedirect)
+	}
+
 	searchTerm := c.Query("q")
 
 	currentPage := c.QueryInt("page", 1)
@@ -215,10 +197,10 @@ func (f Movie) list(c *fiber.Ctx, basePath string) error {
 	if err != nil {
 		f.logger.Error("Error while listing movies.", log.Err(err))
 
-		return c.SendStatus(http.StatusInternalServerError)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	if htmx.AcceptHTML(c.GetReqHeaders()) {
+	if contenttype.IsHTML(c.GetReqHeaders()) {
 		c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 
 		return f.render(c, movies, p, searchTerm)
@@ -230,7 +212,7 @@ func (f Movie) list(c *fiber.Ctx, basePath string) error {
 func (f Movie) render(c *fiber.Ctx, movies []model.Movie, moviePagination pagination.Pagination, searchTerm string) error {
 	var component templ.Component
 
-	switch htmx.GetTarget(c.GetReqHeaders()) {
+	switch contenttype.GetTarget(c.GetReqHeaders()) {
 	case "movie-list", "#movie-list":
 		component = view.MovieList(movies, moviePagination.Template())
 

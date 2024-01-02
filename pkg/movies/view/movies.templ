@@ -25,7 +25,7 @@ templ form() {
     <div class="p-4">
         <h1 class="p-2 text-white text-2xl">Add Movie</h1>
 
-        <form hx-post="/movies" hx-target="#wrapper" hx-swap="innerHTML" hx-indicator="#spinner">
+        <form method="POST" action="/movies" hx-post="/movies" hx-target="#wrapper" hx-swap="innerHTML" hx-indicator="#spinner">
             <p class="p-1">
                 <input type="text" placeholder="Title" name="title" id="movie-title" class="input input-bordered w-full" />
             </p>
@@ -59,7 +59,7 @@ templ form() {
                         hx-swap="innerHTML"
                         class="btn btn-secondary btn-outline">Gen 25</a>
 
-                    <a hx-delete="/movies?truncate=true"
+                    <a hx-delete="/truncate-movies"
                         hx-replace-url="false"
                         hx-target="#movie-list"
                         hx-swap="innerHTML"
@@ -101,9 +101,9 @@ templ MovieList(movies []model.Movie, pagination templ.Component) {
         })
     }
     </script>
-    <form action="/movies-delete"
+    <form action="/delete-movie"
         method="post"
-        hx-delete="/movies"
+        hx-delete="/delete-movies"
         hx-target="#movie-list"
         hx-swap="innerHTML"
         x-data>

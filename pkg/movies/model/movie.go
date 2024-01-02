@@ -13,12 +13,13 @@ func init() {
 }
 
 type Movie struct {
-	Title    string `fake:"{moviename}" validate:"required"`
-	Director string `fake:"{name}"      validate:"required"`
+	ID       string `fake:"{uuid}"      json:"id"`
+	Title    string `fake:"{moviename}" json:"title"    validate:"required"`
+	Director string `fake:"{name}"      json:"director" validate:"required"`
 }
 
 func (f Movie) Clone() Movie {
-	return Movie{Title: f.Title, Director: f.Director}
+	return Movie{ID: f.ID, Title: f.Title, Director: f.Director}
 }
 
 func (f Movie) Validate() error {
@@ -27,13 +28,14 @@ func (f Movie) Validate() error {
 }
 
 type Director struct {
-	Name   string   `validate:"required"`
-	Titles []string `validate:"required"`
+	ID     string   `json:"id"`
+	Name   string   `json:"name"   validate:"required"`
+	Titles []string `json:"titles" validate:"required"`
 }
 
 func (d Director) Clone() Director {
 	titlesClone := make([]string, 0, len(d.Titles))
 	titlesClone = append(titlesClone, d.Titles...)
 
-	return Director{Name: d.Name, Titles: titlesClone}
+	return Director{ID: d.ID, Name: d.Name, Titles: titlesClone}
 }

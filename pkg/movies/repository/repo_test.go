@@ -39,7 +39,7 @@ func TestMovieRepo_CountDirectors(t *testing.T) {
 			name: "single movie",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -49,8 +49,8 @@ func TestMovieRepo_CountDirectors(t *testing.T) {
 			name: "no directors with multiple movies",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Kara Nader"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Kara Nader"},
 				},
 				maxLimit: 10,
 			},
@@ -60,8 +60,8 @@ func TestMovieRepo_CountDirectors(t *testing.T) {
 			name: "directors with multiple movies",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -114,7 +114,7 @@ func TestMovieRepo_CountMovies(t *testing.T) {
 			name: "single movie",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -127,8 +127,8 @@ func TestMovieRepo_CountMovies(t *testing.T) {
 			name: "no directors with multiple movies",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Kara Nader"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Kara Nader"},
 				},
 				maxLimit: 10,
 			},
@@ -141,8 +141,8 @@ func TestMovieRepo_CountMovies(t *testing.T) {
 			name: "directors with multiple movies",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -155,8 +155,8 @@ func TestMovieRepo_CountMovies(t *testing.T) {
 			name: "directors with multiple movies and search term",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -206,8 +206,8 @@ func TestMovieRepo_Insert(t *testing.T) {
 			},
 			args: args{
 				newMovies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 			},
 			wantMovieCount:    2,
@@ -218,13 +218,13 @@ func TestMovieRepo_Insert(t *testing.T) {
 			fields: fields{
 				maxLimit: 10,
 				movies: []model.Movie{
-					{Title: "Back to the Future", Director: "Ethan White"},
+					{ID: "back-to-the-future", Title: "Back to the Future", Director: "Ethan White"},
 				},
 			},
 			args: args{
 				newMovies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 			},
 			wantMovieCount:    3,
@@ -235,13 +235,13 @@ func TestMovieRepo_Insert(t *testing.T) {
 			fields: fields{
 				maxLimit: 10,
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Kara Nader"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Kara Nader"},
 				},
 			},
 			args: args{
 				newMovies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 			},
 			wantMovieCount:    2,
@@ -298,7 +298,7 @@ func TestMovieRepo_ListDirectors(t *testing.T) {
 			name: "single movie",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -307,15 +307,15 @@ func TestMovieRepo_ListDirectors(t *testing.T) {
 				limit:  10,
 			},
 			want: []model.Director{
-				{Name: "Ethan White", Titles: []string{"Forrest Gump"}},
+				{ID: "ethan-white", Name: "Ethan White", Titles: []string{"Forrest Gump"}},
 			},
 		},
 		{
 			name: "no directors with multiple movies",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Kara Nader"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Kara Nader"},
 				},
 				maxLimit: 10,
 			},
@@ -324,16 +324,16 @@ func TestMovieRepo_ListDirectors(t *testing.T) {
 				limit:  10,
 			},
 			want: []model.Director{
-				{Name: "Ethan White", Titles: []string{"Forrest Gump"}},
-				{Name: "Kara Nader", Titles: []string{"Die Hard"}},
+				{ID: "ethan-white", Name: "Ethan White", Titles: []string{"Forrest Gump"}},
+				{ID: "kara-nader", Name: "Kara Nader", Titles: []string{"Die Hard"}},
 			},
 		},
 		{
 			name: "directors with multiple movies",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -342,7 +342,7 @@ func TestMovieRepo_ListDirectors(t *testing.T) {
 				limit:  10,
 			},
 			want: []model.Director{
-				{Name: "Ethan White", Titles: []string{"Die Hard", "Forrest Gump"}},
+				{ID: "ethan-white", Name: "Ethan White", Titles: []string{"Die Hard", "Forrest Gump"}},
 			},
 		},
 	}
@@ -398,7 +398,7 @@ func TestMovieRepo_ListMovies(t *testing.T) {
 			name: "single movie",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -408,15 +408,15 @@ func TestMovieRepo_ListMovies(t *testing.T) {
 				searchTerm: "",
 			},
 			want: []model.Movie{
-				{Title: "Forrest Gump", Director: "Ethan White"},
+				{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
 			},
 		},
 		{
 			name: "movies are in alphabetical order",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Kara Nader"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Kara Nader"},
 				},
 				maxLimit: 10,
 			},
@@ -426,16 +426,16 @@ func TestMovieRepo_ListMovies(t *testing.T) {
 				searchTerm: "",
 			},
 			want: []model.Movie{
-				{Title: "Die Hard", Director: "Kara Nader"},
-				{Title: "Forrest Gump", Director: "Ethan White"},
+				{ID: "die-hard", Title: "Die Hard", Director: "Kara Nader"},
+				{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
 			},
 		},
 		{
 			name: "directors with multiple movies",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -445,16 +445,16 @@ func TestMovieRepo_ListMovies(t *testing.T) {
 				searchTerm: "",
 			},
 			want: []model.Movie{
-				{Title: "Die Hard", Director: "Ethan White"},
-				{Title: "Forrest Gump", Director: "Ethan White"},
+				{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
+				{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
 			},
 		},
 		{
 			name: "filtering works",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -464,15 +464,15 @@ func TestMovieRepo_ListMovies(t *testing.T) {
 				searchTerm: "orre",
 			},
 			want: []model.Movie{
-				{Title: "Forrest Gump", Director: "Ethan White"},
+				{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
 			},
 		},
 		{
 			name: "directors with multiple movies can be filtered out",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -529,8 +529,8 @@ func TestMovieRepo_Truncate(t *testing.T) {
 			name: "empty",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 				maxLimit: 10,
 			},
@@ -592,7 +592,7 @@ func TestMovieRepo_DeleteByKey(t *testing.T) {
 			name: "only keys to be deleted",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
 				},
 			},
 			args: args{
@@ -607,8 +607,8 @@ func TestMovieRepo_DeleteByKey(t *testing.T) {
 			name: "first keys to be deleted",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 			},
 			args: args{
@@ -623,8 +623,8 @@ func TestMovieRepo_DeleteByKey(t *testing.T) {
 			name: "second keys to be deleted",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
 				},
 			},
 			args: args{
@@ -639,9 +639,9 @@ func TestMovieRepo_DeleteByKey(t *testing.T) {
 			name: "middle keys to be deleted",
 			fields: fields{
 				movies: []model.Movie{
-					{Title: "Forrest Gump", Director: "Ethan White"},
-					{Title: "Die Hard", Director: "Ethan White"},
-					{Title: "Fight Club", Director: "Shaylee Hegmann"},
+					{ID: "forrest-gump", Title: "Forrest Gump", Director: "Ethan White"},
+					{ID: "die-hard", Title: "Die Hard", Director: "Ethan White"},
+					{ID: "fight-club", Title: "Fight Club", Director: "Shaylee Hegmann"},
 				},
 			},
 			args: args{

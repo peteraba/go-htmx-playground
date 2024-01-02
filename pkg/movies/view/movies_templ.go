@@ -78,7 +78,7 @@ func form() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><form hx-post=\"/movies\" hx-target=\"#wrapper\" hx-swap=\"innerHTML\" hx-indicator=\"#spinner\"><p class=\"p-1\"><input type=\"text\" placeholder=\"Title\" name=\"title\" id=\"movie-title\" class=\"input input-bordered w-full\"></p><p class=\"p-1\"><input type=\"text\" placeholder=\"Director\" name=\"director\" id=\"movie-director\" class=\"input input-bordered w-full\"></p><div class=\"float-none p-2\"><p class=\"float-left\"><button type=\"submit\" class=\"btn btn-outline btn-wide\"><span class=\"htmx-indicator loading loading-spinner hidden\" id=\"spinner\" role=\"status\" aria-hidden=\"true\"></span> ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><form method=\"POST\" action=\"/movies\" hx-post=\"/movies\" hx-target=\"#wrapper\" hx-swap=\"innerHTML\" hx-indicator=\"#spinner\"><p class=\"p-1\"><input type=\"text\" placeholder=\"Title\" name=\"title\" id=\"movie-title\" class=\"input input-bordered w-full\"></p><p class=\"p-1\"><input type=\"text\" placeholder=\"Director\" name=\"director\" id=\"movie-director\" class=\"input input-bordered w-full\"></p><div class=\"float-none p-2\"><p class=\"float-left\"><button type=\"submit\" class=\"btn btn-outline btn-wide\"><span class=\"htmx-indicator loading loading-spinner hidden\" id=\"spinner\" role=\"status\" aria-hidden=\"true\"></span> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -114,7 +114,7 @@ func form() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a hx-delete=\"/movies?truncate=true\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-error btn-outline\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <a hx-delete=\"/truncate-movies\" hx-replace-url=\"false\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" class=\"btn btn-error btn-outline\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -211,7 +211,7 @@ func MovieList(movies []model.Movie, pagination templ.Component) templ.Component
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><form action=\"/movies-delete\" method=\"post\" hx-delete=\"/movies\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" x-data><div class=\"overflow-x-auto\"><table id=\"movie-list\" class=\"table table-zebra table-fixed\"><!--")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><form action=\"/delete-movie\" method=\"post\" hx-delete=\"/delete-movies\" hx-target=\"#movie-list\" hx-swap=\"innerHTML\" x-data><div class=\"overflow-x-auto\"><table id=\"movie-list\" class=\"table table-zebra table-fixed\"><!--")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

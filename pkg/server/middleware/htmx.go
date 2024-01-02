@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/peteraba/go-htmx-playground/lib/auth"
-	"github.com/peteraba/go-htmx-playground/lib/htmx"
+	"github.com/peteraba/go-htmx-playground/lib/contenttype"
 	"github.com/peteraba/go-htmx-playground/pkg/server/view"
 )
 
@@ -14,7 +14,7 @@ func Htmx(buildVersion string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		headers := c.GetReqHeaders()
 
-		if !htmx.AcceptHTML(headers) {
+		if !contenttype.IsHTML(headers) {
 			return c.Next()
 		}
 
@@ -25,7 +25,7 @@ func Htmx(buildVersion string) fiber.Handler {
 			return err
 		}
 
-		if htmx.IsHx(headers) {
+		if contenttype.IsHTMX(headers) {
 			return nil
 		}
 

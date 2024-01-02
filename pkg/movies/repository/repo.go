@@ -55,7 +55,7 @@ func (r *MovieRepo) Insert(newMovies ...model.Movie) *MovieRepo {
 			newDirector.Titles = append(newDirector.Titles, newMovie.Title)
 			sort.Strings(newDirector.Titles)
 		} else {
-			newDirector = model.Director{Name: newMovie.Director, Titles: []string{newMovie.Title}}
+			newDirector = model.Director{ID: directorKey, Name: newMovie.Director, Titles: []string{newMovie.Title}}
 			r.directorKeys = append(r.directorKeys, directorKey)
 		}
 
@@ -92,6 +92,7 @@ func (r *MovieRepo) deleteMovieByKey(movieKey string) *MovieRepo {
 
 	if len(director.Titles) > 1 {
 		r.directors[directorKey] = model.Director{
+			ID:     directorKey,
 			Name:   movie.Director,
 			Titles: lo.Without(director.Titles, movie.Title),
 		}

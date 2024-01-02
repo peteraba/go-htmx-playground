@@ -2,11 +2,10 @@ package handler
 
 import (
 	"log/slog"
-	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/peteraba/go-htmx-playground/lib/htmx"
+	"github.com/peteraba/go-htmx-playground/lib/contenttype"
 	"github.com/peteraba/go-htmx-playground/lib/jason"
 	"github.com/peteraba/go-htmx-playground/lib/log"
 	"github.com/peteraba/go-htmx-playground/lib/pagination"
@@ -54,12 +53,12 @@ func (d Director) List(c *fiber.Ctx) error {
 		d.logger.Error("Error while listing directors.", log.Err(err))
 		d.notifier.Error(err.Error(), c.IP())
 
-		return c.SendStatus(http.StatusInternalServerError)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
 	p := pagination.New(currentPage, d.pageSize, d.repo.CountDirectors(), c.Path(), nil, "#wrapper")
 
-	if htmx.AcceptHTML(c.GetReqHeaders()) {
+	if contenttype.IsHTML(c.GetReqHeaders()) {
 		c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
 
 		component := view.DirectorsPage(directors, p.Template())

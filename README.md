@@ -26,8 +26,8 @@ task install
 ## Tools being used in this project
 
 - [Task](https://taskfile.dev/) - Task runner (like Make, but nicer)
-- [Air](https://github.com/cosmtrek/air) - rebuilding project on file change
-- 
+- [Air](https://github.com/cosmtrek/air) - Rebuilding project on file change
+- [Zitadel](https://zitadel.com)
 
 ## TODO
 
@@ -35,12 +35,6 @@ task install
   - [ ] Badges
   - [ ] Process to upgrade tools
   - [ ] Process to upgrade vendor libraries
-- [x] Fix bugs
-  - [x] Fix back buttons
-  - [x] Fix JS being lost on re-loading parts
-  - [x] Fix check-all remaining hidden on generating / adding movies
-  - [x] Fix search design
-  - [x] Make sure search is highlighted on reload / load only the table???
 - [ ] Speed improvements
   - [ ] [Compress](https://docs.gofiber.io/api/middleware/compress)
   - [ ] [ETag](https://docs.gofiber.io/api/middleware/etag)
@@ -48,14 +42,12 @@ task install
   - [ ] ~~CDN (IDEA)~~
 - [ ] Interop improvements
   - [ ] [CORS](https://docs.gofiber.io/api/middleware/cors) (IDEA)
-  - [ ] JSON response from endpoints
+  - [x] JSON response from endpoints
     - [x] GET /movies
     - [x] POST /movies
-    - [ ] DELETE /movies
-    - [ ] POST /film-generators
+    - [x] DELETE /movies
     - [x] GET /directors
-    - [ ] GET /colors
-    - [ ] OpenAPI 3.x definition
+  - [ ] OpenAPI 3.x definition
 - [ ] Ops improvements
   - [x] Better logging ([slog](https://github.com/samber/slog-fiber))
   - [ ] Tracing
@@ -63,16 +55,11 @@ task install
   - [x] [Metrics](https://docs.gofiber.io/api/middleware/monitor)
   - [ ] [Pprof](https://docs.gofiber.io/api/middleware/pprof)
   - [x] [Recover](https://docs.gofiber.io/api/middleware/recover)
-- [x] Code quality
-  - [x] golangci-lint
-  - [x] Refactoring for more modular code
-- [x] Colors module
 - [x] Notifications
   - [x] htmx-style (SSE?)
   - [ ] ~~htmx-style (Websockets?)~~
   - [ ] ~~htmx-style (polling?)~~
   - [ ] ~~Load/reload on notification~~
-- [ ] Support for microservice-like deployment (IDEA)
 - [x] Arch changes
   - [x] Use templ
   - [x] Use urfave/cli to support multiple commands
@@ -81,17 +68,19 @@ task install
   - [ ] Testing race conditions
   - [ ] Fuzz testing
   - [ ] Performance testing
+  - [ ] Authentication
+    - [x] [zitadel](https://github.com/zitadel/zitadel-go) ([AMR](https://analyzemyrepo.com/analyze/zitadel/zitadel))
   - [ ] Authorization
-    - [Fiber-Casbin](https://github.com/gofiber/contrib/tree/main/casbin)
-    - [Casbin](https://github.com/casbin/casbin)
-    - [gorbac](https://github.com/mikespook/gorbac)
-    - [topaz](https://github.com/aserto-dev/topaz)
-  - [x] JWT-integration (IDEA)
-    - [zitadel](https://github.com/zitadel/zitadel-go) ([AMR](https://analyzemyrepo.com/analyze/zitadel/zitadel))
-    - [hanko](https://www.hanko.io/) ([AMR](https://analyzemyrepo.com/analyze/teamhanko/hanko))
-    - [authelia](https://www.authelia.com/) ([AMR](https://analyzemyrepo.com/analyze/authelia/authelia))
-    - [hydra](https://github.com/ory/hydra) ([AMR](https://analyzemyrepo.com/analyze/ory/hydra))
-    - [jwt](https://github.com/golang-jwt/jwt)
+    - [ ] [Fiber-Casbin](https://github.com/gofiber/contrib/tree/main/casbin)
+    - [ ] [Casbin](https://github.com/casbin/casbin)
+    - [ ] [gorbac](https://github.com/mikespook/gorbac)
+    - [ ] [topaz](https://github.com/aserto-dev/topaz)
+  - [ ] JWT-integration (IDEA)
+    - [ ] [zitadel](https://github.com/zitadel/zitadel-go) ([AMR](https://analyzemyrepo.com/analyze/zitadel/zitadel))
+    - [ ] [hanko](https://www.hanko.io/) ([AMR](https://analyzemyrepo.com/analyze/teamhanko/hanko))
+    - [ ] [authelia](https://www.authelia.com/) ([AMR](https://analyzemyrepo.com/analyze/authelia/authelia))
+    - [ ] [hydra](https://github.com/ory/hydra) ([AMR](https://analyzemyrepo.com/analyze/ory/hydra))
+    - [ ] [jwt](https://github.com/golang-jwt/jwt)
   - [ ] [CSRF](https://docs.gofiber.io/api/middleware/csrf)
   - [ ] [Encrypt Cookie](https://docs.gofiber.io/api/middleware/encryptcookie) (probably not relevant)
   - [ ] [Limiter](https://docs.gofiber.io/api/middleware/limiter)
